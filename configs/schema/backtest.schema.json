@@ -1,0 +1,172 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rd-agent.local/schema/backtest.json",
+  "title": "BacktestConfig",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "calendar",
+    "portfolio",
+    "signal",
+    "output"
+  ],
+  "properties": {
+    "calendar": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "start_date",
+        "end_date"
+      ],
+      "properties": {
+        "start_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "end_date": {
+          "type": "string",
+          "format": "date"
+        },
+        "benchmark": {
+          "type": "string",
+          "default": "CSI300"
+        }
+      }
+    },
+    "portfolio": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "initial_capital",
+        "max_weight",
+        "cost"
+      ],
+      "properties": {
+        "initial_capital": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "base_currency": {
+          "type": "string",
+          "default": "CNY"
+        },
+        "max_weight": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "cost": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "buy": {
+              "type": "number",
+              "minimum": 0
+            },
+            "sell": {
+              "type": "number",
+              "minimum": 0
+            }
+          }
+        }
+      }
+    },
+    "signal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source",
+        "topk"
+      ],
+      "properties": {
+        "source": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "qlib",
+                "csv"
+              ]
+            },
+            "path": {
+              "type": "string"
+            }
+          }
+        },
+        "topk": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "confidence_floor": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "default": 0
+        }
+      }
+    },
+    "risk": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "max_drawdown": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "allow_limit_up": {
+          "type": "boolean",
+          "default": false
+        },
+        "cooldown_days": {
+          "type": "integer",
+          "minimum": 0,
+          "default": 0
+        }
+      }
+    },
+    "output": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "root_dir"
+      ],
+      "properties": {
+        "root_dir": {
+          "type": "string"
+        },
+        "calendar_file": {
+          "type": "string"
+        },
+        "summary_file": {
+          "type": "string"
+        }
+      }
+    },
+    "logging": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "level": {
+          "type": "string",
+          "enum": [
+            "DEBUG",
+            "INFO",
+            "WARNING",
+            "ERROR"
+          ],
+          "default": "INFO"
+        }
+      }
+    }
+  }
+}
+
+
+
+

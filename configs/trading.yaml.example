@@ -1,0 +1,57 @@
+# Trading execution global configuration (YAML)
+# All scripts support --config to specify this file path; defaults to this file if unspecified.
+
+# Portfolio and rebalancing parameters
+portfolio:
+  topk: 30               # K: max target holding count
+  n_drop: 5              # Max number of replacements per rebalance
+  invest_ratio: 0.95     # Capital utilization ratio (remainder as cash buffer)
+  max_weight: 0.05       # Max single-instrument weight
+  lot: 100               # Trading lot size (A-share mainboard = 100 shares)
+  confidence_floor: 0.96 # Only keep instruments with confidence >= this threshold
+
+# Weight allocation mode
+weights:
+  mode: equal            # equal|ranked
+  confidence_tilt: true  # Adjust weights by confidence (enabled by default in equal mode)
+  rank_metric: rank      # Ranked mode metric: rank|score
+  rank_exponent: 1.0     # Ranked mode: >1 amplifies top names, <1 more uniform
+
+# Order and pricing rules
+order:
+  price_source: qlib_close   # qlib_close|gm_last; default reads daily_pv.h5 close as reference price
+  buy_limit_offset: 0.02     # Buy limit price = reference_price * (1 + 0.02)
+  sell_limit_offset: -0.02   # Sell limit price = reference_price * (1 - 0.02)
+  min_buy_notional: 8000     # Min buy notional per order (avoid tiny orders)
+  min_sell_notional: 8000    # Min sell notional per order (avoid tiny orders)
+  limit_threshold: 0.095     # Approximate limit-up/down threshold (9.5%) for filtering
+  clamp_tick: 0.01           # Price tick size (min price increment), A-shares default 0.01 CNY
+
+# Risk management (account and per-instrument)
+risk:
+  day_drawdown_limit: 0.03    # Single-day drawdown threshold (exceeding triggers sell-only mode)
+  rolling5d_drawdown_limit: 0.08 # 5-day rolling drawdown threshold
+  enforce_limit_up_down_filter: true # Enable limit-up/down filtering (no buying at limit-up, no selling at limit-down)
+
+# Data paths (override with your local paths)
+paths:
+  daily_pv: fullstackautoquant/data/daily_pv.h5
+  logs_dir: logs/
+
+# GM Trade simulation account (reads from env vars GM_ENDPOINT/GM_TOKEN/GM_ACCOUNT_ID first)
+gm:
+  endpoint: api.myquant.cn:9000
+  account_id: ""   # Leave empty to use env var GM_ACCOUNT_ID
+  token: ""        # Leave empty to use env var GM_TOKEN
+
+# Initial capital (used for target position estimation when GM account data is unavailable)
+capital:
+  initial: 300000
+
+# Dynamic rebalance trigger rules (not fixed period): any condition met triggers rebalance
+rebalance_trigger:
+  # Current holdings not in target TopK set exceed this count
+  max_non_target_to_replace: 3
+  # Weight drift trigger (optional, disabled by default)
+  enable_weight_drift: false
+  weight_drift_threshold: 0.2  # Trigger when current vs target weight deviation exceeds 20%

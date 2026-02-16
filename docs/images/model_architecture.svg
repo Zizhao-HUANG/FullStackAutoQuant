@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 520 680" width="520" height="680">
+  <defs>
+    <linearGradient id="bg2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fafbfc"/>
+      <stop offset="100%" stop-color="#f0f2f5"/>
+    </linearGradient>
+    <marker id="arr" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#5c6370"/>
+    </marker>
+  </defs>
+
+  <rect width="520" height="680" fill="url(#bg2)" rx="8"/>
+  <rect x="0" y="0" width="520" height="3" fill="#7c3aed" rx="2"/>
+
+  <!-- Title -->
+  <text x="260" y="32" text-anchor="middle" font-family="'SF Pro Display','Segoe UI',Helvetica,Arial,sans-serif" font-size="15" font-weight="700" fill="#24292e" letter-spacing="0.3">TCN-LocalAttn-GRU Architecture</text>
+  <line x1="170" y1="42" x2="350" y2="42" stroke="#e1e4e8" stroke-width="1"/>
+
+  <!-- ═══════ INPUT ═══════ -->
+  <rect x="110" y="60" width="300" height="48" rx="8" fill="#ffffff" stroke="#d1d5da" stroke-width="1"/>
+  <text x="260" y="82" text-anchor="middle" font-family="'SF Pro Text','Segoe UI',Helvetica,Arial,sans-serif" font-size="13" font-weight="600" fill="#24292e">Input Feature Matrix</text>
+  <text x="260" y="100" text-anchor="middle" font-family="'SF Mono',Consolas,monospace" font-size="11" fill="#6b7280">(N, 72, 22)</text>
+  <text x="425" y="88" text-anchor="start" font-family="'SF Mono',Consolas,monospace" font-size="9" fill="#9ca3af">Alpha158</text>
+  <text x="425" y="100" text-anchor="start" font-family="'SF Mono',Consolas,monospace" font-size="9" fill="#9ca3af">+ custom</text>
+
+  <!-- Arrow -->
+  <line x1="260" y1="108" x2="260" y2="128" stroke="#5c6370" stroke-width="1.2" marker-end="url(#arr)"/>
+
+  <!-- ═══════ TCN BLOCK ═══════ -->
+  <rect x="60" y="134" width="400" height="155" rx="10" fill="#ffffff" stroke="#93c5fd" stroke-width="1.5"/>
+  <rect x="60" y="134" width="400" height="30" rx="10" fill="#dbeafe"/>
+  <rect x="60" y="156" width="400" height="8" fill="#dbeafe"/>
+  <text x="260" y="155" text-anchor="middle" font-family="'SF Pro Display','Segoe UI',Helvetica,Arial,sans-serif" font-size="12" font-weight="700" fill="#1e40af">CAUSAL TCN STEM</text>
+
+  <!-- TCN sub-blocks -->
+  <rect x="85" y="174" width="350" height="28" rx="5" fill="#eff6ff" stroke="#bfdbfe" stroke-width="0.8"/>
+  <text x="260" y="192" text-anchor="middle" font-family="'SF Mono',Consolas,monospace" font-size="10" fill="#1e3a5f">Conv1d (k=5, d=1,2) → GELU → Residual</text>
+  <text x="448" y="192" text-anchor="end" font-family="'SF Mono',Consolas,monospace" font-size="9" fill="#93c5fd">96→64</text>
+
+  <rect x="85" y="210" width="350" height="28" rx="5" fill="#eff6ff" stroke="#bfdbfe" stroke-width="0.8"/>
+  <text x="260" y="228" text-anchor="middle" font-family="'SF Mono',Consolas,monospace" font-size="10" fill="#1e3a5f">Conv1d (k=5, d=2,4) → GELU → Residual</text>
+  <text x="448" y="228" text-anchor="end" font-family="'SF Mono',Consolas,monospace" font-size="9" fill="#93c5fd">64→64</text>
+
+  <rect x="85" y="246" width="350" height="28" rx="5" fill="#eff6ff" stroke="#bfdbfe" stroke-width="0.8"/>
+  <text x="260" y="264" text-anchor="middle" font-family="'SF Mono',Consolas,monospace" font-size="10" fill="#1e3a5f">Conv1d (k=5, d=4,4) → GELU → Residual</text>
+  <text x="448" y="264" text-anchor="end" font-family="'SF Mono',Consolas,monospace" font-size="9" fill="#93c5fd">64→64</text>
+
+  <!-- Side label -->
+  <text x="42" y="220" text-anchor="middle" font-family="'SF Pro Text','Segoe UI',Helvetica,Arial,sans-serif" font-size="9" font-weight="600" fill="#93c5fd" transform="rotate(-90,42,220)">MULTI-SCALE</text>
+
+  <!-- Arrow -->
+  <line x1="260" y1="289" x2="260" y2="312" stroke="#5c6370" stroke-width="1.2" marker-end="url(#arr)"/>
+  <text x="276" y="304" font-family="'SF Mono',Consolas,monospace" font-size="9" fill="#9ca3af">Linear 64→96</text>
+
+  <!-- ═══════ ATTENTION BLOCK ═══════ -->
+  <rect x="60" y="318" width="400" height="80" rx="10" fill="#ffffff" stroke="#c4b5fd" stroke-width="1.5"/>
+  <rect x="60" y="318" width="400" height="30" rx="10" fill="#ede9fe"/>
+  <rect x="60" y="340" width="400" height="8" fill="#ede9fe"/>
+  <text x="260" y="339" text-anchor="middle" font-family="'SF Pro Display','Segoe UI',Helvetica,Arial,sans-serif" font-size="12" font-weight="700" fill="#5b21b6">OVERLAPPING LOCAL SELF-ATTENTION</text>
+
+  <text x="260" y="370" text-anchor="middle" font-family="'SF Mono',Consolas,monospace" font-size="10" fill="#3b1f6e">6 heads × 16 dim  |  window=16, stride=8  |  causal mask</text>
+  <text x="260" y="387" text-anchor="middle" font-family="'SF Mono',Consolas,monospace" font-size="10" fill="#3b1f6e">FFN: 96→192→96 (GELU)  |  LayerNorm + Residual</text>
+
+  <text x="438" y="370" text-anchor="start" font-family="'SF Mono',Consolas,monospace" font-size="9" fill="#c4b5fd">(N,72,96)</text>
+
+  <!-- Side label -->
+  <text x="42" y="358" text-anchor="middle" font-family="'SF Pro Text','Segoe UI',Helvetica,Arial,sans-serif" font-size="9" font-weight="600" fill="#c4b5fd" transform="rotate(-90,42,358)">LONG-RANGE</text>
+
+  <!-- Arrow -->
+  <line x1="260" y1="398" x2="260" y2="421" stroke="#5c6370" stroke-width="1.2" marker-end="url(#arr)"/>
+
+  <!-- ═══════ GRU BLOCK ═══════ -->
+  <rect x="110" y="427" width="300" height="55" rx="10" fill="#ffffff" stroke="#86efac" stroke-width="1.5"/>
+  <rect x="110" y="427" width="300" height="27" rx="10" fill="#dcfce7"/>
+  <rect x="110" y="448" width="300" height="6" fill="#dcfce7"/>
+  <text x="260" y="446" text-anchor="middle" font-family="'SF Pro Display','Segoe UI',Helvetica,Arial,sans-serif" font-size="12" font-weight="700" fill="#166534">GRU AGGREGATION</text>
+  <text x="260" y="472" text-anchor="middle" font-family="'SF Mono',Consolas,monospace" font-size="10" fill="#14532d">Unidirectional  |  hidden=48  |  last hidden state</text>
+  <text x="425" y="462" text-anchor="start" font-family="'SF Mono',Consolas,monospace" font-size="9" fill="#86efac">(N,48)</text>
+
+  <!-- Side label -->
+  <text x="92" y="454" text-anchor="middle" font-family="'SF Pro Text','Segoe UI',Helvetica,Arial,sans-serif" font-size="9" font-weight="600" fill="#86efac" transform="rotate(-90,92,454)">TEMPORAL</text>
+
+  <!-- Arrow -->
+  <line x1="260" y1="482" x2="260" y2="505" stroke="#5c6370" stroke-width="1.2" marker-end="url(#arr)"/>
+
+  <!-- ═══════ MLP HEAD ═══════ -->
+  <rect x="130" y="511" width="260" height="44" rx="8" fill="#ffffff" stroke="#fbbf24" stroke-width="1.2"/>
+  <text x="260" y="531" text-anchor="middle" font-family="'SF Pro Display','Segoe UI',Helvetica,Arial,sans-serif" font-size="12" font-weight="700" fill="#92400e">MLP HEAD</text>
+  <text x="260" y="548" text-anchor="middle" font-family="'SF Mono',Consolas,monospace" font-size="10" fill="#78350f">Linear(48→32) → GELU → Dropout → Linear(32→1)</text>
+
+  <!-- Arrow -->
+  <line x1="260" y1="555" x2="260" y2="578" stroke="#5c6370" stroke-width="1.2" marker-end="url(#arr)"/>
+
+  <!-- ═══════ OUTPUT ═══════ -->
+  <rect x="160" y="584" width="200" height="42" rx="8" fill="#fef2f2" stroke="#fca5a5" stroke-width="1.2"/>
+  <text x="260" y="604" text-anchor="middle" font-family="'SF Pro Display','Segoe UI',Helvetica,Arial,sans-serif" font-size="12" font-weight="700" fill="#991b1b">Ranking Score</text>
+  <text x="260" y="620" text-anchor="middle" font-family="'SF Mono',Consolas,monospace" font-size="10" fill="#b91c1c">(N, 1)</text>
+
+  <!-- MC Dropout callout -->
+  <rect x="375" y="584" width="120" height="40" rx="6" fill="#fef2f2" stroke="#fca5a5" stroke-width="0.8" stroke-dasharray="4,2"/>
+  <text x="435" y="601" text-anchor="middle" font-family="'SF Pro Text','Segoe UI',Helvetica,Arial,sans-serif" font-size="10" font-weight="600" fill="#991b1b">MC Dropout ×16</text>
+  <text x="435" y="615" text-anchor="middle" font-family="'SF Mono',Consolas,monospace" font-size="9" fill="#b91c1c">score + confidence</text>
+  <line x1="360" y1="604" x2="375" y2="604" stroke="#fca5a5" stroke-width="0.8" stroke-dasharray="3,2"/>
+
+  <!-- Bottom annotation bar -->
+  <rect x="60" y="642" width="400" height="24" rx="5" fill="#f8f9fa" stroke="#e1e4e8" stroke-width="0.8"/>
+  <text x="260" y="658" text-anchor="middle" font-family="'SF Mono',Consolas,monospace" font-size="10" fill="#57606a">Strictly causal  ·  ~180K params  ·  RankMSE + PairwiseHinge loss</text>
+</svg>

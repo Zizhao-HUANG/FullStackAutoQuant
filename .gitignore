@@ -1,0 +1,61 @@
+# ----- Python -----
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+*.egg
+
+# ----- Virtual Environments -----
+venv/
+.venv/
+env/
+gmtrade-env/
+
+# ----- Data & Model Artifacts -----
+*.parquet
+*.pkl
+*.pt
+*.h5
+*.hdf5
+*.csv
+!configs/**/*.csv
+
+# ----- Secrets & Environment -----
+.env
+.env.*
+!.env.example
+
+# ----- IDE / OS -----
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ----- Logs & Cache -----
+logs/
+mlruns/
+*.log
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# ----- Qlib Data (local) -----
+qlib_data/
+.qlib/
+
+# ----- Weights (use Git LFS or Releases) -----
+weights/*.pkl
+weights/*.pt
+weights/*.pth
+!weights/.gitkeep
+!weights/README.md
+
+# ----- Misc -----
+*.tar.gz
+*.zip
+tmp/
+backups/
