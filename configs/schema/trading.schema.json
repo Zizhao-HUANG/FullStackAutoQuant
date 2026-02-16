@@ -1,0 +1,148 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://rd-agent.local/schema/trading.json",
+  "title": "TradingWorkflowConfig",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "signal",
+    "risk",
+    "strategy",
+    "execution"
+  ],
+  "properties": {
+    "signal": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source",
+        "preprocessors"
+      ],
+      "properties": {
+        "source": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "csv",
+                "qlib"
+              ],
+              "default": "csv"
+            },
+            "path": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "type"
+          ]
+        },
+        "preprocessors": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "name"
+            ],
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "params": {
+                "type": "object",
+                "default": {}
+              }
+            }
+          }
+        }
+      }
+    },
+    "risk": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "max_drawdown": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "limit_up_guard": {
+          "type": "boolean",
+          "default": true
+        },
+        "exposure_limit": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1,
+          "default": 1
+        }
+      }
+    },
+    "strategy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "params": {
+          "type": "object",
+          "default": {}
+        }
+      }
+    },
+    "execution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "broker"
+      ],
+      "properties": {
+        "broker": {
+          "type": "string",
+          "enum": [
+            "gm"
+          ]
+        },
+        "dry_run": {
+          "type": "boolean",
+          "default": true
+        },
+        "order_batch_size": {
+          "type": "integer",
+          "minimum": 1,
+          "default": 50
+        }
+      }
+    },
+    "logging": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "level": {
+          "type": "string",
+          "enum": [
+            "DEBUG",
+            "INFO",
+            "WARNING",
+            "ERROR"
+          ],
+          "default": "INFO"
+        },
+        "file": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
+
+
+
+

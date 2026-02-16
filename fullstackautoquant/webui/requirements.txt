@@ -1,0 +1,10 @@
+streamlit>=1.38
+pandas>=2.2
+sqlalchemy>=2.0
+plotly>=5.22
+tushare
+pyyaml>=6.0
+python-dotenv>=1.0
+pyarrow>=15
+tables>=3.8
+

@@ -1,0 +1,144 @@
+dataset:
+  class: TSDatasetH
+  kwargs:
+    handler:
+      class: DataHandlerLP
+      kwargs:
+        data_loader:
+          class: NestedDataLoader
+          kwargs:
+            dataloader_l:
+            - class: qlib.contrib.data.loader.Alpha158DL
+              kwargs:
+                config:
+                  feature:
+                  - - Resi($close, 5)/$close
+                    - Std(Abs($close/Ref($close, 1)-1)*$volume, 5)/(Mean(Abs($close/Ref($close,
+                      1)-1)*$volume, 5)+1e-12)
+                    - Rsquare($close, 5)
+                    - ($high-$low)/$open
+                    - Rsquare($close, 10)
+                    - Corr($close, Log($volume+1), 5)
+                    - Corr($close/Ref($close,1), Log($volume/Ref($volume, 1)+1), 5)
+                    - Corr($close, Log($volume+1), 10)
+                    - Ref($close, 60)/$close
+                    - Resi($close, 10)/$close
+                    - Std($volume, 5)/($volume+1e-12)
+                    - Rsquare($close, 60)
+                    - Corr($close, Log($volume+1), 60)
+                    - Std(Abs($close/Ref($close, 1)-1)*$volume, 60)/(Mean(Abs($close/Ref($close,
+                      1)-1)*$volume, 60)+1e-12)
+                    - Std($close, 5)/$close
+                    - Rsquare($close, 20)
+                    - Corr($close/Ref($close,1), Log($volume/Ref($volume, 1)+1), 60)
+                    - Corr($close/Ref($close,1), Log($volume/Ref($volume, 1)+1), 10)
+                    - Corr($close, Log($volume+1), 20)
+                    - (Less($open, $close)-$low)/$open
+                  - - RESI5
+                    - WVMA5
+                    - RSQR5
+                    - KLEN
+                    - RSQR10
+                    - CORR5
+                    - CORD5
+                    - CORR10
+                    - ROC60
+                    - RESI10
+                    - VSTD5
+                    - RSQR60
+                    - CORR60
+                    - WVMA60
+                    - STD5
+                    - RSQR20
+                    - CORD60
+                    - CORD10
+                    - CORR20
+                    - KLOW
+                  label:
+                  - - ((Ref($close,-5)-Ref($open,-1)) / Max(Ref($open,-1)-Min(Ref($low,-5),5),1e-12))
+                      * Log(1 + Mean(Ref($volume,-5),5)/(Mean($volume,60)+1e-12))
+                  - - LABEL0
+            - class: qlib.data.dataset.loader.StaticDataLoader
+              kwargs:
+                config: combined_factors_df.parquet
+        end_time: 2025-07-30
+        infer_processors:
+        - class: RobustZScoreNorm
+          kwargs:
+            clip_outlier: true
+            fields_group: feature
+            fit_end_time: 2021-12-31
+            fit_start_time: 2005-01-04
+        - class: Fillna
+          kwargs:
+            fields_group: feature
+        instruments: csi300
+        learn_processors:
+        - class: DropnaLabel
+        - class: CSZScoreNorm
+          kwargs:
+            fields_group: label
+        start_time: 2005-01-04
+      module_path: qlib.contrib.data.handler
+    segments:
+      test:
+      - 2024-01-02
+      - 2025-07-30
+      train:
+      - 2005-01-04
+      - 2021-12-31
+      valid:
+      - 2022-01-04
+      - 2023-12-29
+    step_len: 72
+  module_path: qlib.data.dataset
+model:
+  class: GeneralPTNN
+  kwargs:
+    GPU: 0
+    batch_size: 256
+    early_stop: 4
+    loss: mse
+    lr: 0.0002
+    metric: loss
+    n_epochs: 95
+    n_jobs: 20
+    pt_model_kwargs:
+      num_features: 22
+      num_timesteps: 72
+    pt_model_uri: model.model_cls
+    weight_decay: 0.0001
+  module_path: qlib.contrib.model.pytorch_general_nn
+record:
+- class: SignalRecord
+  kwargs:
+    dataset: <DATASET>
+    model: <MODEL>
+  module_path: qlib.workflow.record_temp
+- class: SigAnaRecord
+  kwargs:
+    ana_long_short: false
+    ann_scaler: 252
+  module_path: qlib.workflow.record_temp
+- class: PortAnaRecord
+  kwargs:
+    config:
+      backtest:
+        account: 100000000
+        benchmark: SH000300
+        end_time: 2025-07-30
+        exchange_kwargs:
+          close_cost: 0.0015
+          deal_price: close
+          limit_threshold: 0.095
+          min_cost: 5
+          open_cost: 0.0005
+        start_time: 2024-01-02
+      strategy:
+        class: TopkDropoutStrategy
+        kwargs:
+          n_drop: 5
+          signal: <PRED>
+          topk: 50
+        module_path: qlib.contrib.strategy
+  module_path: qlib.workflow.record_temp

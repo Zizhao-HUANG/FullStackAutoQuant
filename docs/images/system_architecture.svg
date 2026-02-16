@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 520" width="960" height="520">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fafbfc"/>
+      <stop offset="100%" stop-color="#f0f2f5"/>
+    </linearGradient>
+    <!-- Arrow marker -->
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#5c6370"/>
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="960" height="520" fill="url(#bg)" rx="8"/>
+  <rect x="0" y="0" width="960" height="3" fill="#4a7cf7" rx="2"/>
+
+  <!-- Title block -->
+  <text x="480" y="36" text-anchor="middle" font-family="'SF Pro Display','Segoe UI',Helvetica,Arial,sans-serif" font-size="16" font-weight="700" fill="#24292e" letter-spacing="0.3">FullStackAutoQuant — System Architecture</text>
+  <line x1="380" y1="48" x2="580" y2="48" stroke="#e1e4e8" stroke-width="1"/>
+
+  <!-- ═══════════════════════ STAGE 1: DATA PIPELINE ═══════════════════════ -->
+  <rect x="30" y="70" width="200" height="390" rx="8" fill="#ffffff" stroke="#d1d5da" stroke-width="1"/>
+  <rect x="30" y="70" width="200" height="36" rx="8" fill="#dbeafe"/>
+  <rect x="30" y="98" width="200" height="8" fill="#dbeafe"/>
+  <text x="130" y="94" text-anchor="middle" font-family="'SF Pro Display','Segoe UI',Helvetica,Arial,sans-serif" font-size="13" font-weight="700" fill="#1e40af" letter-spacing="0.5">DATA PIPELINE</text>
+
+  <!-- Data nodes -->
+  <rect x="50" y="122" width="160" height="40" rx="6" fill="#eff6ff" stroke="#93c5fd" stroke-width="1"/>
+  <text x="130" y="146" text-anchor="middle" font-family="'SF Pro Text','Segoe UI',Helvetica,Arial,sans-serif" font-size="12" fill="#1e3a5f">Qlib Data Update</text>
+
+  <line x1="130" y1="162" x2="130" y2="176" stroke="#93c5fd" stroke-width="1" marker-end="url(#arrowhead)"/>
+
+  <rect x="50" y="182" width="160" height="40" rx="6" fill="#eff6ff" stroke="#93c5fd" stroke-width="1"/>
+  <text x="130" y="206" text-anchor="middle" font-family="'SF Pro Text','Segoe UI',Helvetica,Arial,sans-serif" font-size="12" fill="#1e3a5f">Daily PV Export</text>
+
+  <line x1="130" y1="222" x2="130" y2="236" stroke="#93c5fd" stroke-width="1" marker-end="url(#arrowhead)"/>
+
+  <rect x="50" y="242" width="160" height="40" rx="6" fill="#eff6ff" stroke="#93c5fd" stroke-width="1"/>
+  <text x="130" y="266" text-anchor="middle" font-family="'SF Pro Text','Segoe UI',Helvetica,Arial,sans-serif" font-size="12" fill="#1e3a5f">Factor Synthesis</text>
+
+  <line x1="130" y1="282" x2="130" y2="296" stroke="#93c5fd" stroke-width="1" marker-end="url(#arrowhead)"/>
+
+  <rect x="50" y="302" width="160" height="40" rx="6" fill="#eff6ff" stroke="#93c5fd" stroke-width="1"/>
+  <text x="130" y="326" text-anchor="middle" font-family="'SF Pro Text','Segoe UI',Helvetica,Arial,sans-serif" font-size="12" fill="#1e3a5f">Feature Matrix</text>
+
+  <!-- Data annotations -->
+  <text x="130" y="376" text-anchor="middle" font-family="'SF Mono',Consolas,monospace" font-size="10" fill="#6b7280">Alpha158 + Custom</text>
+  <text x="130" y="392" text-anchor="middle" font-family="'SF Mono',Consolas,monospace" font-size="10" fill="#6b7280">(N × 72 × 22)</text>
+
+  <!-- ═══════ Arrow Stage 1→2 ═══════ -->
+  <line x1="230" y1="265" x2="270" y2="265" stroke="#5c6370" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+
+  <!-- ═══════════════════════ STAGE 2: DL MODEL ═══════════════════════ -->
+  <rect x="275" y="70" width="200" height="390" rx="8" fill="#ffffff" stroke="#d1d5da" stroke-width="1"/>
+  <rect x="275" y="70" width="200" height="36" rx="8" fill="#ede9fe"/>
+  <rect x="275" y="98" width="200" height="8" fill="#ede9fe"/>
+  <text x="375" y="94" text-anchor="middle" font-family="'SF Pro Display','Segoe UI',Helvetica,Arial,sans-serif" font-size="13" font-weight="700" fill="#5b21b6" letter-spacing="0.5">DL MODEL</text>
+
+  <!-- Model nodes -->
+  <rect x="295" y="122" width="160" height="40" rx="6" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="1"/>
+  <text x="375" y="146" text-anchor="middle" font-family="'SF Pro Text','Segoe UI',Helvetica,Arial,sans-serif" font-size="12" fill="#3b1f6e">Causal TCN Stem</text>
+
+  <line x1="375" y1="162" x2="375" y2="176" stroke="#c4b5fd" stroke-width="1" marker-end="url(#arrowhead)"/>
+
+  <rect x="295" y="182" width="160" height="40" rx="6" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="1"/>
+  <text x="375" y="206" text-anchor="middle" font-family="'SF Pro Text','Segoe UI',Helvetica,Arial,sans-serif" font-size="12" fill="#3b1f6e">Local Self-Attention</text>
+
+  <line x1="375" y1="222" x2="375" y2="236" stroke="#c4b5fd" stroke-width="1" marker-end="url(#arrowhead)"/>
+
+  <rect x="295" y="242" width="160" height="40" rx="6" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="1"/>
+  <text x="375" y="266" text-anchor="middle" font-family="'SF Pro Text','Segoe UI',Helvetica,Arial,sans-serif" font-size="12" fill="#3b1f6e">GRU Aggregation</text>
+
+  <line x1="375" y1="282" x2="375" y2="296" stroke="#c4b5fd" stroke-width="1" marker-end="url(#arrowhead)"/>
+
+  <rect x="295" y="302" width="160" height="40" rx="6" fill="#f5f3ff" stroke="#c4b5fd" stroke-width="1"/>
+  <text x="375" y="326" text-anchor="middle" font-family="'SF Pro Text','Segoe UI',Helvetica,Arial,sans-serif" font-size="12" fill="#3b1f6e">MLP Head → Score</text>
+
+  <!-- Model annotations -->
+  <text x="375" y="376" text-anchor="middle" font-family="'SF Mono',Consolas,monospace" font-size="10" fill="#6b7280">~180K params</text>
+  <text x="375" y="392" text-anchor="middle" font-family="'SF Mono',Consolas,monospace" font-size="10" fill="#6b7280">MC Dropout × 16</text>
+
+  <!-- ═══════ Arrow Stage 2→3 ═══════ -->
+  <line x1="475" y1="265" x2="515" y2="265" stroke="#5c6370" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+
+  <!-- ═══════════════════════ STAGE 3: TRADING ENGINE ═══════════════════════ -->
+  <rect x="520" y="70" width="200" height="390" rx="8" fill="#ffffff" stroke="#d1d5da" stroke-width="1"/>
+  <rect x="520" y="70" width="200" height="36" rx="8" fill="#dcfce7"/>
+  <rect x="520" y="98" width="200" height="8" fill="#dcfce7"/>
+  <text x="620" y="94" text-anchor="middle" font-family="'SF Pro Display','Segoe UI',Helvetica,Arial,sans-serif" font-size="13" font-weight="700" fill="#166534" letter-spacing="0.5">TRADING ENGINE</text>
+
+  <!-- Trading nodes -->
+  <rect x="540" y="122" width="160" height="40" rx="6" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
+  <text x="620" y="146" text-anchor="middle" font-family="'SF Pro Text','Segoe UI',Helvetica,Arial,sans-serif" font-size="12" fill="#14532d">Signal Validation</text>
+
+  <line x1="620" y1="162" x2="620" y2="176" stroke="#86efac" stroke-width="1" marker-end="url(#arrowhead)"/>
+
+  <rect x="540" y="182" width="160" height="40" rx="6" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
+  <text x="620" y="206" text-anchor="middle" font-family="'SF Pro Text','Segoe UI',Helvetica,Arial,sans-serif" font-size="12" fill="#14532d">Risk Engine</text>
+
+  <line x1="620" y1="222" x2="620" y2="236" stroke="#86efac" stroke-width="1" marker-end="url(#arrowhead)"/>
+
+  <rect x="540" y="242" width="160" height="40" rx="6" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
+  <text x="620" y="266" text-anchor="middle" font-family="'SF Pro Text','Segoe UI',Helvetica,Arial,sans-serif" font-size="12" fill="#14532d">TopK Rebalancing</text>
+
+  <line x1="620" y1="282" x2="620" y2="296" stroke="#86efac" stroke-width="1" marker-end="url(#arrowhead)"/>
+
+  <rect x="540" y="302" width="160" height="40" rx="6" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
+  <text x="620" y="326" text-anchor="middle" font-family="'SF Pro Text','Segoe UI',Helvetica,Arial,sans-serif" font-size="12" fill="#14532d">Order Execution</text>
+
+  <!-- Trading annotations -->
+  <text x="620" y="376" text-anchor="middle" font-family="'SF Mono',Consolas,monospace" font-size="10" fill="#6b7280">Drawdown + Limits</text>
+  <text x="620" y="392" text-anchor="middle" font-family="'SF Mono',Consolas,monospace" font-size="10" fill="#6b7280">GM Trade API</text>
+
+  <!-- ═══════ Arrow Stage 3→4 ═══════ -->
+  <line x1="720" y1="265" x2="760" y2="265" stroke="#5c6370" stroke-width="1.5" marker-end="url(#arrowhead)"/>
+
+  <!-- ═══════════════════════ STAGE 4: MONITORING ═══════════════════════ -->
+  <rect x="765" y="70" width="165" height="390" rx="8" fill="#ffffff" stroke="#d1d5da" stroke-width="1"/>
+  <rect x="765" y="70" width="165" height="36" rx="8" fill="#fef3c7"/>
+  <rect x="765" y="98" width="165" height="8" fill="#fef3c7"/>
+  <text x="847" y="94" text-anchor="middle" font-family="'SF Pro Display','Segoe UI',Helvetica,Arial,sans-serif" font-size="13" font-weight="700" fill="#92400e" letter-spacing="0.5">MONITORING</text>
+
+  <!-- Monitor nodes -->
+  <rect x="780" y="122" width="135" height="40" rx="6" fill="#fffbeb" stroke="#fcd34d" stroke-width="1"/>
+  <text x="847" y="146" text-anchor="middle" font-family="'SF Pro Text','Segoe UI',Helvetica,Arial,sans-serif" font-size="12" fill="#78350f">WebUI</text>
+
+  <rect x="780" y="182" width="135" height="40" rx="6" fill="#fffbeb" stroke="#fcd34d" stroke-width="1"/>
+  <text x="847" y="206" text-anchor="middle" font-family="'SF Pro Text','Segoe UI',Helvetica,Arial,sans-serif" font-size="12" fill="#78350f">Backtest Engine</text>
+
+  <rect x="780" y="242" width="135" height="40" rx="6" fill="#fffbeb" stroke="#fcd34d" stroke-width="1"/>
+  <text x="847" y="266" text-anchor="middle" font-family="'SF Pro Text','Segoe UI',Helvetica,Arial,sans-serif" font-size="12" fill="#78350f">NAV Tracker</text>
+
+  <rect x="780" y="302" width="135" height="40" rx="6" fill="#fffbeb" stroke="#fcd34d" stroke-width="1"/>
+  <text x="847" y="326" text-anchor="middle" font-family="'SF Pro Text','Segoe UI',Helvetica,Arial,sans-serif" font-size="12" fill="#78350f">Audit Logs</text>
+
+  <!-- Monitor annotations -->
+  <text x="847" y="376" text-anchor="middle" font-family="'SF Mono',Consolas,monospace" font-size="10" fill="#6b7280">Streamlit</text>
+  <text x="847" y="392" text-anchor="middle" font-family="'SF Mono',Consolas,monospace" font-size="10" fill="#6b7280">Sharpe · Calmar · MDD</text>
+
+  <!-- Bottom bar -->
+  <rect x="30" y="475" width="900" height="28" rx="6" fill="#f8f9fa" stroke="#e1e4e8" stroke-width="0.8"/>
+  <text x="480" y="494" text-anchor="middle" font-family="'SF Mono',Consolas,monospace" font-size="11" fill="#57606a">CSI300 Universe  ·  Daily Frequency  ·  A-Share Market  ·  End-to-End Automated</text>
+</svg>
