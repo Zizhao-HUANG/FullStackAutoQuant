@@ -2,10 +2,7 @@
 
 from __future__ import annotations
 
-import json
-import math
 import os
-from pathlib import Path
 
 import pytest
 import yaml
@@ -30,7 +27,6 @@ from fullstackautoquant.trading.utils import (
     save_json,
     ts_code_to_gm,
 )
-
 
 # ── Symbol Conversion ────────────────────────────────────────────────
 
@@ -140,15 +136,25 @@ class TestComputeAllowedPrice:
 class TestComputeLimitPriceFromRtPreclose:
     def test_buy_price(self):
         price = compute_limit_price_from_rt_preclose(
-            "BUY", rt_price=10.1, pre_close=10.0, buy_offset=0.02,
-            sell_offset=-0.02, limit_threshold=0.095, tick=0.01,
+            "BUY",
+            rt_price=10.1,
+            pre_close=10.0,
+            buy_offset=0.02,
+            sell_offset=-0.02,
+            limit_threshold=0.095,
+            tick=0.01,
         )
         assert price > 0
 
     def test_sell_price(self):
         price = compute_limit_price_from_rt_preclose(
-            "SELL", rt_price=9.9, pre_close=10.0, buy_offset=0.02,
-            sell_offset=-0.02, limit_threshold=0.095, tick=0.01,
+            "SELL",
+            rt_price=9.9,
+            pre_close=10.0,
+            buy_offset=0.02,
+            sell_offset=-0.02,
+            limit_threshold=0.095,
+            tick=0.01,
         )
         assert price > 0
 
@@ -194,8 +200,12 @@ class TestComputeAuctionPrice:
 
     def test_with_limit_overrides(self):
         price = compute_auction_price(
-            "BUY", "SHSE.600000", pre_close=10.0, tick=0.01,
-            limit_up_override=10.95, limit_down_override=9.05,
+            "BUY",
+            "SHSE.600000",
+            pre_close=10.0,
+            tick=0.01,
+            limit_up_override=10.95,
+            limit_down_override=9.05,
         )
         assert price > 0
 
@@ -203,29 +213,53 @@ class TestComputeAuctionPrice:
 class TestComputeOpenMidPrice:
     def test_buy_with_bid_ask(self):
         price = compute_open_mid_price(
-            "BUY", "SHSE.600000", bid=9.98, ask=10.02,
-            rt_price=10.0, pre_close=10.0, eps=0.001, tick=0.01,
+            "BUY",
+            "SHSE.600000",
+            bid=9.98,
+            ask=10.02,
+            rt_price=10.0,
+            pre_close=10.0,
+            eps=0.001,
+            tick=0.01,
         )
         assert price > 0
 
     def test_sell_with_bid_ask(self):
         price = compute_open_mid_price(
-            "SELL", "SHSE.600000", bid=9.98, ask=10.02,
-            rt_price=10.0, pre_close=10.0, eps=0.001, tick=0.01,
+            "SELL",
+            "SHSE.600000",
+            bid=9.98,
+            ask=10.02,
+            rt_price=10.0,
+            pre_close=10.0,
+            eps=0.001,
+            tick=0.01,
         )
         assert price > 0
 
     def test_no_bid_ask_uses_rt_price(self):
         price = compute_open_mid_price(
-            "BUY", "SHSE.600000", bid=0, ask=0,
-            rt_price=10.0, pre_close=10.0, eps=0.001, tick=0.01,
+            "BUY",
+            "SHSE.600000",
+            bid=0,
+            ask=0,
+            rt_price=10.0,
+            pre_close=10.0,
+            eps=0.001,
+            tick=0.01,
         )
         assert price > 0
 
     def test_no_bid_ask_no_rt_uses_preclose(self):
         price = compute_open_mid_price(
-            "BUY", "SHSE.600000", bid=0, ask=0,
-            rt_price=0, pre_close=10.0, eps=0.001, tick=0.01,
+            "BUY",
+            "SHSE.600000",
+            bid=0,
+            ask=0,
+            rt_price=0,
+            pre_close=10.0,
+            eps=0.001,
+            tick=0.01,
         )
         assert price > 0
 

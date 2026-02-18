@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import datetime as dt
-from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -29,7 +28,6 @@ from fullstackautoquant.backtest.utils import (
     compute_max_drawdown,
     compute_volatility,
 )
-
 
 # ═══════════════════════════════ backtest/utils.py ═══════════════════
 
@@ -134,9 +132,11 @@ class TestComputeSummary:
         assert summary.total_return == 0.0
 
     def test_basic_equity(self):
-        eq = pd.DataFrame({
-            "equity": [100_000.0] + [100_000 * (1.001) ** i for i in range(1, 253)],
-        })
+        eq = pd.DataFrame(
+            {
+                "equity": [100_000.0] + [100_000 * (1.001) ** i for i in range(1, 253)],
+            }
+        )
         eq = enrich_equity_curve(eq)
         summary = compute_summary(eq)
         assert summary.total_return > 0
@@ -233,11 +233,13 @@ class TestManualWorkflowParams:
         assert mwp.partial_fill_ratio == 0.8
 
     def test_from_dict_edge_cases(self):
-        mwp = ManualWorkflowParams.from_dict({
-            "partial_fill_ratio": -0.5,
-            "max_signals_per_day": None,
-            "min_confidence": None,
-        })
+        mwp = ManualWorkflowParams.from_dict(
+            {
+                "partial_fill_ratio": -0.5,
+                "max_signals_per_day": None,
+                "min_confidence": None,
+            }
+        )
         assert mwp.partial_fill_ratio == 0.0
         assert mwp.max_signals_per_day is None
         assert mwp.min_confidence is None
@@ -262,19 +264,23 @@ class TestSignalParams:
             SignalParams.from_dict({})
 
     def test_valid(self):
-        sp = SignalParams.from_dict({
-            "combined_factors": "/tmp/factors.parquet",
-            "params_path": "/tmp/params.yaml",
-        })
+        sp = SignalParams.from_dict(
+            {
+                "combined_factors": "/tmp/factors.parquet",
+                "params_path": "/tmp/params.yaml",
+            }
+        )
         assert sp.combined_factors is not None
         assert sp.region == "cn"
 
     def test_roundtrip(self):
-        sp = SignalParams.from_dict({
-            "combined_factors": "/tmp/factors.parquet",
-            "params_path": "/tmp/params.yaml",
-            "fallback_days": 5,
-        })
+        sp = SignalParams.from_dict(
+            {
+                "combined_factors": "/tmp/factors.parquet",
+                "params_path": "/tmp/params.yaml",
+                "fallback_days": 5,
+            }
+        )
         d = sp.to_dict()
         assert d["fallback_days"] == 5
 
@@ -329,14 +335,16 @@ class TestBacktestConfig:
 class TestExpandParameterGrid:
     @pytest.fixture()
     def base_config(self):
-        return BacktestConfig.from_dict({
-            "start_date": "2024-01-01",
-            "end_date": "2024-12-31",
-            "signal": {
-                "combined_factors": "/tmp/f.parquet",
-                "params_path": "/tmp/p.yaml",
-            },
-        })
+        return BacktestConfig.from_dict(
+            {
+                "start_date": "2024-01-01",
+                "end_date": "2024-12-31",
+                "signal": {
+                    "combined_factors": "/tmp/f.parquet",
+                    "params_path": "/tmp/p.yaml",
+                },
+            }
+        )
 
     def test_empty_grid(self, base_config):
         configs = list(expand_parameter_grid(base_config, {}))

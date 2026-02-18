@@ -2,12 +2,6 @@
 
 from __future__ import annotations
 
-import datetime as dt
-import json
-from pathlib import Path
-from unittest.mock import patch
-
-import numpy as np
 import pandas as pd
 import pytest
 import torch
@@ -16,14 +10,12 @@ from fullstackautoquant.model.architecture import Net
 from fullstackautoquant.trading.risk.service import (
     RiskEvaluatorService,
     RiskInputs,
-    RiskState,
 )
 from fullstackautoquant.trading.signals.schema import (
     _resolve_schema_path,
     load_schema,
     validate_config,
 )
-
 
 # ═══════════════════════════════ model/architecture.py ════════════════
 
@@ -86,7 +78,9 @@ class TestSignalSchema:
         assert result == config
 
     def test_validate_config_invalid(self):
-        with pytest.raises(Exception):
+        import jsonschema as _jsonschema
+
+        with pytest.raises(_jsonschema.ValidationError):
             validate_config({"invalid": True})
 
 
@@ -108,10 +102,12 @@ class TestRiskEvaluatorService:
         assert state.day_drawdown == 0.0
 
     def test_with_nav_history_no_drawdown(self, tmp_path):
-        nav_data = pd.DataFrame({
-            "date": ["2024-01-01", "2024-01-02", "2024-01-03"],
-            "equity": [100_000, 101_000, 102_000],
-        })
+        nav_data = pd.DataFrame(
+            {
+                "date": ["2024-01-01", "2024-01-02", "2024-01-03"],
+                "equity": [100_000, 101_000, 102_000],
+            }
+        )
         nav_data.to_csv(tmp_path / "nav_history.csv", index=False)
         inputs = RiskInputs(
             signals=[],
@@ -124,10 +120,12 @@ class TestRiskEvaluatorService:
         assert state.allow_buy is True
 
     def test_with_drawdown_exceeds_limit(self, tmp_path):
-        nav_data = pd.DataFrame({
-            "date": ["2024-01-01", "2024-01-02"],
-            "equity": [100_000, 95_000],  # 5% drawdown > 3%
-        })
+        nav_data = pd.DataFrame(
+            {
+                "date": ["2024-01-01", "2024-01-02"],
+                "equity": [100_000, 95_000],  # 5% drawdown > 3%
+            }
+        )
         nav_data.to_csv(tmp_path / "nav_history.csv", index=False)
         inputs = RiskInputs(
             signals=[],
@@ -141,10 +139,12 @@ class TestRiskEvaluatorService:
         assert any("day_drawdown_exceed" in r for r in state.reasons)
 
     def test_override_buy_forces_allow(self, tmp_path):
-        nav_data = pd.DataFrame({
-            "date": ["2024-01-01", "2024-01-02"],
-            "equity": [100_000, 95_000],
-        })
+        nav_data = pd.DataFrame(
+            {
+                "date": ["2024-01-01", "2024-01-02"],
+                "equity": [100_000, 95_000],
+            }
+        )
         nav_data.to_csv(tmp_path / "nav_history.csv", index=False)
         inputs = RiskInputs(
             signals=[],
@@ -212,10 +212,12 @@ class TestComputeDrawdowns:
     def test_with_drawdown(self, tmp_path):
         from fullstackautoquant.trading.risk.manager import compute_drawdowns
 
-        data = pd.DataFrame({
-            "date": ["2024-01-01", "2024-01-02", "2024-01-03"],
-            "equity": [100_000, 95_000, 90_000],
-        })
+        data = pd.DataFrame(
+            {
+                "date": ["2024-01-01", "2024-01-02", "2024-01-03"],
+                "equity": [100_000, 95_000, 90_000],
+            }
+        )
         data.to_csv(tmp_path / "nav_history.csv", index=False)
         day_dd, rolling_dd = compute_drawdowns(str(tmp_path))
         assert day_dd > 0
@@ -224,10 +226,12 @@ class TestComputeDrawdowns:
     def test_no_drawdown(self, tmp_path):
         from fullstackautoquant.trading.risk.manager import compute_drawdowns
 
-        data = pd.DataFrame({
-            "date": ["2024-01-01", "2024-01-02", "2024-01-03"],
-            "equity": [100_000, 101_000, 102_000],
-        })
+        data = pd.DataFrame(
+            {
+                "date": ["2024-01-01", "2024-01-02", "2024-01-03"],
+                "equity": [100_000, 101_000, 102_000],
+            }
+        )
         data.to_csv(tmp_path / "nav_history.csv", index=False)
         day_dd, rolling_dd = compute_drawdowns(str(tmp_path))
         assert day_dd == 0.0
@@ -303,7 +307,12 @@ class TestStrategyHelpers:
         ]
         cfg = {
             "portfolio": {"max_weight": 0.5},
-            "weights": {"mode": "ranked", "confidence_tilt": False, "rank_metric": "rank", "rank_exponent": 1.0},
+            "weights": {
+                "mode": "ranked",
+                "confidence_tilt": False,
+                "rank_metric": "rank",
+                "rank_exponent": 1.0,
+            },
         }
         result = compute_weight_candidates(signals, cfg)
         assert len(result) == 2

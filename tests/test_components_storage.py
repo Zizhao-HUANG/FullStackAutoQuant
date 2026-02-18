@@ -3,29 +3,19 @@
 from __future__ import annotations
 
 import datetime as dt
-import json
 from dataclasses import dataclass
-from pathlib import Path
 
 import pandas as pd
 import pytest
 
 from fullstackautoquant.backtest.components.execution import ExecutionEngine
 from fullstackautoquant.backtest.components.nav_tracker import NavTracker
-from fullstackautoquant.backtest.components.records import (
-    BacktestIntermediate,
-    BacktestResult,
-    BacktestSummary,
-    DailyEquity,
-    TradeRecord,
-)
 from fullstackautoquant.backtest.storage import (
     ResultSerializer,
     list_backtest_runs,
     load_backtest_result,
     persist_backtest_result,
 )
-
 
 # ═══════════════════════════════ ExecutionEngine ═════════════════════
 
@@ -181,7 +171,9 @@ class TestResultSerializer:
     def test_persist_creates_files(self, tmp_path):
         serializer = ResultSerializer(tmp_path)
         equity = pd.DataFrame({"equity": [100_000, 101_000]}, index=[0, 1])
-        trades = pd.DataFrame({"symbol": ["SH600000"], "side": ["BUY"], "volume": [100], "price": [10.0]})
+        trades = pd.DataFrame(
+            {"symbol": ["SH600000"], "side": ["BUY"], "volume": [100], "price": [10.0]}
+        )
         positions = pd.DataFrame({"symbol": ["SH600000"], "shares": [100]})
         config = {"topk": 20}
         summary = {"total_return": 0.01}
@@ -256,7 +248,9 @@ class TestListBacktestRuns:
 class TestLoadBacktestResult:
     def test_load_full(self, tmp_path):
         # Create a valid run directory — equity_curve has index col
-        eq = pd.DataFrame({"equity": [100_000, 101_000]}, index=pd.Index(["2024-01-01", "2024-01-02"]))
+        eq = pd.DataFrame(
+            {"equity": [100_000, 101_000]}, index=pd.Index(["2024-01-01", "2024-01-02"])
+        )
         eq.to_csv(tmp_path / "equity_curve.csv")
         (tmp_path / "trades.csv").write_text("symbol,side\nSH600000,BUY", encoding="utf-8")
         (tmp_path / "positions.csv").write_text("symbol,shares\nSH600000,100", encoding="utf-8")
