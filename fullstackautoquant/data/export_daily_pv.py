@@ -16,15 +16,15 @@ from __future__ import annotations
 import argparse
 import os
 import shutil
+from collections.abc import Sequence
 from pathlib import Path
-from typing import List, Sequence
 
 import pandas as pd
 import qlib
 from qlib.data import D
 
 
-def _parse_fields(csv_fields: str | None) -> List[str]:
+def _parse_fields(csv_fields: str | None) -> list[str]:
     if csv_fields is None:
     # Default "as-is" export: OHLCV + $factor
         return ["$open", "$high", "$low", "$close", "$volume", "$factor"]
@@ -35,7 +35,7 @@ def _export_daily_pv(
     instruments: str,
     start_time: str | None,
     end_time: str | None,
-    fields: List[str],
+    fields: list[str],
     provider_uri: str,
     region: str,
 ) -> pd.DataFrame:

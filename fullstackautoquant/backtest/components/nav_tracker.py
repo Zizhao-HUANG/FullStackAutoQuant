@@ -3,8 +3,8 @@
 from __future__ import annotations
 
 import datetime as dt
+from collections.abc import Iterable
 from pathlib import Path
-from typing import Dict, Iterable, Optional
 
 import pandas as pd
 
@@ -13,9 +13,9 @@ class NavTracker:
     """Records and persists NAV time series."""
 
     def __init__(self) -> None:
-        self._records: Dict[dt.date, Dict[str, float]] = {}
+        self._records: dict[dt.date, dict[str, float]] = {}
 
-    def append(self, date: dt.date, equity: float, cash: Optional[float] = None, market_value: Optional[float] = None) -> None:
+    def append(self, date: dt.date, equity: float, cash: float | None = None, market_value: float | None = None) -> None:
         record = self._records.setdefault(date, {"equity": 0.0, "cash": 0.0, "market_value": 0.0})
         record["equity"] = float(equity)
         if cash is not None:
@@ -26,9 +26,9 @@ class NavTracker:
     def ensure_previous(
         self,
         trade_date: dt.date,
-        prev_equity: Optional[float],
-        prev_cash: Optional[float] = None,
-        prev_market_value: Optional[float] = None,
+        prev_equity: float | None,
+        prev_cash: float | None = None,
+        prev_market_value: float | None = None,
     ) -> None:
         if prev_equity is None:
             return
@@ -47,7 +47,7 @@ class NavTracker:
         if record["equity"] == 0.0:
             record["equity"] = float(cash + market_value)
 
-    def to_rows(self) -> Iterable[Dict[str, object]]:
+    def to_rows(self) -> Iterable[dict[str, object]]:
         for day, data in sorted(self._records.items()):
             row = {
                 "date": day.isoformat(),

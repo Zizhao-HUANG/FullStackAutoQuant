@@ -3,11 +3,9 @@
 from __future__ import annotations
 
 import importlib
-import datetime as dt
-from pathlib import Path
 import sys
+from pathlib import Path
 
-import pandas as pd
 import pytest
 
 ROOT = Path(__file__).resolve().parents[4]
@@ -45,7 +43,7 @@ def _formal_config() -> BacktestConfig:
 )
 def test_engine_with_formal_data() -> None:
     engine_module = importlib.import_module("Trading.trading.backtest.engine")
-    BacktestEngine = getattr(engine_module, "BacktestEngine")
+    BacktestEngine = engine_module.BacktestEngine
     cfg = _formal_config()
     engine = BacktestEngine(cfg)
     result = engine.run()
@@ -60,7 +58,7 @@ def test_engine_with_formal_data() -> None:
 )
 def test_strategy_config_reflects_portfolio_overrides() -> None:
     engine_module = importlib.import_module("Trading.trading.backtest.engine")
-    BacktestEngine = getattr(engine_module, "BacktestEngine")
+    BacktestEngine = engine_module.BacktestEngine
     cfg = _formal_config().with_overrides(
         {
             "portfolio.topk": 7,

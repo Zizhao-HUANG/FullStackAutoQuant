@@ -5,10 +5,8 @@ from __future__ import annotations
 import datetime as dt
 import json
 from pathlib import Path
-from typing import Dict, List
 
 from fullstackautoquant.trading.risk.manager import compute_drawdowns, detect_limit_states
-from fullstackautoquant.trading import utils
 
 
 class RiskEvaluator:
@@ -23,10 +21,10 @@ class RiskEvaluator:
         self,
         trade_date: dt.date,
         signal_date: dt.date,
-        signals: List[dict],
+        signals: list[dict],
         positions,
-        manual_feedback: List[dict] | None = None,
-    ) -> Dict[str, object]:
+        manual_feedback: list[dict] | None = None,
+    ) -> dict[str, object]:
         logs_dir = self._ensure_logs_dir()
         day_dd, rolling_dd = compute_drawdowns(str(logs_dir))
         allow_buy = self._decide_buy(day_dd, rolling_dd)
@@ -74,7 +72,7 @@ class RiskEvaluator:
             allow_buy = True
         return allow_buy
 
-    def _detect_limits(self, signals: List[dict]) -> tuple[List[str], List[str]]:
+    def _detect_limits(self, signals: list[dict]) -> tuple[list[str], list[str]]:
         if not signals:
             return [], []
         paths = self._config.get("paths", {})
@@ -88,7 +86,7 @@ class RiskEvaluator:
         limit_up, limit_down = detect_limit_states(h5_path, instruments, limit_threshold)
         return limit_up, limit_down
 
-    def _write_limit_log(self, record: Dict[str, object]) -> None:
+    def _write_limit_log(self, record: dict[str, object]) -> None:
         limit_path = self._ensure_logs_dir() / "limit_states.json"
         try:
             payload = {}

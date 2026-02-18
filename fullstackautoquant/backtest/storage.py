@@ -6,7 +6,6 @@ import json
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, Iterable, List, Optional
 
 import pandas as pd
 
@@ -18,7 +17,7 @@ class BacktestRunMeta:
     run_id: str
     created_at: datetime
     path: Path
-    summary: Dict[str, float]
+    summary: dict[str, float]
     config_path: Path
 
 
@@ -34,12 +33,12 @@ class ResultSerializer:
 
     def persist(
         self,
-        config: Dict[str, object],
-        summary: Dict[str, float],
+        config: dict[str, object],
+        summary: dict[str, float],
         equity: pd.DataFrame,
         trades: pd.DataFrame,
         positions: pd.DataFrame,
-        artifacts: Dict[str, object] | None = None,
+        artifacts: dict[str, object] | None = None,
     ) -> SerializedArtifacts:
         run_dir = _timestamp_dir(self._root)
         run_dir.mkdir(parents=True, exist_ok=False)
@@ -54,7 +53,7 @@ class ResultSerializer:
             self._write_artifact(logs_dir / name, payload)
         return SerializedArtifacts(root=run_dir, logs_dir=logs_dir)
 
-    def _write_json(self, path: Path, payload: Dict[str, object]) -> None:
+    def _write_json(self, path: Path, payload: dict[str, object]) -> None:
         path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
 
     def _write_dataframe(self, path: Path, df: pd.DataFrame, *, index: bool = True) -> None:
@@ -84,23 +83,23 @@ def _timestamp_dir(root: Path) -> Path:
 
 def persist_backtest_result(
     root: Path,
-    config: Dict[str, object],
-    summary: Dict[str, float],
+    config: dict[str, object],
+    summary: dict[str, float],
     equity: pd.DataFrame,
     trades: pd.DataFrame,
     positions: pd.DataFrame,
     *,
-    artifacts: Dict[str, object] | None = None,
+    artifacts: dict[str, object] | None = None,
 ) -> Path:
     serializer = ResultSerializer(root)
     bundle = serializer.persist(config, summary, equity, trades, positions, artifacts)
     return bundle.root
 
 
-def list_backtest_runs(root: Path) -> List[BacktestRunMeta]:
+def list_backtest_runs(root: Path) -> list[BacktestRunMeta]:
     if not root.exists():
         return []
-    runs: List[BacktestRunMeta] = []
+    runs: list[BacktestRunMeta] = []
     for child in sorted(root.iterdir() if root.is_dir() else [], reverse=True):
         if not child.is_dir():
             continue

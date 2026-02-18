@@ -1,13 +1,13 @@
 # === Library Imports ===
 # Core
+import logging
+import sys
+
 import numpy as np
 import pandas as pd
-import sys
-import logging
 
 # High-Performance Alternatives (selected per framework)
 import polars as pl
-import bottleneck as bn
 
 # Note: The target formulation requires the standard discrete Hilbert transform (analytic signal) over the full series.
 # SciPy is not guaranteed in the environment; thus, we implement an FFT-based symmetric Hilbert transform that is
@@ -197,7 +197,7 @@ def calculate_PhaseLeadLagHilbert_20_60d():
     idx_end = np.r_[idx_start[1:], len(inst)]
 
     x20 = pdf['x20_raw'].values.astype(np.float64)
-    for s, e in zip(idx_start, idx_end):
+    for s, e in zip(idx_start, idx_end, strict=False):
         seg = x20[s:e]
         if np.isfinite(seg).sum() > 10:
             x20[s:e] = _winsorize_series(seg, winsor_q)
@@ -218,7 +218,7 @@ def calculate_PhaseLeadLagHilbert_20_60d():
     x20_vals = pdf['x20'].values.astype(np.float64)
     zx_real = np.full_like(x20_vals, np.nan, dtype=np.float64)
     zx_imag = np.full_like(x20_vals, np.nan, dtype=np.float64)
-    for s, e in zip(idx_start, idx_end):
+    for s, e in zip(idx_start, idx_end, strict=False):
         seg = x20_vals[s:e]
         if seg.size == 0:
             continue

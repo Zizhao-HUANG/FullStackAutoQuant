@@ -11,9 +11,10 @@ from __future__ import annotations
 import dataclasses
 import datetime as dt
 import itertools
-from dataclasses import dataclass, field, replace
+from collections.abc import Iterator, Mapping, MutableMapping, Sequence
+from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Dict, Iterable, Iterator, Mapping, MutableMapping, Sequence
+from typing import Any
 
 
 def _to_date(value: Any) -> dt.date:
@@ -44,14 +45,14 @@ class DataParams:
     calendar_csv: Path | None = None
 
     @classmethod
-    def from_dict(cls, data: Mapping[str, Any]) -> "DataParams":
+    def from_dict(cls, data: Mapping[str, Any]) -> DataParams:
         return cls(
             daily_pv=_as_path(data.get("daily_pv")),
             qlib_root=_as_path(data.get("qlib_root")),
             calendar_csv=_as_path(data.get("calendar_csv")),
         )
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return {
             "daily_pv": str(self.daily_pv) if self.daily_pv else None,
             "qlib_root": str(self.qlib_root) if self.qlib_root else None,
@@ -69,7 +70,7 @@ class PortfolioParams:
     weight_mode: str = "score"
 
     @classmethod
-    def from_dict(cls, data: Mapping[str, Any]) -> "PortfolioParams":
+    def from_dict(cls, data: Mapping[str, Any]) -> PortfolioParams:
         return cls(
             topk=int(data.get("topk", 20)),
             invest_ratio=float(data.get("invest_ratio", 0.95)),
@@ -79,7 +80,7 @@ class PortfolioParams:
             weight_mode=str(data.get("weight_mode", "score")),
         )
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return {
             "topk": self.topk,
             "invest_ratio": self.invest_ratio,
@@ -99,7 +100,7 @@ class CostParams:
     min_commission: float = 0.0
 
     @classmethod
-    def from_dict(cls, data: Mapping[str, Any]) -> "CostParams":
+    def from_dict(cls, data: Mapping[str, Any]) -> CostParams:
         return cls(
             commission=float(data.get("commission", 0.001)),
             stamp_tax=float(data.get("stamp_tax", 0.001)),
@@ -108,7 +109,7 @@ class CostParams:
             min_commission=float(data.get("min_commission", 0.0)),
         )
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return {
             "commission": self.commission,
             "stamp_tax": self.stamp_tax,
@@ -132,7 +133,7 @@ class SignalParams:
     latest_csv: Path | None = None
 
     @classmethod
-    def from_dict(cls, data: Mapping[str, Any]) -> "SignalParams":
+    def from_dict(cls, data: Mapping[str, Any]) -> SignalParams:
         factors = _as_path(data.get("combined_factors"))
         params = _as_path(data.get("params_path"))
         provider = _as_path(data.get("provider_uri")) or Path.home() / ".qlib/qlib_data/cn_data"
@@ -151,7 +152,7 @@ class SignalParams:
             latest_csv=_as_path(data.get("latest_csv")),
         )
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return {
             "combined_factors": str(self.combined_factors),
             "params_path": str(self.params_path),
@@ -174,17 +175,17 @@ class ManualWorkflowParams:
     min_confidence: float | None = None
     record_rejected: bool = True
     strategy_field: str | None = None
-    strategy_limits: Dict[str, int] = field(default_factory=dict)
+    strategy_limits: dict[str, int] = field(default_factory=dict)
     partial_fill_ratio: float = 1.0
 
     @classmethod
-    def from_dict(cls, data: Mapping[str, Any]) -> "ManualWorkflowParams":
+    def from_dict(cls, data: Mapping[str, Any]) -> ManualWorkflowParams:
         if not isinstance(data, Mapping):
             return cls()
         strategy_field = data.get("strategy_field")
         strategy_field = str(strategy_field).strip() if strategy_field else None
         limits_raw = data.get("strategy_limits") if isinstance(data.get("strategy_limits"), Mapping) else {}
-        strategy_limits: Dict[str, int] = {}
+        strategy_limits: dict[str, int] = {}
         if isinstance(limits_raw, Mapping):
             for key, value in limits_raw.items():
                 try:
@@ -219,7 +220,7 @@ class ManualWorkflowParams:
             partial_fill_ratio=partial_ratio,
         )
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return {
             "enabled": self.enabled,
             "confirm_delay_days": self.confirm_delay_days,
@@ -245,10 +246,10 @@ class BacktestConfig:
     costs: CostParams = field(default_factory=CostParams)
     signal: SignalParams = field(default_factory=SignalParams)
     manual: ManualWorkflowParams = field(default_factory=ManualWorkflowParams)
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    metadata: dict[str, Any] = field(default_factory=dict)
 
     @classmethod
-    def from_dict(cls, data: Mapping[str, Any]) -> "BacktestConfig":
+    def from_dict(cls, data: Mapping[str, Any]) -> BacktestConfig:
         start = _to_date(data.get("start_date"))
         end = _to_date(data.get("end_date"))
         return cls(
@@ -266,7 +267,7 @@ class BacktestConfig:
             metadata=dict(data.get("metadata", {})),
         )
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         return {
             "start_date": self.start_date.isoformat(),
             "end_date": self.end_date.isoformat(),
@@ -282,7 +283,7 @@ class BacktestConfig:
             "metadata": dict(self.metadata),
         }
 
-    def with_overrides(self, overrides: Mapping[str, Any]) -> "BacktestConfig":
+    def with_overrides(self, overrides: Mapping[str, Any]) -> BacktestConfig:
         """Return new config with overrides, supports dot-notation."""
 
         nested = self.to_dict()
@@ -293,7 +294,7 @@ class BacktestConfig:
 
     def apply_overrides_inplace(self, overrides: Mapping[str, Any]) -> None:
         updated = self.with_overrides(overrides)
-        for field_name in dataclasses.asdict(self).keys():
+        for field_name in dataclasses.asdict(self):
             setattr(self, field_name, getattr(updated, field_name))
 
     @staticmethod

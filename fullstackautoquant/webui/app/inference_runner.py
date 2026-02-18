@@ -13,7 +13,6 @@ import subprocess
 import time
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, List
 
 
 class InferenceError(RuntimeError):
@@ -25,13 +24,13 @@ class StepResult:
     name: str
     stdout: str
     stderr: str
-    output_paths: Dict[str, Path]
+    output_paths: dict[str, Path]
     started_at: dt.datetime | None = None
     finished_at: dt.datetime | None = None
     duration_sec: float | None = None
 
 
-def _run_cmd(cmd: List[str], cwd: Path) -> StepResult:
+def _run_cmd(cmd: list[str], cwd: Path) -> StepResult:
     try:
         started_at = dt.datetime.now()
         start_perf = time.perf_counter()
@@ -195,8 +194,8 @@ def run_inference(config: dict[str, object]) -> StepResult:
     return _run_cmd(cmd, cwd=infer_dir)
 
 
-def run_full_pipeline(config: dict[str, object]) -> List[StepResult]:
-    steps: List[StepResult] = []
+def run_full_pipeline(config: dict[str, object]) -> list[StepResult]:
+    steps: list[StepResult] = []
     # Phase 1: Update Qlib data (optional, user may skip)
     try:
         steps.append(run_update_qlib(config))

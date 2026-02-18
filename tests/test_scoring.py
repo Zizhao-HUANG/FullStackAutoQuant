@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import numpy as np
 import pandas as pd
-
 from fullstackautoquant.model.scoring import compute_confidence, rank_signals
 
 

@@ -1,18 +1,17 @@
-import os
-import sys
 import argparse
-import subprocess
-import time as time_mod
 import csv
-from datetime import datetime, timedelta, time
-from typing import List, Tuple, Optional, Set
+import os
+import subprocess
+import sys
+import time as time_mod
+from datetime import datetime, time, timedelta
 
 try:
     from zoneinfo import ZoneInfo  # Python 3.9+
 except Exception:  # noqa: E722
     ZoneInfo = None  # type: ignore
 
-from utils import load_config, ensure_logs_dir
+from utils import ensure_logs_dir, load_config
 
 
 def parse_args():
@@ -58,10 +57,10 @@ def _parse_time_str(tstr: str) -> time:
     raise ValueError(f"Invalid time format: {tstr}")
 
 
-def _build_today_schedule(times_str: str, now_sh: datetime, open_dates: Optional[Set[str]] = None) -> List[datetime]:
+def _build_today_schedule(times_str: str, now_sh: datetime, open_dates: set[str] | None = None) -> list[datetime]:
     sh = _tz_shanghai()
     times = [t for t in (s.strip() for s in times_str.split(",")) if t]
-    sched: List[datetime] = []
+    sched: list[datetime] = []
     for ts in times:
         tt = _parse_time_str(ts)
         dt = datetime(now_sh.year, now_sh.month, now_sh.day, tt.hour, tt.minute, tt.second, tzinfo=sh)
@@ -83,7 +82,7 @@ def _is_in_auction_window(t_sh: time) -> bool:
     return time(9, 15, 0) <= t_sh <= time(9, 25, 0)
 
 
-def _should_use_second_slice(t_sh: time, second_slice_times: List[time]) -> bool:
+def _should_use_second_slice(t_sh: time, second_slice_times: list[time]) -> bool:
     for tt in second_slice_times:
         if t_sh.hour == tt.hour and t_sh.minute == tt.minute and t_sh.second == tt.second:
             return True
@@ -128,13 +127,13 @@ def main():
     sh = _tz_shanghai()
     second_slice_times = [_parse_time_str(s) for s in [t.strip() for t in args.second_slice_times.split(",") if t.strip()]]
 
-    open_dates: Optional[Set[str]] = None
+    open_dates: set[str] | None = None
     if args.trade_cal:
         cal_path = os.path.abspath(args.trade_cal)
         if not os.path.exists(cal_path):
             raise FileNotFoundError(f"trade calendar not found: {cal_path}")
         open_dates = set()
-        with open(cal_path, "r", encoding="utf-8") as f:
+        with open(cal_path, encoding="utf-8") as f:
             reader = csv.DictReader(f)
             for row in reader:
                 cal_date = (row.get("cal_date") or "").strip().strip('"')

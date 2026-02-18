@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 
 """
 Replicate feature construction pipeline from training snapshot task_rendered.yaml:
@@ -13,7 +12,6 @@ from __future__ import annotations
 import argparse
 import sys
 from pathlib import Path
-from typing import List
 
 import numpy as np
 import pandas as pd
@@ -36,7 +34,7 @@ def _auto_last_trading_day() -> str:
     return str(pd.Timestamp(cal[-1]).date())
 
 
-def _extract_alpha_feature_names(task_cfg: dict) -> List[str]:
+def _extract_alpha_feature_names(task_cfg: dict) -> list[str]:
     dataset_cfg = task_cfg.get("dataset", {})
     dataset_kwargs = dataset_cfg.get("kwargs", {})
     handler_cfg = dataset_kwargs.get("handler", {})
@@ -82,7 +80,7 @@ def _assert_value_and_missing(df_feat: pd.DataFrame) -> None:
         raise AssertionError(f"Feature values exceed normalization range [-3, 3], actual [{vmin:.6f}, {vmax:.6f}]")
 
 
-def _reorder_columns(df_feat: pd.DataFrame, expected_order: List[str]) -> pd.DataFrame:
+def _reorder_columns(df_feat: pd.DataFrame, expected_order: list[str]) -> pd.DataFrame:
     if not isinstance(df_feat.columns, pd.MultiIndex):
         df_feat.columns = pd.MultiIndex.from_tuples([("feature", str(c)) for c in df_feat.columns])
 

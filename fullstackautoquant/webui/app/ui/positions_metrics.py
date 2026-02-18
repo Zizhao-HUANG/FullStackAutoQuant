@@ -2,11 +2,10 @@
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from dataclasses import dataclass
-from typing import Dict, Mapping
 
 import pandas as pd
-
 from app.quotes import apply_quotes_to_market_value
 from app.ui.positions_data import digits_only_symbol
 
@@ -17,7 +16,7 @@ class PositionMetrics:
 
     raw: pd.DataFrame
     display: pd.DataFrame
-    totals: Dict[str, float]
+    totals: dict[str, float]
 
 
 class PositionMetricsCalculator:
@@ -93,7 +92,7 @@ class PositionMetricsCalculator:
         )
         return display_df
 
-    def _summarize(self, df: pd.DataFrame) -> Dict[str, float]:
+    def _summarize(self, df: pd.DataFrame) -> dict[str, float]:
         summary_total_market_value = float(df["market_value"].sum())
         summary_total_cost = float((df["cost_price"] * df["qty"]).sum())
         summary_total_pnl = summary_total_market_value - summary_total_cost

@@ -1,24 +1,23 @@
-import os
-import math
 import argparse
 import json
-from typing import Dict, List, Tuple, Optional
+import math
+import os
 
 import numpy as np
 
 try:
     from .utils import (
-        load_config,
-        ensure_logs_dir,
-        read_close_prices_from_h5,
         compute_allowed_price,
         compute_limit_price_from_rt_preclose,
-        round_price,
-        min_order_lot_for_symbol,
         compute_manual_price,
+        ensure_logs_dir,
         fetch_tushare_quotes,
-        instrument_to_gm,
         gm_to_instrument,
+        instrument_to_gm,
+        load_config,
+        min_order_lot_for_symbol,
+        read_close_prices_from_h5,
+        round_price,
     )
 except ImportError:  # pragma: no cover - direct script execution fallback
     import sys
@@ -28,17 +27,15 @@ except ImportError:  # pragma: no cover - direct script execution fallback
     if str(current_dir) not in sys.path:
         sys.path.insert(0, str(current_dir))
     from utils import (  # type: ignore
-        load_config,
-        ensure_logs_dir,
-        read_close_prices_from_h5,
         compute_allowed_price,
         compute_limit_price_from_rt_preclose,
-        round_price,
-        min_order_lot_for_symbol,
         compute_manual_price,
+        ensure_logs_dir,
         fetch_tushare_quotes,
         instrument_to_gm,
-        gm_to_instrument,
+        load_config,
+        min_order_lot_for_symbol,
+        read_close_prices_from_h5,
     )
 
 
@@ -56,11 +53,11 @@ def parse_args():
 
 
 def load_json(path: str):
-    with open(path, "r", encoding="utf-8") as f:
+    with open(path, encoding="utf-8") as f:
         return json.load(f)
 
 
-def fetch_current_positions_from_gm(cfg: dict, account_id_override: str = None) -> Dict[str, int]:
+def fetch_current_positions_from_gm(cfg: dict, account_id_override: str = None) -> dict[str, int]:
     """Fetch current positions from gmtrade; return {GM symbol: shares}. Empty on failure."""
     try:
         from gm_api_wrapper import gm_login  # type: ignore
@@ -75,7 +72,7 @@ def fetch_current_positions_from_gm(cfg: dict, account_id_override: str = None) 
             # backward compat for gm_login(cfg)
             gm_login(cfg)
         positions = get_positions()
-        cur: Dict[str, int] = {}
+        cur: dict[str, int] = {}
         for p in positions or []:  # type: ignore
             sym = None
             if hasattr(p, "symbol"):
@@ -105,16 +102,16 @@ def fetch_current_positions_from_gm(cfg: dict, account_id_override: str = None) 
         return {}
 
 
-def infer_reference_prices(cfg: dict, qlib_instruments: List[str]) -> Tuple[Dict[str, float], Dict[str, Dict[str, float]]]:
+def infer_reference_prices(cfg: dict, qlib_instruments: list[str]) -> tuple[dict[str, float], dict[str, dict[str, float]]]:
     price_src = cfg["order"].get("price_source", "qlib_close")
     if price_src == "tushare":
-        gm_symbols: List[str] = []
+        gm_symbols: list[str] = []
         for ins in qlib_instruments:
             gm = instrument_to_gm(ins)
             if gm:
                 gm_symbols.append(gm)
         quotes = fetch_tushare_quotes(gm_symbols, src=cfg["order"].get("tushare_src", "sina"))
-        res: Dict[str, float] = {}
+        res: dict[str, float] = {}
         for gm_symbol in gm_symbols:
             info = quotes.get(gm_symbol, {})
             price = float(info.get("price") or info.get("ask") or info.get("bid") or info.get("pre_close") or 0.0)
@@ -126,7 +123,7 @@ def infer_reference_prices(cfg: dict, qlib_instruments: List[str]) -> Tuple[Dict
     return closes, {}
 
 
-def waterfill_with_cap(base_weights: List[float], max_w: float) -> List[float]:
+def waterfill_with_cap(base_weights: list[float], max_w: float) -> list[float]:
     """Water-filling normalization with per-name cap.
     - base_weights non-negative; we normalize to sum 1 without exceeding max_w per name.
     - If all names hit cap before sum reaches 1, leftover remains as cash (sum<1).
@@ -162,7 +159,7 @@ def waterfill_with_cap(base_weights: List[float], max_w: float) -> List[float]:
     return w.tolist()
 
 
-def _resolve_weight_mode(cfg: dict) -> Tuple[str, Dict]:
+def _resolve_weight_mode(cfg: dict) -> tuple[str, dict]:
     weight_cfg = cfg.get("weights") or {}
     if not isinstance(weight_cfg, dict):
         weight_cfg = {}
@@ -176,7 +173,7 @@ def _resolve_weight_mode(cfg: dict) -> Tuple[str, Dict]:
     return mode, weight_cfg
 
 
-def _ranked_weight_candidates(signals_top: List[Dict], weight_cfg: Dict) -> np.ndarray:
+def _ranked_weight_candidates(signals_top: list[dict], weight_cfg: dict) -> np.ndarray:
     n = len(signals_top)
     if n == 0:
         return np.array([], dtype=float)
@@ -203,7 +200,7 @@ def _ranked_weight_candidates(signals_top: List[Dict], weight_cfg: Dict) -> np.n
     return values
 
 
-def compute_weight_candidates(signals_top: List[Dict], cfg: dict) -> List[float]:
+def compute_weight_candidates(signals_top: list[dict], cfg: dict) -> list[float]:
     if not signals_top:
         return []
     mode, weight_cfg = _resolve_weight_mode(cfg)
@@ -232,14 +229,14 @@ def compute_weight_candidates(signals_top: List[Dict], cfg: dict) -> List[float]
 
 
 def build_targets(
-    signals: List[Dict],
+    signals: list[dict],
     cfg: dict,
     allow_buy: bool,
-    limit_up_syms: List[str],
-    limit_down_syms: List[str],
+    limit_up_syms: list[str],
+    limit_down_syms: list[str],
     total_capital: float,
-    rank_map: Optional[Dict[str, int]] = None,
-) -> Tuple[List[Dict], List[Dict], Dict[str, float], Dict[str, Dict[str, float]], float, float]:
+    rank_map: dict[str, int] | None = None,
+) -> tuple[list[dict], list[dict], dict[str, float], dict[str, dict[str, float]], float, float]:
     topk = int(cfg["portfolio"]["topk"])
     invest_ratio = float(cfg["portfolio"]["invest_ratio"])
     max_w = float(cfg["portfolio"]["max_weight"])
@@ -254,7 +251,7 @@ def build_targets(
     signals_top = signals_sorted[:topk]
 
     price_source = cfg["order"].get("price_source", "qlib_close")
-    qlib_instruments: List[str] = []
+    qlib_instruments: list[str] = []
     for s in signals_top:
         ins = s.get("instrument")
         if isinstance(ins, str):
@@ -263,9 +260,9 @@ def build_targets(
 
     invest_cap = total_capital * invest_ratio
 
-    targets: List[Dict] = []
-    orders: List[Dict] = []
-    provisional_buys: List[Dict] = []
+    targets: list[dict] = []
+    orders: list[dict] = []
+    provisional_buys: list[dict] = []
 
     n = len(signals_top)
     if n == 0:
@@ -275,7 +272,7 @@ def build_targets(
     w_final = waterfill_with_cap(raw_weights, max_w=max_w)
 
     total_target_value = 0.0
-    for s, w in zip(signals_top, w_final):
+    for s, w in zip(signals_top, w_final, strict=False):
         symbol = s["symbol"]
         ins = s["instrument"]
         ref = float(ref_prices_map.get(symbol, 0.0))
@@ -390,16 +387,16 @@ def build_targets(
 
 
 def dynamic_adjust_with_positions(
-    targets: List[Dict],
-    current_positions: Dict[str, int],
+    targets: list[dict],
+    current_positions: dict[str, int],
     cfg: dict,
-    ref_prices: Dict[str, float],
-    quote_details: Dict[str, Dict[str, float]],
+    ref_prices: dict[str, float],
+    quote_details: dict[str, dict[str, float]],
     price_source: str,
     allow_buy: bool,
-    limit_up_syms: List[str],
-    limit_down_syms: List[str],
-) -> List[Dict]:
+    limit_up_syms: list[str],
+    limit_down_syms: list[str],
+) -> list[dict]:
     lot = int(cfg["portfolio"]["lot"])
     n_drop = int(cfg["portfolio"]["n_drop"])
     topk = int(cfg["portfolio"]["topk"])
@@ -415,8 +412,8 @@ def dynamic_adjust_with_positions(
 
     target_map = {t["symbol"]: int(t["target_shares"]) for t in targets}
 
-    sells_target: List[Tuple[str, int]] = []
-    sells_full_exits: List[Tuple[str, int]] = []
+    sells_target: list[tuple[str, int]] = []
+    sells_full_exits: list[tuple[str, int]] = []
 
     for sym, cur in current_positions.items():
         cur = int(cur)
@@ -438,7 +435,7 @@ def dynamic_adjust_with_positions(
     num_full_exits = len(sells_full_exits)
     allowed_new_slots = max(0, topk - (current_symbols_count - num_full_exits))
 
-    orders: List[Dict] = []
+    orders: list[dict] = []
 
     for sym, vol in sells_target + sells_full_exits:
         ref = ref_prices.get(sym)
@@ -477,8 +474,8 @@ def dynamic_adjust_with_positions(
         })
 
     if allow_buy:
-        existing_names: List[Tuple[str, int]] = []
-        new_names: List[Tuple[str, int]] = []
+        existing_names: list[tuple[str, int]] = []
+        new_names: list[tuple[str, int]] = []
         for t in targets:
             sym = t["symbol"]
             tgt = int(t["target_shares"]) if int(t["target_shares"]) > 0 else 0
@@ -540,7 +537,7 @@ def main():
     signals = sig.get("signals", [])
     # build rank map by (score, confidence) desc for prioritization
     signals_sorted = sorted(signals, key=lambda x: (x.get("score", 0.0), x.get("confidence", 0.0)), reverse=True)
-    rank_map: Dict[str, int] = {}
+    rank_map: dict[str, int] = {}
     for idx, s in enumerate(signals_sorted):
         sym = s.get("symbol")
         if isinstance(sym, str):
@@ -548,8 +545,8 @@ def main():
 
     # risk
     allow_buy = True
-    limit_up_syms: List[str] = []
-    limit_down_syms: List[str] = []
+    limit_up_syms: list[str] = []
+    limit_down_syms: list[str] = []
     if args.risk_state and os.path.exists(args.risk_state):
         rs = load_json(args.risk_state)
         allow_buy = bool(rs.get("allow_buy", True))
@@ -567,7 +564,7 @@ def main():
         total_capital = float(cfg.get("capital", {}).get("initial", 300000))
 
     # current positions (symbol -> shares). If not provided, assume empty (first build)
-    current_positions: Dict[str, int] = {}
+    current_positions: dict[str, int] = {}
     if args.current_positions and os.path.exists(args.current_positions):
         cur = load_json(args.current_positions)
         # expect {"positions":[{"symbol":"SHSE.600000","shares":1000}, ...]}
@@ -597,7 +594,7 @@ def main():
         ins = t.get("instrument")
         if isinstance(ins, str):
             qlib_instruments.append(ins)
-    for sym in current_positions.keys():
+    for sym in current_positions:
         ins = gm_to_instrument(sym)
         if ins:
             qlib_instruments.append(ins)
@@ -636,12 +633,12 @@ def main():
     )
 
     # strategy-side budget enforcement for final BUY list
-    invest_ratio = float(cfg["portfolio"]["invest_ratio"])  # 0.95
+    float(cfg["portfolio"]["invest_ratio"])  # 0.95
     invest_cap = invest_cap
     buy_orders = [od for od in orders if od["side"] == "BUY"]
     sell_orders = [od for od in orders if od["side"] == "SELL"]
     budget = invest_cap
-    final_buys: List[Dict] = []
+    final_buys: list[dict] = []
     for od in buy_orders:
         est_cost = float(od["price"]) * int(od["volume"])  # conservative
         if est_cost <= budget + 1e-6:
@@ -674,10 +671,10 @@ def main():
             need = total_buy_need - available_cash
             # candidates: current held names that are in targets (remain) and not limit-down
             target_syms = {t["symbol"] for t in targets}
-            candidates = [sym for sym in current_positions.keys() if sym in target_syms and sym not in set(limit_down_syms)]
+            candidates = [sym for sym in current_positions if sym in target_syms and sym not in set(limit_down_syms)]
             # sort by worse rank (larger idx)
             candidates.sort(key=lambda s: rank_map.get(s, 10**9), reverse=True)
-            extra_sells: List[Dict] = []
+            extra_sells: list[dict] = []
             for sym in candidates:
                 if need <= 1e-6 or len(extra_sells) >= n_drop:
                     break

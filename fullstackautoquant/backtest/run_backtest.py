@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import argparse
-import datetime as dt
 import json
 import logging
 import sys
@@ -21,7 +20,6 @@ for path in (str(REPO_ROOT), str(PACKAGE_ROOT), str(TRADING_DIR)):
 
 from fullstackautoquant.backtest.config import BacktestConfig
 from fullstackautoquant.backtest.engine import BacktestEngine
-
 
 logger = logging.getLogger("backtest")
 

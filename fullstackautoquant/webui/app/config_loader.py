@@ -6,9 +6,8 @@ and `config/env.template` (env var template).
 
 from __future__ import annotations
 
-import os
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any
 
 import yaml
 from dotenv import dotenv_values
@@ -26,13 +25,13 @@ class ConfigLoader:
         self.config_path = self.base_dir / "config" / "settings.yaml"
         self.env_path = self.base_dir / ".env"
 
-    def load(self) -> Dict[str, Any]:
+    def load(self) -> dict[str, Any]:
         base_config = self._load_yaml(self.config_path, required=False)
         env_values = self._load_env(self.env_path)
         merged = self._merge(base_config, env_values)
         return merged
 
-    def _load_yaml(self, path: Path, required: bool = True) -> Dict[str, Any]:
+    def _load_yaml(self, path: Path, required: bool = True) -> dict[str, Any]:
         if not path.exists():
             if required:
                 raise ConfigError(f"Missing config file: {path}")
@@ -40,13 +39,13 @@ class ConfigLoader:
         with path.open("r", encoding="utf-8") as fh:
             return yaml.safe_load(fh) or {}
 
-    def _load_env(self, path: Path) -> Dict[str, Any]:
+    def _load_env(self, path: Path) -> dict[str, Any]:
         if not path.exists():
             return {}
         data = dotenv_values(path)
         return {k: v for k, v in data.items() if v is not None}
 
-    def _merge(self, config: Dict[str, Any], env: Dict[str, Any]) -> Dict[str, Any]:
+    def _merge(self, config: dict[str, Any], env: dict[str, Any]) -> dict[str, Any]:
         merged = dict(config)
         if "tushare" not in merged:
             merged["tushare"] = {}

@@ -4,9 +4,10 @@ from __future__ import annotations
 
 import contextlib
 import datetime as dt
+from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Iterable, List, Optional, Sequence
+from typing import Any
 
 from sqlalchemy import Date, DateTime, Float, Integer, String, Text, create_engine
 from sqlalchemy.orm import DeclarativeBase, Mapped, Session, mapped_column
@@ -100,7 +101,7 @@ class Database:
             yield session
 
     # Positions
-    def get_positions(self) -> List[Position]:
+    def get_positions(self) -> list[Position]:
         with self.session() as sess:
             return list(sess.query(Position).order_by(Position.symbol).all())
 
@@ -160,7 +161,7 @@ class Database:
 
             sess.commit()
 
-    def get_edit_logs(self, limit: int = 200) -> List[EditLog]:
+    def get_edit_logs(self, limit: int = 200) -> list[EditLog]:
         with self.session() as sess:
             return list(
                 sess.query(EditLog)
@@ -170,7 +171,7 @@ class Database:
             )
 
     # Plans
-    def upsert_plans(self, rows: Sequence[dict[str, Any]], date: Optional[dt.date] = None) -> None:
+    def upsert_plans(self, rows: Sequence[dict[str, Any]], date: dt.date | None = None) -> None:
         with self.session() as sess:
             date = date or dt.date.today()
             sess.query(Plan).filter(Plan.gen_date == date).delete(synchronize_session=False)
@@ -192,7 +193,7 @@ class Database:
                 ))
             sess.commit()
 
-    def get_plans(self, date: Optional[dt.date] = None) -> List[Plan]:
+    def get_plans(self, date: dt.date | None = None) -> list[Plan]:
         with self.session() as sess:
             query = sess.query(Plan)
             if date is not None:
@@ -200,7 +201,7 @@ class Database:
             return list(query.order_by(Plan.symbol).all())
 
     # Snapshots
-    def insert_snapshot(self, rows: List[dict[str, Any]], date: Optional[dt.date] = None) -> None:
+    def insert_snapshot(self, rows: list[dict[str, Any]], date: dt.date | None = None) -> None:
         with self.session() as sess:
             date = date or dt.date.today()
             for row in rows:
@@ -212,7 +213,7 @@ class Database:
                 ))
             sess.commit()
 
-    def get_snapshots(self, date: Optional[dt.date] = None) -> List[Snapshot]:
+    def get_snapshots(self, date: dt.date | None = None) -> list[Snapshot]:
         with self.session() as sess:
             query = sess.query(Snapshot)
             if date is not None:
@@ -229,7 +230,7 @@ class Database:
             entry.value = value
             sess.commit()
 
-    def get_config(self, key: str, default: Optional[str] = None) -> Optional[str]:
+    def get_config(self, key: str, default: str | None = None) -> str | None:
         with self.session() as sess:
             entry = sess.get(ConfigEntry, key)
             return entry.value if entry else default
@@ -239,7 +240,7 @@ class Database:
             entries = sess.query(ConfigEntry).all()
             return {entry.key: entry.value for entry in entries}
 
-    def append_historical_positions(self, rows: Sequence[dict[str, Any]], date: Optional[dt.date] = None, note: str = "") -> None:
+    def append_historical_positions(self, rows: Sequence[dict[str, Any]], date: dt.date | None = None, note: str = "") -> None:
         with self.session() as sess:
             record_date = date or dt.date.today()
             now = dt.datetime.utcnow()
@@ -257,7 +258,7 @@ class Database:
                 ))
             sess.commit()
 
-    def get_historical_positions(self, limit: int = 200) -> List[HistoricalPosition]:
+    def get_historical_positions(self, limit: int = 200) -> list[HistoricalPosition]:
         with self.session() as sess:
             query = sess.query(HistoricalPosition).order_by(HistoricalPosition.record_date.desc(), HistoricalPosition.id.desc())
             if limit > 0:

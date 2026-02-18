@@ -1,21 +1,20 @@
 from __future__ import annotations
 
+from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, Iterable, List, Sequence
 
 import pandas as pd
-
 from fullstackautoquant.trading.utils import gm_to_instrument, instrument_to_gm
 
 
 @dataclass(frozen=True)
 class RiskInputs:
-    signals: Sequence[Dict[str, object]]
+    signals: Sequence[dict[str, object]]
     logs_dir: Path
-    risk_config: Dict[str, object]
-    order_config: Dict[str, object]
-    paths_config: Dict[str, object]
+    risk_config: dict[str, object]
+    order_config: dict[str, object]
+    paths_config: dict[str, object]
     override_buy: bool = False
 
 
@@ -24,9 +23,9 @@ class RiskState:
     allow_buy: bool
     day_drawdown: float
     rolling5d_drawdown: float
-    limit_up_symbols: List[str]
-    limit_down_symbols: List[str]
-    reasons: List[str]
+    limit_up_symbols: list[str]
+    limit_down_symbols: list[str]
+    reasons: list[str]
 
 
 class RiskEvaluatorService:
@@ -37,7 +36,7 @@ class RiskEvaluatorService:
         day_dd, rolling_dd = self._compute_drawdowns()
         limit_up, limit_down = self._detect_limit_states()
         allow_buy = True
-        reasons: List[str] = []
+        reasons: list[str] = []
 
         risk_cfg = self._inputs.risk_config
         if day_dd >= float(risk_cfg.get("day_drawdown_limit", 0.03)):
@@ -106,7 +105,7 @@ class RiskEvaluatorService:
         )
         return grouped["nav"]
 
-    def _detect_limit_states(self) -> tuple[List[str], List[str]]:
+    def _detect_limit_states(self) -> tuple[list[str], list[str]]:
         order_cfg = self._inputs.order_config
         enforce = bool(self._inputs.risk_config.get("enforce_limit_up_down_filter", True))
         if order_cfg.get("mode", "auto") == "manual":
@@ -118,8 +117,8 @@ class RiskEvaluatorService:
             return [], []
         return detect_limit_states(Path(daily_pv), self._instrument_list(), float(order_cfg.get("limit_threshold", 0.095)))
 
-    def _instrument_list(self) -> List[str]:
-        instruments: List[str] = []
+    def _instrument_list(self) -> list[str]:
+        instruments: list[str] = []
         for item in self._inputs.signals:
             gm_symbol = item.get("symbol")
             if not gm_symbol:
@@ -130,7 +129,7 @@ class RiskEvaluatorService:
         return instruments
 
 
-def detect_limit_states(h5_path: Path | str, instruments: Iterable[str], threshold: float) -> tuple[List[str], List[str]]:
+def detect_limit_states(h5_path: Path | str, instruments: Iterable[str], threshold: float) -> tuple[list[str], list[str]]:
     h5_path = Path(h5_path)
     if not h5_path.exists():
         return [], []
@@ -141,8 +140,8 @@ def detect_limit_states(h5_path: Path | str, instruments: Iterable[str], thresho
     last_dt, prev_dt = dates[-1], dates[-2]
     df_last = df.xs(last_dt, level="datetime")
     df_prev = df.xs(prev_dt, level="datetime")
-    limit_up: List[str] = []
-    limit_down: List[str] = []
+    limit_up: list[str] = []
+    limit_down: list[str] = []
     for ins in instruments:
         if ins not in df_last.index or ins not in df_prev.index:
             continue

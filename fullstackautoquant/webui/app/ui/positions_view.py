@@ -3,13 +3,13 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, Dict, Optional
+from typing import Any
 
 import pandas as pd
 import streamlit as st
-
 from app.database import Database
 from app.quotes import QuoteFetchResult, apply_quotes_to_market_value, fetch_quotes, format_currency
+from app.services.data_access import DataAccess
 from app.ui.positions_data import (
     PositionDiffResult,
     compute_position_diff,
@@ -22,15 +22,14 @@ from app.ui.positions_data import (
 )
 from app.ui.positions_metrics import PositionMetricsCalculator
 from app.ui_apply_plan import render_apply_plan_section
-from app.services.data_access import DataAccess
 
 
 @dataclass(frozen=True)
 class PositionPageDependencies:
     db: Database
-    market: Optional[Any]
+    market: Any | None
     data_access: DataAccess
-    config: Dict[str, object]
+    config: dict[str, object]
 
 
 class PositionsPage:
@@ -122,7 +121,7 @@ class PositionsPage:
             st.session_state["available_cash_saved"] = updated_cash
         return updated_cash
 
-    def _render_summary(self, totals: Dict[str, float], available_cash: float) -> None:
+    def _render_summary(self, totals: dict[str, float], available_cash: float) -> None:
         total_market_value = totals["market_value"]
         total_pnl = totals["pnl"]
         total_daily = totals["daily_pnl"]
@@ -177,8 +176,8 @@ class PositionsPage:
     def _build_export_dataframe(
         self,
         raw_df: pd.DataFrame,
-        totals: Dict[str, float],
-        quotes: Dict[str, Dict[str, object]],
+        totals: dict[str, float],
+        quotes: dict[str, dict[str, object]],
         realtime_price: pd.Series,
     ) -> pd.DataFrame:
         export_df = raw_df.copy()
@@ -239,7 +238,7 @@ class PositionsPage:
             )
 
     def _render_diff(self, raw_df: pd.DataFrame) -> None:
-        imported_df: Optional[pd.DataFrame] = st.session_state.get(  # type: ignore[assignment]
+        imported_df: pd.DataFrame | None = st.session_state.get(  # type: ignore[assignment]
             "positions_import_df"
         )
         if imported_df is not None:

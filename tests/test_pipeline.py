@@ -6,7 +6,6 @@ from types import SimpleNamespace
 
 import pandas as pd
 import pytest
-
 from fullstackautoquant.backtest.components.execution import ExecutionEngine
 from fullstackautoquant.backtest.components.nav_tracker import NavTracker
 from fullstackautoquant.backtest.components.records import BacktestIntermediate

@@ -5,11 +5,9 @@ from __future__ import annotations
 import datetime as dt
 import importlib
 import importlib.util
-import json
 import os
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, Iterable, List, Optional, Tuple
 
 import pandas as pd
 import torch
@@ -42,9 +40,9 @@ class QlibInferenceConfig:
     region: str
     start: str
     instruments: str
-    cache_dir: Optional[Path] = None
-    archive_dir: Optional[Path] = None
-    latest_csv: Optional[Path] = None
+    cache_dir: Path | None = None
+    archive_dir: Path | None = None
+    latest_csv: Path | None = None
 
 
 class QlibInferenceAdapter:
@@ -54,9 +52,9 @@ class QlibInferenceAdapter:
         try:
             import qlib  # type: ignore
             from qlib.contrib.data.handler import DataHandlerLP  # type: ignore
+            from qlib.contrib.model.pytorch_general_nn import GeneralPTNN  # type: ignore
             from qlib.data.dataset import DataHandlerLP as DH  # type: ignore
             from qlib.data.dataset import TSDatasetH  # type: ignore
-            from qlib.contrib.model.pytorch_general_nn import GeneralPTNN  # type: ignore
         except Exception as exc:  # noqa: BLE001
             raise QlibInferenceError("qlib not installed, cannot run training-equivalent inference") from exc
 
@@ -77,12 +75,12 @@ class QlibInferenceAdapter:
         self.handler = self._build_handler()
         self.available_dates = self._collect_available_dates()
         self.model, self._ideal_workers = self._load_model()
-        self._prediction_cache: Dict[dt.date, Tuple[dt.date, List[dict]]] = {}
+        self._prediction_cache: dict[dt.date, tuple[dt.date, list[dict]]] = {}
 
     # ------------------------------------------------------------------
     # Public interface
     # ------------------------------------------------------------------
-    def generate_for_date(self, target_date: dt.date) -> Tuple[dt.date, List[dict]]:
+    def generate_for_date(self, target_date: dt.date) -> tuple[dt.date, list[dict]]:
         if target_date in self._prediction_cache:
             return self._prediction_cache[target_date]
         stored = self._load_from_storage(target_date)
@@ -95,7 +93,7 @@ class QlibInferenceAdapter:
             return result
         used_date = self._resolve_date(target_date)
         if used_date is None:
-            result: Tuple[dt.date, List[dict]] = (target_date, [])
+            result: tuple[dt.date, list[dict]] = (target_date, [])
             self._prediction_cache[target_date] = result
             return result
 
@@ -129,7 +127,7 @@ class QlibInferenceAdapter:
 
         pred_df["confidence"] = 1.0
 
-        signals: List[dict] = []
+        signals: list[dict] = []
         for _, row in pred_df.iterrows():
             instrument = str(row["instrument"])
             gm_symbol = instrument_to_gm(instrument)
@@ -155,8 +153,8 @@ class QlibInferenceAdapter:
     # ------------------------------------------------------------------
     # Internal utilities
     # ------------------------------------------------------------------
-    def _load_from_storage(self, target_date: dt.date) -> Optional[Tuple[dt.date, List[dict]]]:
-        candidates: List[Path] = []
+    def _load_from_storage(self, target_date: dt.date) -> tuple[dt.date, list[dict]] | None:
+        candidates: list[Path] = []
         archive_path = self.archive_dir / f"ranked_scores_{target_date:%Y-%m-%d}.csv"
         if archive_path.exists():
             candidates.append(archive_path)
@@ -168,7 +166,7 @@ class QlibInferenceAdapter:
                 return loaded
         return None
 
-    def _load_signals_from_csv(self, path: Path, target_date: dt.date) -> Optional[Tuple[dt.date, List[dict]]]:
+    def _load_signals_from_csv(self, path: Path, target_date: dt.date) -> tuple[dt.date, list[dict]] | None:
         try:
             df = pd.read_csv(path)
         except Exception:
@@ -212,7 +210,7 @@ class QlibInferenceAdapter:
             if str(candidate).lower() == "confidence":
                 conf_col = candidate
                 break
-        signals: List[dict] = []
+        signals: list[dict] = []
         for row in df.itertuples(index=False):
             instrument = str(getattr(row, instrument_col, "")).strip()
             if not instrument:
@@ -239,7 +237,7 @@ class QlibInferenceAdapter:
             )
         return (used_date, signals)
 
-    def _persist_signals(self, used_date: dt.date, signals: List[dict]) -> None:
+    def _persist_signals(self, used_date: dt.date, signals: list[dict]) -> None:
         if not signals:
             return
         try:
@@ -258,8 +256,8 @@ class QlibInferenceAdapter:
         except Exception:
             pass
 
-    def _signals_to_dataframe(self, used_date: dt.date, signals: List[dict]) -> pd.DataFrame:
-        rows: List[Dict[str, object]] = []
+    def _signals_to_dataframe(self, used_date: dt.date, signals: list[dict]) -> pd.DataFrame:
+        rows: list[dict[str, object]] = []
         for item in signals:
             instrument = item.get("instrument")
             score = item.get("score")
@@ -382,7 +380,7 @@ class QlibInferenceAdapter:
 
         return self._DataHandlerLP(**handler_kwargs)
 
-    def _collect_available_dates(self) -> List[dt.date]:
+    def _collect_available_dates(self) -> list[dt.date]:
         feat = self.handler.fetch(
             selector=slice(None, None),
             level="datetime",
@@ -394,7 +392,7 @@ class QlibInferenceAdapter:
         dates = sorted(pd.to_datetime(feat.index.get_level_values("datetime").unique()).date)
         return dates
 
-    def _resolve_date(self, target_date: dt.date) -> Optional[dt.date]:
+    def _resolve_date(self, target_date: dt.date) -> dt.date | None:
         if not self.available_dates:
             return None
         candidates = [d for d in self.available_dates if d <= target_date]

@@ -4,23 +4,21 @@ import datetime as dt
 import os
 import shutil
 from pathlib import Path
-from typing import Dict, List, Optional
 
 import numpy as np
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
 import streamlit as st
-
 from app.config_loader import ConfigLoader
 from app.inference_runner import (
     InferenceError,
     StepResult,
-    run_full_pipeline,
-    run_update_qlib,
-    run_export_daily_pv,
     run_build_factors,
+    run_export_daily_pv,
+    run_full_pipeline,
     run_inference,
+    run_update_qlib,
 )
 
 
@@ -30,7 +28,7 @@ def _page_header() -> None:
     st.caption("Update Qlib → export daily → Factor Synthesis → Inference Ranking, one-stop execution with visual assertions and logs.")
 
 
-def _collect_paths(cfg: dict) -> Dict[str, Path]:
+def _collect_paths(cfg: dict) -> dict[str, Path]:
     base_dir = Path(__file__).resolve().parents[2]
     paths_cfg = cfg.get("paths", {})  # type: ignore[index]
     infer_dir = (base_dir / paths_cfg.get("model_infer_dir", "../../ModelInferenceBundle")).resolve()
@@ -48,7 +46,7 @@ def _collect_paths(cfg: dict) -> Dict[str, Path]:
 
 
 def _append_history(step: StepResult, run_label: str) -> None:
-    history: List[Dict[str, object]] = st.session_state.setdefault("infer_history", [])
+    history: list[dict[str, object]] = st.session_state.setdefault("infer_history", [])
     history.append(
         {
             "run": run_label,
@@ -65,7 +63,7 @@ def _append_history(step: StepResult, run_label: str) -> None:
 
 def _append_error(name: str, message: str, run_label: str) -> None:
     now = dt.datetime.now()
-    history: List[Dict[str, object]] = st.session_state.setdefault("infer_history", [])
+    history: list[dict[str, object]] = st.session_state.setdefault("infer_history", [])
     history.append(
         {
             "run": run_label,
@@ -101,7 +99,7 @@ def _read_tail(path: Path, n: int = 20) -> str:
         return f"Read failed: {exc}"
 
 
-def _file_metadata(path: Path) -> Dict[str, object]:
+def _file_metadata(path: Path) -> dict[str, object]:
     try:
         stat = path.stat()
         return {
@@ -124,7 +122,7 @@ def _format_filesize(size: int) -> str:
     return f"{value:.1f} {units[idx]}"
 
 
-def _human_timedelta(ts: Optional[dt.datetime]) -> str:
+def _human_timedelta(ts: dt.datetime | None) -> str:
     if ts is None:
         return "Unknown"
     delta = dt.datetime.now() - ts
@@ -141,7 +139,7 @@ def _human_timedelta(ts: Optional[dt.datetime]) -> str:
     return "Just now"
 
 
-def _disk_usage_summary(path: Path) -> Dict[str, object]:
+def _disk_usage_summary(path: Path) -> dict[str, object]:
     try:
         usage = shutil.disk_usage(path)
         total_gb = usage.total / 1024 ** 3
@@ -158,7 +156,7 @@ def _disk_usage_summary(path: Path) -> Dict[str, object]:
         return {"error": str(exc), "total_gb": None, "free_gb": None, "used_pct": None}
 
 
-def _latest_trading_day(df: pd.DataFrame) -> Optional[dt.date]:
+def _latest_trading_day(df: pd.DataFrame) -> dt.date | None:
     candidates = []
     for col in ["datetime", "date", "trade_date"]:
         if col in df.columns:
@@ -205,7 +203,7 @@ def _zero_variance_columns(df: pd.DataFrame, limit: int = 10) -> pd.Series:
     return zeros.head(limit)
 
 
-def _build_missing_chart(missing: pd.Series, title: str) -> Optional[go.Figure]:
+def _build_missing_chart(missing: pd.Series, title: str) -> go.Figure | None:
     if missing.empty:
         return None
     fig = go.Figure(
@@ -221,7 +219,7 @@ def _build_missing_chart(missing: pd.Series, title: str) -> Optional[go.Figure]:
     return fig
 
 
-def _format_duration(duration: Optional[float]) -> str:
+def _format_duration(duration: float | None) -> str:
     if not duration:
         return "-"
     minutes, seconds = divmod(duration, 60)
@@ -230,7 +228,7 @@ def _format_duration(duration: Optional[float]) -> str:
     return f"{seconds:.1f} s"
 
 
-def _extract_datetime_series(df: pd.DataFrame) -> Optional[pd.Series]:
+def _extract_datetime_series(df: pd.DataFrame) -> pd.Series | None:
     if df.empty:
         return None
     candidates = []
@@ -255,7 +253,7 @@ def _extract_datetime_series(df: pd.DataFrame) -> Optional[pd.Series]:
     return None
 
 
-def _build_time_series(series: pd.Series, title: str, value_name: str) -> Optional[go.Figure]:
+def _build_time_series(series: pd.Series, title: str, value_name: str) -> go.Figure | None:
     if isinstance(series, (pd.Index, np.ndarray)):
         series = pd.Series(series)
     series = pd.to_datetime(series, errors="coerce")
@@ -275,7 +273,7 @@ def _build_time_series(series: pd.Series, title: str, value_name: str) -> Option
     return fig
 
 
-def _build_histogram(values: pd.Series, title: str, nbins: int = 30) -> Optional[go.Figure]:
+def _build_histogram(values: pd.Series, title: str, nbins: int = 30) -> go.Figure | None:
     if values.empty:
         return None
     fig = go.Figure(data=[go.Histogram(x=values.dropna(), nbinsx=nbins, marker_color="#2ca02c")])
@@ -283,7 +281,7 @@ def _build_histogram(values: pd.Series, title: str, nbins: int = 30) -> Optional
     return fig
 
 
-def _build_score_heatmap(df: pd.DataFrame) -> Optional[go.Figure]:
+def _build_score_heatmap(df: pd.DataFrame) -> go.Figure | None:
     if df.empty:
         return None
     subset = df.head(100)
@@ -304,7 +302,7 @@ def _build_score_heatmap(df: pd.DataFrame) -> Optional[go.Figure]:
     return fig
 
 
-def _preview_parquet(path: Path) -> Dict[str, object]:
+def _preview_parquet(path: Path) -> dict[str, object]:
     try:
         df = pd.read_parquet(path)
         return {"exists": True, "df": df}
@@ -312,7 +310,7 @@ def _preview_parquet(path: Path) -> Dict[str, object]:
         return {"exists": path.exists(), "error": str(exc)}
 
 
-def _preview_h5(path: Path) -> Dict[str, object]:
+def _preview_h5(path: Path) -> dict[str, object]:
     try:
         df = pd.read_hdf(path, key="data")
         return {"exists": True, "df": df}
@@ -320,7 +318,7 @@ def _preview_h5(path: Path) -> Dict[str, object]:
         return {"exists": path.exists(), "error": str(exc)}
 
 
-def _preview_csv(path: Path) -> Dict[str, object]:
+def _preview_csv(path: Path) -> dict[str, object]:
     try:
         df = pd.read_csv(path)
         count = len(df)
@@ -340,7 +338,7 @@ def _preview_csv(path: Path) -> Dict[str, object]:
         return {"exists": path.exists(), "error": str(exc)}
 
 
-def _env_overview(cfg: dict) -> Dict[str, Path]:
+def _env_overview(cfg: dict) -> dict[str, Path]:
     st.subheader("Environment Overview", divider="gray")
     paths = _collect_paths(cfg)
 
@@ -389,11 +387,11 @@ def _env_overview(cfg: dict) -> Dict[str, Path]:
     return paths
 
 
-def _actions(cfg: dict) -> List[StepResult]:
+def _actions(cfg: dict) -> list[StepResult]:
     st.subheader("Execute Operations", divider="gray")
     col_full, col_upd, col_export, col_factor, col_infer = st.columns([1.2, 1, 1, 1, 1])
     run_label = dt.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    executions: List[StepResult] = []
+    executions: list[StepResult] = []
 
     with col_full:
         if st.button("Run Full Pipeline", type="primary"):
@@ -459,7 +457,7 @@ def _actions(cfg: dict) -> List[StepResult]:
     return executions
 
 
-def _artifacts(cfg: dict, paths: Dict[str, Path]) -> None:
+def _artifacts(cfg: dict, paths: dict[str, Path]) -> None:
     st.subheader("Output Preview & Validation", divider="gray")
     result_h5 = _preview_h5(paths["daily_pv"])
     result_pq = _preview_parquet(paths["combined_factors"])
@@ -561,7 +559,7 @@ def _artifacts(cfg: dict, paths: Dict[str, Path]) -> None:
         st.success("Now pointing to paths.ranked_csv. Go to Manual Trading Console to run the workflow.")
 
 
-def _build_history_timeline(history: List[Dict[str, object]]) -> Optional[go.Figure]:
+def _build_history_timeline(history: list[dict[str, object]]) -> go.Figure | None:
     if not history:
         return None
     df = pd.DataFrame(history)
@@ -601,9 +599,9 @@ def _build_history_timeline(history: List[Dict[str, object]]) -> Optional[go.Fig
     return fig
 
 
-def _render_execution_history(executions: List[StepResult]) -> None:
+def _render_execution_history(executions: list[StepResult]) -> None:
     st.subheader("Execution History / Diagnostics", divider="gray")
-    history: List[Dict[str, object]] = st.session_state.get("infer_history", [])  # type: ignore[assignment]
+    history: list[dict[str, object]] = st.session_state.get("infer_history", [])  # type: ignore[assignment]
     if executions:
         last_run_label = executions[-1].started_at.strftime("%Y-%m-%d %H:%M:%S") if executions[-1].started_at else "Recent execution"
         st.success(f"Latest execution batch:{last_run_label}, {len(executions)}  steps.Check duration and stderr for anomalies.")

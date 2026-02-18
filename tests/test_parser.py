@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import pandas as pd
 import pytest
-
 from fullstackautoquant.trading.signals.parser import SignalRecord, parse_ranked_scores
 
 

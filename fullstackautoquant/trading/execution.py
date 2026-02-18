@@ -1,9 +1,8 @@
-import os
 import argparse
 import json
-from typing import List, Dict, Tuple, Set
+import os
 from datetime import datetime, time
-import time as _time
+
 try:
     from zoneinfo import ZoneInfo  # py3.9+
 except Exception:  # noqa: E722
@@ -11,36 +10,33 @@ except Exception:  # noqa: E722
 from pathlib import Path
 
 from dotenv import load_dotenv
-
 from utils import (
-    load_config,
-    ensure_logs_dir,
-    save_json,
-    gm_to_ts_code,
-    ts_code_to_gm,
-    compute_limit_price_from_rt_preclose,
-    min_order_lot_for_symbol,
-    max_order_volume_for_symbol,
     clamp_volume_to_lot,
     compute_auction_price,
-    compute_open_mid_price,
     compute_manual_price,
+    compute_open_mid_price,
+    ensure_logs_dir,
+    gm_to_ts_code,
+    load_config,
+    max_order_volume_for_symbol,
+    min_order_lot_for_symbol,
+    save_json,
 )
 
 # trade api
 try:
     from gmtrade.api import (
-        set_token,
-        set_endpoint,
-        account,
-        login,
-        order_volume,
         OrderSide_Buy,
         OrderSide_Sell,
         OrderType_Limit,
-        PositionEffect_Open,
         PositionEffect_Close,
+        PositionEffect_Open,
+        account,
         get_cash,
+        login,
+        order_volume,
+        set_endpoint,
+        set_token,
     )
 except Exception:  # noqa: E722
     set_token = None
@@ -78,8 +74,8 @@ def parse_args():
     return p.parse_args()
 
 
-def load_orders(path: str) -> Dict:
-    with open(path, "r", encoding="utf-8") as f:
+def load_orders(path: str) -> dict:
+    with open(path, encoding="utf-8") as f:
         return json.load(f)
 
 
@@ -104,7 +100,7 @@ def gm_login(cfg: dict, alias: str = "", account_id_override: str = None):
     return acc_id
 
 
-def fetch_realtime_quotes_tushare(ts_codes: List[str], src: str = "sina") -> Dict[str, Dict[str, float]]:
+def fetch_realtime_quotes_tushare(ts_codes: list[str], src: str = "sina") -> dict[str, dict[str, float]]:
     if ts is None:
         raise RuntimeError("tushare not installed; pip install tushare>=1.3.3")
     load_dotenv()
@@ -114,7 +110,7 @@ def fetch_realtime_quotes_tushare(ts_codes: List[str], src: str = "sina") -> Dic
         raise RuntimeError("Missing Tushare token in env var TUSHARE or TS_TOKEN")
     ts.set_token(ts_token)
 
-    out: Dict[str, Dict[str, float]] = {}
+    out: dict[str, dict[str, float]] = {}
     batch_size = 1 if src == "dc" else 50
     for i in range(0, len(ts_codes), batch_size):
         batch = ts_codes[i : i + batch_size]
@@ -150,17 +146,17 @@ def fetch_realtime_quotes_tushare(ts_codes: List[str], src: str = "sina") -> Dic
     return out
 
 
-def fetch_realtime_with_fallback(ts_codes: List[str]) -> Tuple[Dict[str, Dict[str, float]], Set[str]]:
+def fetch_realtime_with_fallback(ts_codes: list[str]) -> tuple[dict[str, dict[str, float]], set[str]]:
     """Try sina first, then fallback dc for missing or invalid records. Return (quotes, used_fallback_codes)."""
-    used_fallback: Set[str] = set()
-    quotes: Dict[str, Dict[str, float]] = {}
+    used_fallback: set[str] = set()
+    quotes: dict[str, dict[str, float]] = {}
     # try sina
     try:
         quotes = fetch_realtime_quotes_tushare(ts_codes, src="sina")
     except Exception:
         quotes = {}
     # detect missing or invalid
-    need_dc: List[str] = []
+    need_dc: list[str] = []
     for code in ts_codes:
         rec = quotes.get(code)
         if rec is None:
@@ -172,9 +168,7 @@ def fetch_realtime_with_fallback(ts_codes: List[str]) -> Tuple[Dict[str, Dict[st
         ask = float(rec.get("ask", 0.0))
         limu = float(rec.get("limit_up", 0.0))
         limd = float(rec.get("limit_down", 0.0))
-        if pre_close <= 0:
-            need_dc.append(code)
-        elif price <= 0 and bid <= 0 and ask <= 0:
+        if pre_close <= 0 or price <= 0 and bid <= 0 and ask <= 0:
             need_dc.append(code)
         elif limu <= 0 or limd <= 0:
             # try dc to fill hard bounds even if price is available
@@ -204,7 +198,7 @@ def get_available_cash_amount() -> float:
     try:
         cash = get_cash()
         if hasattr(cash, "available"):
-            return float(getattr(cash, "available"))
+            return float(cash.available)
         if isinstance(cash, dict) and "available" in cash:
             return float(cash["available"])  # type: ignore
     except Exception:
@@ -231,8 +225,8 @@ def _is_before_auction_cut(now_sh: datetime) -> bool:
     return now_sh.time() <= t1
 
 
-def place_orders(orders: List[Dict], do_place: bool, cfg: dict, src: str, auction_mode: bool, max_slices_open: int, open_eps: float) -> List[Dict]:
-    receipts: List[Dict] = []
+def place_orders(orders: list[dict], do_place: bool, cfg: dict, src: str, auction_mode: bool, max_slices_open: int, open_eps: float) -> list[dict]:
+    receipts: list[dict] = []
     # split sells and buys to avoid cash freeze issue
     sells = [od for od in orders if str(od.get("side", "")).upper() == "SELL"]
     buys = [od for od in orders if str(od.get("side", "")).upper() == "BUY"]
@@ -241,7 +235,7 @@ def place_orders(orders: List[Dict], do_place: bool, cfg: dict, src: str, auctio
     ts_codes = [gm_to_ts_code(s) for s in gm_symbols if gm_to_ts_code(s)]
     if src == "dc":
         quotes = fetch_realtime_quotes_tushare(ts_codes, src="dc") if ts_codes else {}
-        used_fallback: Set[str] = set()
+        used_fallback: set[str] = set()
     else:
         quotes, used_fallback = fetch_realtime_with_fallback(ts_codes) if ts_codes else ({}, set())
 
@@ -265,7 +259,7 @@ def place_orders(orders: List[Dict], do_place: bool, cfg: dict, src: str, auctio
 
     manual_budget = invest_cap if mode_manual else None
 
-    def compute_price_note(sym: str, side: str, fallback_used: bool, supplied_price: float) -> Tuple[float, str]:
+    def compute_price_note(sym: str, side: str, fallback_used: bool, supplied_price: float) -> tuple[float, str]:
         ts_code = gm_to_ts_code(sym)
         q = quotes.get(ts_code, {}) if ts_code else {}
         pre_close = float(q.get("pre_close", 0.0))
@@ -351,16 +345,16 @@ def place_orders(orders: List[Dict], do_place: bool, cfg: dict, src: str, auctio
         return ""
 
     # helper to split by lot for slicing
-    def split_by_slices(sym: str, volume: int, slices: int) -> List[int]:
+    def split_by_slices(sym: str, volume: int, slices: int) -> list[int]:
         base = max(1, int(slices))
         vol = clamp_volume_to_lot(sym, volume)
         if vol <= 0 or base <= 1:
             return [vol]
-        parts: List[int] = []
+        parts: list[int] = []
         lot = min_order_lot_for_symbol(sym)
         per = max(lot, (vol // base) // lot * lot)
         allocated = 0
-        for i in range(base - 1):
+        for _i in range(base - 1):
             parts.append(per)
             allocated += per
         parts.append(max(0, vol - allocated))
@@ -460,7 +454,7 @@ def place_orders(orders: List[Dict], do_place: bool, cfg: dict, src: str, auctio
         vols = split_by_slices(sym, vol, slices)
         if do_place:
             total_need_all = 0.0
-            per_costs: List[Tuple[int, float]] = []
+            per_costs: list[tuple[int, float]] = []
             for v in vols:
                 c = price * v
                 f = max(min_cost, c * fee_rate_open)

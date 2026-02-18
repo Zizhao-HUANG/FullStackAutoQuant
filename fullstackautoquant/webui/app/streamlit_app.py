@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import streamlit as st
-
 from app.services import bootstrap_services
 from app.ui import (
     BacktestDependencies,

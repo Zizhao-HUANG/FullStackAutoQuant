@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import datetime as dt
 from dataclasses import dataclass
-from typing import Dict, List, Optional
 
 import pandas as pd
 
@@ -21,9 +20,9 @@ class PlanResult:
 def generate_plan(
     db: Database,
     targets: pd.DataFrame,
-    prices: Dict[str, float],
-    fallback_price: Optional[float] = None,
-    fallback_price_map: Optional[Dict[str, float]] = None,
+    prices: dict[str, float],
+    fallback_price: float | None = None,
+    fallback_price_map: dict[str, float] | None = None,
 ) -> PlanResult:
     positions = db.get_positions()
     pos_df = pd.DataFrame([

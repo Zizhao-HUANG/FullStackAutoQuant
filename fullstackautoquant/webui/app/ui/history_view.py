@@ -3,11 +3,10 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Any, Optional
+from typing import Any
 
 import pandas as pd
 import streamlit as st
-
 from app.database import Database
 from app.quotes import fetch_quotes
 from app.ui.positions_data import digits_only_symbol, get_positions_dataframe, rename_columns
@@ -16,7 +15,7 @@ from app.ui.positions_data import digits_only_symbol, get_positions_dataframe, r
 @dataclass(frozen=True)
 class HistoryDependencies:
     db: Database
-    market: Optional[Any]
+    market: Any | None
 
 
 class HistoryPage:

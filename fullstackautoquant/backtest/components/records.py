@@ -5,7 +5,6 @@ from __future__ import annotations
 import datetime as dt
 from dataclasses import dataclass
 from math import isfinite
-from typing import Dict, List
 
 import pandas as pd
 
@@ -19,7 +18,7 @@ class TradeRecord:
     price: float
     fee: float
 
-    def to_dict(self) -> Dict[str, object]:
+    def to_dict(self) -> dict[str, object]:
         return {
             "date": self.date,
             "symbol": self.symbol,
@@ -37,7 +36,7 @@ class PositionSnapshot:
     shares: float
     market_value: float
 
-    def to_dict(self) -> Dict[str, object]:
+    def to_dict(self) -> dict[str, object]:
         return {
             "date": self.date,
             "symbol": self.symbol,
@@ -55,7 +54,7 @@ class BacktestSummary:
     volatility: float
     calmar: float
 
-    def to_dict(self) -> Dict[str, float | None]:
+    def to_dict(self) -> dict[str, float | None]:
         def _normalise(value: float) -> float | None:
             return value if isfinite(value) else None
 
@@ -77,7 +76,7 @@ class DailyEquity:
     equity: float
     daily_return: float
 
-    def to_dict(self) -> Dict[str, object]:
+    def to_dict(self) -> dict[str, object]:
         return {
             "date": self.date,
             "cash": self.cash,
@@ -93,9 +92,9 @@ class BacktestResult:
     trades: pd.DataFrame
     positions: pd.DataFrame
     summary: BacktestSummary
-    metadata: Dict[str, object]
+    metadata: dict[str, object]
 
-    def with_metadata(self, extra: Dict[str, object]) -> "BacktestResult":
+    def with_metadata(self, extra: dict[str, object]) -> BacktestResult:
         combined = dict(self.metadata)
         combined.update(extra)
         return BacktestResult(
@@ -109,17 +108,17 @@ class BacktestResult:
 
 @dataclass(slots=True)
 class BacktestIntermediate:
-    equities: List[DailyEquity]
-    trades: List[TradeRecord]
-    snapshots: List[PositionSnapshot]
-    risk_records: List[Dict[str, object]]
-    signal_records: List[Dict[str, object]]
-    manual_decisions: List[Dict[str, object]]
+    equities: list[DailyEquity]
+    trades: list[TradeRecord]
+    snapshots: list[PositionSnapshot]
+    risk_records: list[dict[str, object]]
+    signal_records: list[dict[str, object]]
+    manual_decisions: list[dict[str, object]]
 
     def equity_curve_df(self) -> pd.DataFrame:
         return pd.DataFrame([rec.to_dict() for rec in self.equities]).set_index("date") if self.equities else pd.DataFrame()
 
-    def to_result(self, summary: BacktestSummary, metadata: Dict[str, object]) -> BacktestResult:
+    def to_result(self, summary: BacktestSummary, metadata: dict[str, object]) -> BacktestResult:
         equity_df = self.equity_curve_df()
         trades_df = pd.DataFrame([rec.to_dict() for rec in self.trades]) if self.trades else pd.DataFrame()
         positions_df = pd.DataFrame([snap.to_dict() for snap in self.snapshots]) if self.snapshots else pd.DataFrame()
