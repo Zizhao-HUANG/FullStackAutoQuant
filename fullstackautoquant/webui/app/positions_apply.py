@@ -3,9 +3,22 @@ from __future__ import annotations
 import math
 from collections.abc import Sequence
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, TypedDict
 
 import pandas as pd
+
+
+class PositionRecord(TypedDict):
+    symbol: str
+    qty: float
+    cost_price: float
+    market_value: float
+
+
+class SoldRecord(TypedDict):
+    symbol: str
+    qty: float
+    cost_price: float
 
 
 def normalize_symbol(symbol: object) -> str:
@@ -31,9 +44,27 @@ def normalize_symbol(symbol: object) -> str:
 
 
 @dataclass
+class _MutablePosition:
+    """Internal mutable position used during order processing."""
+
+    symbol: str
+    qty: float
+    cost_price: float
+    market_value: float
+
+    def to_record(self) -> PositionRecord:
+        return PositionRecord(
+            symbol=self.symbol,
+            qty=self.qty,
+            cost_price=self.cost_price,
+            market_value=self.market_value,
+        )
+
+
+@dataclass
 class ApplyResult:
-    positions: list[dict[str, Any]]
-    sold: list[dict[str, Any]]
+    positions: list[PositionRecord]
+    sold: list[SoldRecord]
     cash_delta: float
     buy_notional: float
     sell_notional: float
@@ -71,7 +102,7 @@ def apply_orders(
     positions_df["cost_price"] = pd.to_numeric(positions_df["cost_price"], errors="coerce").fillna(
         0.0
     )
-    positions_map: dict[str, dict[str, Any]] = {}
+    positions_map: dict[str, _MutablePosition] = {}
     for row in positions_df.itertuples(index=False):
         symbol = str(row.symbol)
         if not symbol:
@@ -80,21 +111,21 @@ def apply_orders(
         cost_price = float(getattr(row, "cost_price", 0.0) or 0.0)
         market_value = float(getattr(row, "market_value", qty * cost_price) or 0.0)
         if symbol in positions_map:
-            positions_map[symbol]["qty"] += qty
+            positions_map[symbol].qty += qty
         else:
-            positions_map[symbol] = {
-                "symbol": symbol,
-                "qty": qty,
-                "cost_price": cost_price,
-                "market_value": market_value,
-            }
+            positions_map[symbol] = _MutablePosition(
+                symbol=symbol,
+                qty=qty,
+                cost_price=cost_price,
+                market_value=market_value,
+            )
 
     orders_df["symbol"] = orders_df["symbol"].apply(normalize_symbol)
     orders_df["side"] = orders_df["side"].astype(str).str.upper()
     orders_df["volume"] = pd.to_numeric(orders_df["volume"], errors="coerce").fillna(0.0)
     orders_df["price"] = pd.to_numeric(orders_df["price"], errors="coerce").fillna(0.0)
 
-    sold_records: list[dict[str, Any]] = []
+    sold_records: list[SoldRecord] = []
     warnings: list[str] = []
     cash_delta = 0.0
     buy_notional = 0.0
@@ -112,22 +143,20 @@ def apply_orders(
         if side == "BUY":
             pos = positions_map.get(symbol)
             if pos is None:
-                pos = {"symbol": symbol, "qty": 0.0, "cost_price": 0.0, "market_value": 0.0}
-            existing_qty = float(pos.get("qty", 0.0))
+                pos = _MutablePosition(symbol=symbol, qty=0.0, cost_price=0.0, market_value=0.0)
+            existing_qty = pos.qty
             new_qty = existing_qty + volume
             if price > 0:
                 buy_notional += price * volume
                 cash_delta -= price * volume
                 if new_qty > 0:
                     if existing_qty > 0:
-                        weighted = (
-                            existing_qty * pos.get("cost_price", 0.0) + price * volume
-                        ) / new_qty
-                        pos["cost_price"] = weighted
+                        weighted = (existing_qty * pos.cost_price + price * volume) / new_qty
+                        pos.cost_price = weighted
                     else:
-                        pos["cost_price"] = price
-            pos["qty"] = new_qty
-            pos["market_value"] = pos.get("cost_price", 0.0) * new_qty
+                        pos.cost_price = price
+            pos.qty = new_qty
+            pos.market_value = pos.cost_price * new_qty
             positions_map[symbol] = pos
         elif side == "SELL":
             pos = positions_map.get(symbol)
@@ -136,7 +165,7 @@ def apply_orders(
                     f"Order {symbol} SELL {volume} not found in current positions, ignored."
                 )
                 continue
-            existing_qty = float(pos.get("qty", 0.0))
+            existing_qty = pos.qty
             if existing_qty <= 0:
                 warnings.append(f"Order {symbol} SELL {volume} current quantity is 0, ignored.")
                 continue
@@ -145,15 +174,15 @@ def apply_orders(
                 sell_notional += price * sell_qty
                 cash_delta += price * sell_qty
             remaining = existing_qty - sell_qty
-            pos["qty"] = remaining
-            pos["market_value"] = pos.get("cost_price", 0.0) * remaining
+            pos.qty = remaining
+            pos.market_value = pos.cost_price * remaining
             if remaining <= 0:
                 sold_records.append(
-                    {
-                        "symbol": symbol,
-                        "qty": sell_qty,
-                        "cost_price": float(pos.get("cost_price", 0.0) or 0.0),
-                    }
+                    SoldRecord(
+                        symbol=symbol,
+                        qty=sell_qty,
+                        cost_price=pos.cost_price,
+                    )
                 )
                 positions_map.pop(symbol, None)
             else:
@@ -165,20 +194,11 @@ def apply_orders(
         else:
             warnings.append(f"Unknown side {side}, Order {symbol} skipped.")
 
-    updated_positions: list[dict[str, Any]] = []
+    updated_positions: list[PositionRecord] = []
     for symbol in sorted(positions_map):
         pos = positions_map[symbol]
-        qty = float(pos.get("qty", 0.0) or 0.0)
-        cost_price = float(pos.get("cost_price", 0.0) or 0.0)
-        market_value = float(qty * cost_price)
-        updated_positions.append(
-            {
-                "symbol": symbol,
-                "qty": qty,
-                "cost_price": cost_price,
-                "market_value": market_value,
-            }
-        )
+        pos.market_value = pos.qty * pos.cost_price
+        updated_positions.append(pos.to_record())
 
     return ApplyResult(
         positions=updated_positions,

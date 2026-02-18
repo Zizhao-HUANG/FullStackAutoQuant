@@ -116,7 +116,11 @@ class MarketDataService:
                     or row_dict.get("preclose")
                     or row_dict.get("prev_close")
                 )
-                pre_close = float(pre_close_val) if pre_close_val is not None and pre_close_val != "" else None
+                pre_close = (
+                    float(pre_close_val)
+                    if pre_close_val is not None and pre_close_val != ""
+                    else None
+                )
                 payload = {
                     "price": price,
                     "name": name,
@@ -139,14 +143,13 @@ class MarketDataService:
 
 
 def build_market_service(config: dict[str, Any]) -> MarketDataService:
-    tushare_cfg: Any = config.get("tushare", {})
-    token = ""
-    if isinstance(tushare_cfg, dict):
-        token = str(tushare_cfg.get("token", ""))
-        if not token:
-            env_name = str(tushare_cfg.get("token_env", ""))
-            if env_name:
-                token = os.getenv(env_name, "")
+    raw_tushare = config.get("tushare", {})
+    tushare_cfg: dict[str, str] = raw_tushare if isinstance(raw_tushare, dict) else {}
+    token = str(tushare_cfg.get("token", ""))
+    if not token:
+        env_name = str(tushare_cfg.get("token_env", ""))
+        if env_name:
+            token = os.getenv(env_name, "")
     if not token:
         raise RuntimeError("TuShare Token not configured")
     return MarketDataService(MarketDataConfig(token=token))
