@@ -4,6 +4,7 @@ import datetime as dt
 import os
 import shutil
 from pathlib import Path
+from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -46,7 +47,7 @@ def _collect_paths(cfg: dict) -> dict[str, Path]:
 
 
 def _append_history(step: StepResult, run_label: str) -> None:
-    history: list[dict[str, object]] = st.session_state.setdefault("infer_history", [])
+    history: list[dict[str, Any]] = st.session_state.setdefault("infer_history", [])
     history.append(
         {
             "run": run_label,
@@ -63,7 +64,7 @@ def _append_history(step: StepResult, run_label: str) -> None:
 
 def _append_error(name: str, message: str, run_label: str) -> None:
     now = dt.datetime.now()
-    history: list[dict[str, object]] = st.session_state.setdefault("infer_history", [])
+    history: list[dict[str, Any]] = st.session_state.setdefault("infer_history", [])
     history.append(
         {
             "run": run_label,
@@ -99,7 +100,7 @@ def _read_tail(path: Path, n: int = 20) -> str:
         return f"Read failed: {exc}"
 
 
-def _file_metadata(path: Path) -> dict[str, object]:
+def _file_metadata(path: Path) -> dict[str, Any]:
     try:
         stat = path.stat()
         return {
@@ -139,7 +140,7 @@ def _human_timedelta(ts: dt.datetime | None) -> str:
     return "Just now"
 
 
-def _disk_usage_summary(path: Path) -> dict[str, object]:
+def _disk_usage_summary(path: Path) -> dict[str, Any]:
     try:
         usage = shutil.disk_usage(path)
         total_gb = usage.total / 1024 ** 3
@@ -302,7 +303,7 @@ def _build_score_heatmap(df: pd.DataFrame) -> go.Figure | None:
     return fig
 
 
-def _preview_parquet(path: Path) -> dict[str, object]:
+def _preview_parquet(path: Path) -> dict[str, Any]:
     try:
         df = pd.read_parquet(path)
         return {"exists": True, "df": df}
@@ -310,7 +311,7 @@ def _preview_parquet(path: Path) -> dict[str, object]:
         return {"exists": path.exists(), "error": str(exc)}
 
 
-def _preview_h5(path: Path) -> dict[str, object]:
+def _preview_h5(path: Path) -> dict[str, Any]:
     try:
         df = pd.read_hdf(path, key="data")
         return {"exists": True, "df": df}
@@ -318,7 +319,7 @@ def _preview_h5(path: Path) -> dict[str, object]:
         return {"exists": path.exists(), "error": str(exc)}
 
 
-def _preview_csv(path: Path) -> dict[str, object]:
+def _preview_csv(path: Path) -> dict[str, Any]:
     try:
         df = pd.read_csv(path)
         count = len(df)
@@ -559,7 +560,7 @@ def _artifacts(cfg: dict, paths: dict[str, Path]) -> None:
         st.success("Now pointing to paths.ranked_csv. Go to Manual Trading Console to run the workflow.")
 
 
-def _build_history_timeline(history: list[dict[str, object]]) -> go.Figure | None:
+def _build_history_timeline(history: list[dict[str, Any]]) -> go.Figure | None:
     if not history:
         return None
     df = pd.DataFrame(history)
@@ -601,7 +602,7 @@ def _build_history_timeline(history: list[dict[str, object]]) -> go.Figure | Non
 
 def _render_execution_history(executions: list[StepResult]) -> None:
     st.subheader("Execution History / Diagnostics", divider="gray")
-    history: list[dict[str, object]] = st.session_state.get("infer_history", [])  # type: ignore[assignment]
+    history: list[dict[str, Any]] = st.session_state.get("infer_history", [])  # type: ignore[assignment]
     if executions:
         last_run_label = executions[-1].started_at.strftime("%Y-%m-%d %H:%M:%S") if executions[-1].started_at else "Recent execution"
         st.success(f"Latest execution batch:{last_run_label}, {len(executions)}  steps.Check duration and stderr for anomalies.")

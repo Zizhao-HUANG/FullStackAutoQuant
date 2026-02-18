@@ -5,6 +5,7 @@ from __future__ import annotations
 import datetime as dt
 from collections.abc import Iterable
 from pathlib import Path
+from typing import Any
 
 import pandas as pd
 
@@ -47,7 +48,7 @@ class NavTracker:
         if record["equity"] == 0.0:
             record["equity"] = float(cash + market_value)
 
-    def to_rows(self) -> Iterable[dict[str, object]]:
+    def to_rows(self) -> Iterable[dict[str, Any]]:
         for day, data in sorted(self._records.items()):
             row = {
                 "date": day.isoformat(),

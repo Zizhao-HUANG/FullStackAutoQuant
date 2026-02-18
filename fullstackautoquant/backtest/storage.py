@@ -6,6 +6,7 @@ import json
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
+from typing import Any
 
 import pandas as pd
 
@@ -33,12 +34,12 @@ class ResultSerializer:
 
     def persist(
         self,
-        config: dict[str, object],
+        config: dict[str, Any],
         summary: dict[str, float],
         equity: pd.DataFrame,
         trades: pd.DataFrame,
         positions: pd.DataFrame,
-        artifacts: dict[str, object] | None = None,
+        artifacts: dict[str, Any] | None = None,
     ) -> SerializedArtifacts:
         run_dir = _timestamp_dir(self._root)
         run_dir.mkdir(parents=True, exist_ok=False)
@@ -53,7 +54,7 @@ class ResultSerializer:
             self._write_artifact(logs_dir / name, payload)
         return SerializedArtifacts(root=run_dir, logs_dir=logs_dir)
 
-    def _write_json(self, path: Path, payload: dict[str, object]) -> None:
+    def _write_json(self, path: Path, payload: dict[str, Any]) -> None:
         path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
 
     def _write_dataframe(self, path: Path, df: pd.DataFrame, *, index: bool = True) -> None:
@@ -83,13 +84,13 @@ def _timestamp_dir(root: Path) -> Path:
 
 def persist_backtest_result(
     root: Path,
-    config: dict[str, object],
+    config: dict[str, Any],
     summary: dict[str, float],
     equity: pd.DataFrame,
     trades: pd.DataFrame,
     positions: pd.DataFrame,
     *,
-    artifacts: dict[str, object] | None = None,
+    artifacts: dict[str, Any] | None = None,
 ) -> Path:
     serializer = ResultSerializer(root)
     bundle = serializer.persist(config, summary, equity, trades, positions, artifacts)

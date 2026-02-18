@@ -5,6 +5,7 @@ from __future__ import annotations
 import datetime as dt
 import json
 from pathlib import Path
+from typing import Any
 
 from fullstackautoquant.trading.risk.manager import compute_drawdowns, detect_limit_states
 
@@ -24,7 +25,7 @@ class RiskEvaluator:
         signals: list[dict],
         positions,
         manual_feedback: list[dict] | None = None,
-    ) -> dict[str, object]:
+    ) -> dict[str, Any]:
         logs_dir = self._ensure_logs_dir()
         day_dd, rolling_dd = compute_drawdowns(str(logs_dir))
         allow_buy = self._decide_buy(day_dd, rolling_dd)
@@ -86,7 +87,7 @@ class RiskEvaluator:
         limit_up, limit_down = detect_limit_states(h5_path, instruments, limit_threshold)
         return limit_up, limit_down
 
-    def _write_limit_log(self, record: dict[str, object]) -> None:
+    def _write_limit_log(self, record: dict[str, Any]) -> None:
         limit_path = self._ensure_logs_dir() / "limit_states.json"
         try:
             payload = {}

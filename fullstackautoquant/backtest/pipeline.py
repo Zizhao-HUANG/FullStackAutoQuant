@@ -4,6 +4,7 @@ import datetime as dt
 from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Any
 
 from ..trading.manual_workflow.simulator import ManualWorkflowSimulator
 from .components.execution import ExecutionEngine
@@ -29,9 +30,9 @@ class BacktestContext:
 class BacktestPipeline:
     def __init__(self, ctx: BacktestContext) -> None:
         self._ctx = ctx
-        self._risk_records: list[dict[str, object]] = []
-        self._signal_records: list[dict[str, object]] = []
-        self._manual_records: list[dict[str, object]] = []
+        self._risk_records: list[dict[str, Any]] = []
+        self._signal_records: list[dict[str, Any]] = []
+        self._manual_records: list[dict[str, Any]] = []
 
     def run(
         self,
@@ -51,7 +52,7 @@ class BacktestPipeline:
 
         for trade_date, signal_date, signals in self._ctx.signal_provider.iterate(self._ctx.calendar):
             active_signals = signals
-            manual_log: list[dict[str, object]] = []
+            manual_log: list[dict[str, Any]] = []
             queued_total = 0
             if manual_sim is not None:
                 active_signals, manual_log, queued_total = manual_sim.process(
@@ -110,7 +111,7 @@ class BacktestPipeline:
             self._manual_records,
         )
 
-    def flush(self, run_dir: Path, intermediate: BacktestIntermediate, meta: dict[str, object]) -> None:
+    def flush(self, run_dir: Path, intermediate: BacktestIntermediate, meta: dict[str, Any]) -> None:
         logs_dir = run_dir / "logs"
         logs_dir.mkdir(exist_ok=True)
         self._ctx.nav_tracker.write_csv(logs_dir / "nav_history.csv")

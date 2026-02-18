@@ -5,6 +5,7 @@ from __future__ import annotations
 import copy
 from collections.abc import Mapping, MutableMapping
 from pathlib import Path
+from typing import Any
 
 import yaml
 
@@ -43,7 +44,7 @@ def resolve_trading_config_path(app_config: Mapping[str, object]) -> Path:
     return (Path(__file__).resolve().parents[2] / candidate).resolve()
 
 
-def load_strategy_config(path: Path) -> dict[str, object]:
+def load_strategy_config(path: Path) -> dict[str, Any]:
     """Load the trading strategy YAML config."""
 
     if not path.exists():

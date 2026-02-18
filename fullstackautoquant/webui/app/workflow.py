@@ -11,6 +11,7 @@ import tempfile
 from collections.abc import Iterable
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Any
 
 import pandas as pd
 
@@ -115,10 +116,10 @@ def _run(cmd: list[str], cwd: Path) -> StepResult:
 
 
 def run_full_workflow(
-    config: dict[str, object],
+    config: dict[str, Any],
     *,
-    current_positions: Iterable[dict[str, object]] | None = None,
-) -> dict[str, object]:
+    current_positions: Iterable[dict[str, Any]] | None = None,
+) -> dict[str, Any]:
     base_dir = Path(__file__).resolve().parents[1]
     paths_cfg = config.get("paths", {})  # type: ignore[assignment]
     trading_dir = _resolve_path(base_dir, str(paths_cfg.get("trading_dir", "../trading")), "../trading")
@@ -176,7 +177,7 @@ def run_full_workflow(
     step.output_paths.update({"targets": targets_path, "orders": orders_path})
     steps.append(step)
 
-    result: dict[str, object] = {
+    result: dict[str, Any] = {
         "steps": [
             {
                 "name": s.name,
@@ -254,10 +255,10 @@ def _recalculate_buy_limits(orders_payload: dict, cfg_path: Path, signals_payloa
 
 
 def run_single_step(
-    config: dict[str, object],
+    config: dict[str, Any],
     step: str,
     *,
-    current_positions: Iterable[dict[str, object]] | None = None,
+    current_positions: Iterable[dict[str, Any]] | None = None,
 ) -> StepResult:
     base_dir = Path(__file__).resolve().parents[1]
     paths_cfg = config.get("paths", {})  # type: ignore[assignment]

@@ -15,7 +15,7 @@ from app.services.data_access import DataAccess
 from app.ui.positions_data import digits_only_symbol
 
 
-def _as_dataframe(data: Sequence[dict[str, object]] | pd.DataFrame) -> pd.DataFrame:
+def _as_dataframe(data: Sequence[dict[str, Any]] | pd.DataFrame) -> pd.DataFrame:
     if isinstance(data, pd.DataFrame):
         return data.copy()
     if not data:
@@ -26,7 +26,7 @@ def _as_dataframe(data: Sequence[dict[str, object]] | pd.DataFrame) -> pd.DataFr
 def render_apply_plan_section(
     *,
     db: Database,
-    current_positions_df: Sequence[dict[str, object]] | pd.DataFrame,
+    current_positions_df: Sequence[dict[str, Any]] | pd.DataFrame,
     workflow_result: dict[str, Any] | None,
     data_access: DataAccess,
     config: dict[str, Any],

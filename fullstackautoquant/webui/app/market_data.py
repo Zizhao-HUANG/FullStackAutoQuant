@@ -6,6 +6,7 @@ import datetime as dt
 import os
 from collections.abc import Iterable
 from dataclasses import dataclass
+from typing import Any
 
 try:
     import tushare as ts
@@ -25,7 +26,7 @@ class MarketDataService:
             raise RuntimeError("tushare library not installed")
         ts.set_token(config.token)
         self.pro = ts.pro_api()
-        self.cache: dict[str, dict[str, object]] = {}
+        self.cache: dict[str, dict[str, Any]] = {}
 
     @staticmethod
     def _to_ts_code(symbol: str) -> str | None:
@@ -58,7 +59,7 @@ class MarketDataService:
         quotes = self.get_realtime_quotes(symbols)
         return {code: data["price"] for code, data in quotes.items() if data["price"] is not None}
 
-    def get_realtime_quotes(self, symbols: Iterable[str], src: str = "sina") -> dict[str, dict[str, object]]:
+    def get_realtime_quotes(self, symbols: Iterable[str], src: str = "sina") -> dict[str, dict[str, Any]]:
         seen: set[str] = set()
         original_symbols: list[str] = []
         for s in symbols:
@@ -84,7 +85,7 @@ class MarketDataService:
         if not ts_codes:
             return {}
 
-        result_by_ts: dict[str, dict[str, object]] = {}
+        result_by_ts: dict[str, dict[str, Any]] = {}
         dt.datetime.now().strftime("%Y%m%d%H%M%S")
 
         batches: list[list[str]] = []
@@ -119,7 +120,7 @@ class MarketDataService:
                 self.cache[code] = payload
                 result_by_ts[code] = payload
 
-        final_result: dict[str, dict[str, object]] = {}
+        final_result: dict[str, dict[str, Any]] = {}
         for ts_code, original in alias_map.items():
             payload = result_by_ts.get(ts_code)
             if payload:
@@ -131,7 +132,7 @@ class MarketDataService:
         return final_result
 
 
-def build_market_service(config: dict[str, object]) -> MarketDataService:
+def build_market_service(config: dict[str, Any]) -> MarketDataService:
     tushare_cfg = config.get("tushare", {})  # type: ignore[assignment]
     token = ""
     if isinstance(tushare_cfg, dict):

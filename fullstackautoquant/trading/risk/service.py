@@ -3,6 +3,7 @@ from __future__ import annotations
 from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Any
 
 import pandas as pd
 from fullstackautoquant.trading.utils import gm_to_instrument, instrument_to_gm
@@ -10,11 +11,11 @@ from fullstackautoquant.trading.utils import gm_to_instrument, instrument_to_gm
 
 @dataclass(frozen=True)
 class RiskInputs:
-    signals: Sequence[dict[str, object]]
+    signals: Sequence[dict[str, Any]]
     logs_dir: Path
-    risk_config: dict[str, object]
-    order_config: dict[str, object]
-    paths_config: dict[str, object]
+    risk_config: dict[str, Any]
+    order_config: dict[str, Any]
+    paths_config: dict[str, Any]
     override_buy: bool = False
 
 
