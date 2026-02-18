@@ -2,19 +2,11 @@ from __future__ import annotations
 
 import argparse
 import json
-import sys
 from pathlib import Path
 
 import pandas as pd
 
-SCRIPT_PATH = Path(__file__).resolve()
-TRADING_ROOT = SCRIPT_PATH.parent.parent
-REPO_ROOT = TRADING_ROOT.parent
-for candidate in (REPO_ROOT, TRADING_ROOT):
-    candidate_str = str(candidate)
-    if candidate_str not in sys.path:
-        sys.path.insert(0, candidate_str)
-
+from fullstackautoquant.logging_config import get_logger
 from fullstackautoquant.trading.risk.service import (
     RiskEvaluatorService,
     RiskInputs,
@@ -26,6 +18,8 @@ from fullstackautoquant.trading.utils import (
     load_config,
     save_json,
 )
+
+logger = get_logger(__name__)
 
 
 def compute_drawdowns(logs_dir: str) -> tuple[float, float]:
@@ -125,10 +119,10 @@ def main() -> None:
         },
         str(out_path),
     )
-    print(
-        json.dumps(
-            {"status": "ok", "out": str(out_path), "allow_buy": state.allow_buy}, ensure_ascii=False
-        )
+    logger.info(
+        "Risk evaluation complete: allow_buy=%s, out=%s",
+        state.allow_buy,
+        out_path,
     )
 
 

@@ -110,7 +110,6 @@ ignore = [
 ]
 
 [tool.ruff.lint.per-file-ignores]
-"fullstackautoquant/trading/strategy.py" = ["F401"]  # imports used at runtime via fallback
 "fullstackautoquant/trading/execution.py" = ["F841"]  # variables kept for documentation
 "tests/test_backtest_engine.py" = ["B009"]  # getattr with constant needed for dynamic import
 "fullstackautoquant/webui/app/services/__init__.py" = ["F401", "UP035"]  # re-exports for downstream
@@ -145,7 +144,9 @@ omit = [
     "fullstackautoquant/webui/*",
     "fullstackautoquant/model/factors/*",
     "*/tests/*",
-    # Standalone scripts with non-package imports (from utils import ...)
+    # CLI wrappers that spawn subprocesses / call external APIs (gmtrade, tushare)
+    # Imports are now fixed (proper package imports), but main() paths require
+    # live API credentials and are tested via integration tests.
     "fullstackautoquant/trading/execution.py",
     "fullstackautoquant/trading/scheduler.py",
     "fullstackautoquant/trading/run_once.py",

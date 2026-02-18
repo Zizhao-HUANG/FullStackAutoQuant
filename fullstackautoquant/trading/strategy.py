@@ -5,38 +5,21 @@ import os
 
 import numpy as np
 
-try:
-    from .utils import (
-        compute_allowed_price,
-        compute_limit_price_from_rt_preclose,
-        compute_manual_price,
-        ensure_logs_dir,
-        fetch_tushare_quotes,
-        gm_to_instrument,
-        instrument_to_gm,
-        load_config,
-        min_order_lot_for_symbol,
-        read_close_prices_from_h5,
-        round_price,
-    )
-except ImportError:  # pragma: no cover - direct script execution fallback
-    import sys
-    from pathlib import Path
+from fullstackautoquant.logging_config import get_logger
+from fullstackautoquant.trading.utils import (
+    compute_allowed_price,
+    compute_limit_price_from_rt_preclose,
+    compute_manual_price,
+    ensure_logs_dir,
+    fetch_tushare_quotes,
+    gm_to_instrument,
+    instrument_to_gm,
+    load_config,
+    min_order_lot_for_symbol,
+    read_close_prices_from_h5,
+)
 
-    current_dir = Path(__file__).resolve().parent
-    if str(current_dir) not in sys.path:
-        sys.path.insert(0, str(current_dir))
-    from utils import (  # type: ignore
-        compute_allowed_price,
-        compute_limit_price_from_rt_preclose,
-        compute_manual_price,
-        ensure_logs_dir,
-        fetch_tushare_quotes,
-        instrument_to_gm,
-        load_config,
-        min_order_lot_for_symbol,
-        read_close_prices_from_h5,
-    )
+logger = get_logger(__name__)
 
 
 def parse_args():
@@ -653,8 +636,6 @@ def main():
         )
     )
 
-    from utils import gm_to_instrument
-
     qlib_instruments = []
     for t in targets:
         ins = t.get("instrument")
@@ -814,17 +795,12 @@ def main():
     with open(orders_out, "w", encoding="utf-8") as f:
         json.dump({"date": date_str, "orders": orders}, f, ensure_ascii=False, indent=2)
 
-    print(
-        json.dumps(
-            {
-                "status": "ok",
-                "targets": len(targets),
-                "orders": len(orders),
-                "targets_out": targets_out,
-                "orders_out": orders_out,
-            },
-            ensure_ascii=False,
-        )
+    logger.info(
+        "Strategy complete: targets=%d, orders=%d, targets_out=%s, orders_out=%s",
+        len(targets),
+        len(orders),
+        targets_out,
+        orders_out,
     )
 
 
