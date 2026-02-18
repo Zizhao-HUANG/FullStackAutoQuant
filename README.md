@@ -4,6 +4,9 @@
     <strong>End-to-End Deep Learning Quantitative Trading System</strong>
   </p>
   <p align="center">
+    <a href="https://github.com/Zizhao-HUANG/FullStackAutoQuant/actions/workflows/ci.yml">
+      <img src="https://github.com/Zizhao-HUANG/FullStackAutoQuant/actions/workflows/ci.yml/badge.svg?branch=main" alt="CI">
+    </a>
     <img src="https://img.shields.io/badge/python-3.10+-blue.svg" alt="Python 3.10+">
     <img src="https://img.shields.io/badge/pytorch-2.0+-ee4c2c.svg" alt="PyTorch 2.0+">
     <img src="https://img.shields.io/badge/license-CC%20BY--NC--SA%204.0-blue.svg" alt="CC BY-NC-SA 4.0">
