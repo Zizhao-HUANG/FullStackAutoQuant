@@ -60,3 +60,4 @@ weights/*.pth
 tmp/
 backups/
 fullstackautoquant/data/trade.db
+.coverage

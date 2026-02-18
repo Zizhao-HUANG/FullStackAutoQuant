@@ -4,9 +4,7 @@ from __future__ import annotations
 
 import datetime as dt
 import json
-from math import isfinite, nan
 from pathlib import Path
-from unittest.mock import MagicMock, patch
 
 import pandas as pd
 import pytest
@@ -20,7 +18,6 @@ from fullstackautoquant.backtest.components.records import (
     TradeRecord,
 )
 from fullstackautoquant.backtest.config import _as_path, _to_date
-
 
 # ═══════════════════════════════ config helpers ══════════════════════
 
@@ -280,9 +277,9 @@ class TestRunBacktestHelpers:
         assert _parse_value("hello") == "hello"
 
     def test_load_config_yaml(self, tmp_path):
-        from fullstackautoquant.backtest.run_backtest import _load_config
-
         import yaml
+
+        from fullstackautoquant.backtest.run_backtest import _load_config
 
         cfg_file = tmp_path / "test.yaml"
         data = {
@@ -317,14 +314,16 @@ class TestRunBacktestHelpers:
         from fullstackautoquant.backtest.config import BacktestConfig
         from fullstackautoquant.backtest.run_backtest import _apply_overrides
 
-        cfg = BacktestConfig.from_dict({
-            "start_date": "2024-01-01",
-            "end_date": "2024-12-31",
-            "signal": {
-                "combined_factors": "/tmp/f.parquet",
-                "params_path": "/tmp/p.yaml",
-            },
-        })
+        cfg = BacktestConfig.from_dict(
+            {
+                "start_date": "2024-01-01",
+                "end_date": "2024-12-31",
+                "signal": {
+                    "combined_factors": "/tmp/f.parquet",
+                    "params_path": "/tmp/p.yaml",
+                },
+            }
+        )
         cfg2 = _apply_overrides(cfg, ["portfolio.topk=50", "initial_capital=500000"])
         assert cfg2.portfolio.topk == 50
         assert cfg2.initial_capital == 500_000
@@ -333,14 +332,16 @@ class TestRunBacktestHelpers:
         from fullstackautoquant.backtest.config import BacktestConfig
         from fullstackautoquant.backtest.run_backtest import _apply_overrides
 
-        cfg = BacktestConfig.from_dict({
-            "start_date": "2024-01-01",
-            "end_date": "2024-12-31",
-            "signal": {
-                "combined_factors": "/tmp/f.parquet",
-                "params_path": "/tmp/p.yaml",
-            },
-        })
+        cfg = BacktestConfig.from_dict(
+            {
+                "start_date": "2024-01-01",
+                "end_date": "2024-12-31",
+                "signal": {
+                    "combined_factors": "/tmp/f.parquet",
+                    "params_path": "/tmp/p.yaml",
+                },
+            }
+        )
         with pytest.raises(ValueError, match="Invalid override format"):
             _apply_overrides(cfg, ["portfolio.topk"])
 
@@ -370,7 +371,6 @@ class TestModelScoring:
         assert all(c == 1.0 for c in conf)  # zero std => confidence = 1
 
     def test_rank_signals(self):
-        import numpy as np
 
         from fullstackautoquant.model.scoring import rank_signals
 

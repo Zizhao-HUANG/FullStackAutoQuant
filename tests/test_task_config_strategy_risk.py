@@ -3,11 +3,8 @@
 from __future__ import annotations
 
 import datetime as dt
-import math
-from pathlib import Path
 from typing import Any
 
-import numpy as np
 import pandas as pd
 import pytest
 import yaml
@@ -26,7 +23,6 @@ from fullstackautoquant.trading.strategy import (
     _resolve_weight_mode,
     waterfill_with_cap,
 )
-
 
 # ═══════════════════════════════ model/task_config.py ══════════════════
 
@@ -66,11 +62,7 @@ class TestLoadTaskConfig:
 class TestLocateHandlerCfg:
     def test_valid(self):
         task_cfg: dict[str, Any] = {
-            "dataset": {
-                "kwargs": {
-                    "handler": {"class": "DataHandlerLP", "kwargs": {}}
-                }
-            }
+            "dataset": {"kwargs": {"handler": {"class": "DataHandlerLP", "kwargs": {}}}}
         }
         result = _locate_handler_cfg(task_cfg)
         assert result["class"] == "DataHandlerLP"
@@ -142,9 +134,7 @@ class TestGetTrainingTimeRange:
         assert result["end_time"] == "2021-12-31"
 
     def test_missing_times(self):
-        cfg: dict[str, Any] = {
-            "dataset": {"kwargs": {"handler": {"kwargs": {}}}}
-        }
+        cfg: dict[str, Any] = {"dataset": {"kwargs": {"handler": {"kwargs": {}}}}}
         with pytest.raises(TaskConfigError, match="start_time/end_time"):
             get_training_time_range(cfg)
 
@@ -312,10 +302,12 @@ class TestRiskManagerMain:
     def test_compute_drawdowns_old_nav_column(self, tmp_path):
         from fullstackautoquant.trading.risk.manager import compute_drawdowns
 
-        data = pd.DataFrame({
-            "date": ["2024-01-01", "2024-01-02", "2024-01-03"],
-            "nav": [100_000, 99_000, 98_000],
-        })
+        data = pd.DataFrame(
+            {
+                "date": ["2024-01-01", "2024-01-02", "2024-01-03"],
+                "nav": [100_000, 99_000, 98_000],
+            }
+        )
         data.to_csv(tmp_path / "nav_history.csv", index=False)
         day_dd, rolling_dd = compute_drawdowns(str(tmp_path))
         assert day_dd > 0  # should detect drawdown
@@ -328,10 +320,12 @@ class TestRiskServiceNormalizeNav:
     def test_normalize_nav_basic(self, tmp_path):
         from fullstackautoquant.trading.risk.service import RiskEvaluatorService, RiskInputs
 
-        nav_data = pd.DataFrame({
-            "date": ["2024-01-01", "2024-01-02"],
-            "equity": [100_000, 101_000],
-        })
+        nav_data = pd.DataFrame(
+            {
+                "date": ["2024-01-01", "2024-01-02"],
+                "equity": [100_000, 101_000],
+            }
+        )
         nav_data.to_csv(tmp_path / "nav_history.csv", index=False)
         inputs = RiskInputs(
             signals=[],
@@ -348,10 +342,12 @@ class TestRiskServiceNormalizeNav:
     def test_normalize_nav_with_nav_column(self, tmp_path):
         from fullstackautoquant.trading.risk.service import RiskEvaluatorService, RiskInputs
 
-        nav_data = pd.DataFrame({
-            "date": ["2024-01-01", "2024-01-02"],
-            "nav": [100_000, 101_000],
-        })
+        nav_data = pd.DataFrame(
+            {
+                "date": ["2024-01-01", "2024-01-02"],
+                "nav": [100_000, 101_000],
+            }
+        )
         inputs = RiskInputs(
             signals=[],
             logs_dir=tmp_path,
@@ -381,10 +377,12 @@ class TestRiskServiceNormalizeNav:
         from fullstackautoquant.trading.risk.service import RiskEvaluatorService, RiskInputs
 
         # Create NAV with large rolling drawdown (>10%)
-        nav_data = pd.DataFrame({
-            "date": [f"2024-01-{i:02d}" for i in range(1, 8)],
-            "equity": [100_000, 95_000, 92_000, 90_000, 88_000, 87_000, 85_000],
-        })
+        nav_data = pd.DataFrame(
+            {
+                "date": [f"2024-01-{i:02d}" for i in range(1, 8)],
+                "equity": [100_000, 95_000, 92_000, 90_000, 88_000, 87_000, 85_000],
+            }
+        )
         nav_data.to_csv(tmp_path / "nav_history.csv", index=False)
         inputs = RiskInputs(
             signals=[],
