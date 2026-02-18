@@ -3,9 +3,8 @@
 from __future__ import annotations
 
 import datetime as dt
-from typing import Dict, Iterator, List, Tuple
-
 import json
+from collections.abc import Iterator
 from pathlib import Path
 
 from ..qlib_adapter import QlibInferenceAdapter
@@ -19,14 +18,14 @@ class SignalProvider:
         cache_dir = getattr(self._adapter.cfg, "cache_dir", None) or Path(__file__).resolve().parents[2] / "cache/signals"
         self._cache_dir = Path(cache_dir)
         self._cache_dir.mkdir(parents=True, exist_ok=True)
-        self._memory_cache: Dict[dt.date, List[dict]] = {}
+        self._memory_cache: dict[dt.date, list[dict]] = {}
 
-    def iterate(self, calendar: List[dt.date]) -> Iterator[Tuple[dt.date, dt.date, List[dict]]]:
+    def iterate(self, calendar: list[dt.date]) -> Iterator[tuple[dt.date, dt.date, list[dict]]]:
         for trade_date in calendar:
             source_date, signals = self._fetch_signals(trade_date)
             yield trade_date, source_date, self._normalize(signals, trade_date)
 
-    def _fetch_signals(self, target_date: dt.date) -> Tuple[dt.date, List[dict]]:
+    def _fetch_signals(self, target_date: dt.date) -> tuple[dt.date, list[dict]]:
         for offset in range(self._fallback_days + 1):
             candidate = target_date - dt.timedelta(days=offset)
             cached = self._load_cached(candidate)
@@ -39,8 +38,8 @@ class SignalProvider:
                 return used_date, signals_copy
         return target_date, []
 
-    def _normalize(self, signals: List[dict], trade_date: dt.date) -> List[dict]:
-        result: List[dict] = []
+    def _normalize(self, signals: list[dict], trade_date: dt.date) -> list[dict]:
+        result: list[dict] = []
         for item in signals:
             confidence = float(item.get("confidence", 0.0) or 0.0)
             if confidence < self._confidence_floor:
@@ -53,7 +52,7 @@ class SignalProvider:
     def _cache_path(self, date: dt.date) -> Path:
         return self._cache_dir / f"signals_{date.isoformat()}.json"
 
-    def _load_cached(self, date: dt.date) -> List[dict] | None:
+    def _load_cached(self, date: dt.date) -> list[dict] | None:
         if date in self._memory_cache:
             return [dict(item) for item in self._memory_cache[date]]
         path = self._cache_path(date)
@@ -69,7 +68,7 @@ class SignalProvider:
         except Exception:
             return None
 
-    def _store_cache(self, date: dt.date, signals: List[dict]) -> None:
+    def _store_cache(self, date: dt.date, signals: list[dict]) -> None:
         self._memory_cache[date] = [dict(item) for item in signals]
         payload = {"date": date.isoformat(), "signals": signals}
         try:

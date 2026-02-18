@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import datetime as dt
-from typing import Dict, List, Sequence
+from collections.abc import Sequence
 
 from .records import DailyEquity, TradeRecord
 
@@ -18,12 +18,12 @@ class ExecutionEngine:
         self,
         trade_date: dt.date,
         orders: Sequence[dict],
-        positions: Dict[str, float],
+        positions: dict[str, float],
         cash: float,
         prev_equity: float,
         market_value_func,
-    ) -> tuple[float, Dict[str, float], List[TradeRecord], DailyEquity]:
-        trades: List[TradeRecord] = []
+    ) -> tuple[float, dict[str, float], list[TradeRecord], DailyEquity]:
+        trades: list[TradeRecord] = []
         cash_after = cash
         sell_orders = [od for od in orders if self._is_valid_order(od) and str(od["side"]).upper() == "SELL"]
         buy_orders = [od for od in orders if self._is_valid_order(od) and str(od["side"]).upper() == "BUY"]
@@ -54,9 +54,9 @@ class ExecutionEngine:
         trade_date: dt.date,
         order: dict,
         cash: float,
-        positions: Dict[str, float],
-        trades: List[TradeRecord],
-    ) -> tuple[float, Dict[str, float]]:
+        positions: dict[str, float],
+        trades: list[TradeRecord],
+    ) -> tuple[float, dict[str, float]]:
         if str(order["side"]).upper() != "SELL":
             return cash, positions
         symbol = order["symbol"]
@@ -84,9 +84,9 @@ class ExecutionEngine:
         trade_date: dt.date,
         order: dict,
         cash: float,
-        positions: Dict[str, float],
-        trades: List[TradeRecord],
-    ) -> tuple[float, Dict[str, float]]:
+        positions: dict[str, float],
+        trades: list[TradeRecord],
+    ) -> tuple[float, dict[str, float]]:
         if str(order["side"]).upper() != "BUY":
             return cash, positions
         symbol = order["symbol"]

@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from typing import Dict, List, Tuple
-
 from fullstackautoquant.trading.strategy import (
     build_targets,
     dynamic_adjust_with_positions,
@@ -18,11 +16,11 @@ class StrategyRunner:
 
     def generate_orders(
         self,
-        signals: List[dict],
-        risk_state: Dict[str, object],
-        positions: Dict[str, float],
+        signals: list[dict],
+        risk_state: dict[str, object],
+        positions: dict[str, float],
         total_capital: float,
-    ) -> Tuple[List[dict], Dict[str, float], Dict[str, dict]]:
+    ) -> tuple[list[dict], dict[str, float], dict[str, dict]]:
         allow_buy = bool(risk_state.get("allow_buy", True))
         limit_up = list(risk_state.get("limit_up_symbols", []))
         limit_down = list(risk_state.get("limit_down_symbols", []))

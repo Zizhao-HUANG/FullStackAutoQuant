@@ -3,29 +3,33 @@
 from __future__ import annotations
 
 import datetime as dt
+import json
 from copy import deepcopy
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
 
-import json
 import pandas as pd
 
+from ..manual_workflow import ManualWorkflowSimulator
 from .components.execution import ExecutionEngine
 from .components.nav_tracker import NavTracker
-from .components.records import BacktestIntermediate, BacktestResult, BacktestSummary, PositionSnapshot
+from .components.records import (
+    BacktestIntermediate,
+    BacktestResult,
+    PositionSnapshot,
+)
 from .components.risk_evaluator import RiskEvaluator
 from .components.signal_provider import SignalProvider
 from .components.strategy_runner import StrategyRunner
 from .config import BacktestConfig
-from ..manual_workflow import ManualWorkflowSimulator
 from .metrics import compute_summary, enrich_equity_curve
 from .pipeline import BacktestContext, BacktestPipeline
 from .qlib_adapter import build_qlib_adapter
 from .storage import persist_backtest_result
+
 try:
-    from fullstackautoquant.trading.utils import load_config, ensure_logs_dir
+    from fullstackautoquant.trading.utils import ensure_logs_dir, load_config
 except ImportError:
-    from ..utils import load_config, ensure_logs_dir
+    from ..utils import ensure_logs_dir, load_config
 
 
 class BacktestEngine:
@@ -33,8 +37,8 @@ class BacktestEngine:
 
     def __init__(self, config: BacktestConfig):
         self._config = config
-        self._symbol_cache: Dict[str, str] = {}
-        self._close_cache: Dict[Tuple[dt.date, str], float] = {}
+        self._symbol_cache: dict[str, str] = {}
+        self._close_cache: dict[tuple[dt.date, str], float] = {}
         self._daily_data = self._load_daily_data()
         self._calendar = self._build_calendar()
         self._strategy_config = self._load_strategy_config()
@@ -96,7 +100,7 @@ class BacktestEngine:
             raise ValueError("daily_pv should have MultiIndex(datetime, instrument)")
         return df
 
-    def _build_calendar(self) -> List[dt.date]:
+    def _build_calendar(self) -> list[dt.date]:
         if self._config.data.calendar_csv and Path(self._config.data.calendar_csv).exists():
             cal = pd.read_csv(self._config.data.calendar_csv)
             date_col = None
@@ -183,7 +187,7 @@ class BacktestEngine:
 
         return cfg
 
-    def _portfolio_value(self, date: dt.date, positions: Dict[str, float]) -> float:
+    def _portfolio_value(self, date: dt.date, positions: dict[str, float]) -> float:
         total = 0.0
         for symbol, volume in positions.items():
             if volume <= 0:
@@ -204,7 +208,7 @@ class BacktestEngine:
         self._close_cache[cache_key] = price
         return price
 
-    def _lookup_close_price(self, date: dt.date, qlib_symbol: Optional[str]) -> float:
+    def _lookup_close_price(self, date: dt.date, qlib_symbol: str | None) -> float:
         if not qlib_symbol:
             return 0.0
         ts = pd.Timestamp(date)
@@ -229,7 +233,7 @@ class BacktestEngine:
             except Exception:
                 return 0.0
 
-    def _to_qlib_symbol(self, symbol: str) -> Optional[str]:
+    def _to_qlib_symbol(self, symbol: str) -> str | None:
         sym = str(symbol or "").upper()
         if not sym:
             return None
@@ -237,7 +241,7 @@ class BacktestEngine:
         if cached is not None:
             return cached
 
-        normalized: Optional[str] = None
+        normalized: str | None = None
         if sym.startswith(("SHSE.", "SSE.")):
             code = sym.split(".", 1)[1]
             normalized = f"SH{code}"
@@ -252,8 +256,8 @@ class BacktestEngine:
         self._symbol_cache[sym] = normalized
         return normalized
 
-    def _collect_snapshots(self, date: dt.date, positions: Dict[str, float]) -> List[PositionSnapshot]:
-        snaps: List[PositionSnapshot] = []
+    def _collect_snapshots(self, date: dt.date, positions: dict[str, float]) -> list[PositionSnapshot]:
+        snaps: list[PositionSnapshot] = []
         for sym, qty in positions.items():
             if qty <= 0:
                 continue

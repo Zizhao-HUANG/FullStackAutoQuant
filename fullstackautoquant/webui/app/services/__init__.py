@@ -7,7 +7,6 @@ from pathlib import Path
 from typing import Dict, List, Optional
 
 import pandas as pd
-
 from app.config_loader import ConfigLoader, ensure_default_config
 from app.database import Database, HistoricalPosition, build_database_from_config
 from app.market_data import MarketDataService, build_market_service
@@ -18,12 +17,12 @@ from .data_access import DataAccess
 
 @dataclass
 class Services:
-    config: Dict[str, object]
+    config: dict[str, object]
     db: Database
-    market: Optional[MarketDataService]
+    market: MarketDataService | None
     data_access: DataAccess
 
-    def get_historical_positions(self, limit: int = 200) -> List[HistoricalPosition]:
+    def get_historical_positions(self, limit: int = 200) -> list[HistoricalPosition]:
         return self.db.get_historical_positions(limit=limit)
 
 
@@ -48,7 +47,7 @@ def load_latest_targets_dataframe(config: dict[str, object]) -> pd.DataFrame:
     return load_targets(latest)
 
 
-def fetch_last_prices(market: Optional[MarketDataService], symbols: List[str]) -> Dict[str, float]:
+def fetch_last_prices(market: MarketDataService | None, symbols: list[str]) -> dict[str, float]:
     if not symbols or market is None:
         return {}
     try:

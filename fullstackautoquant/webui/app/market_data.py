@@ -3,12 +3,9 @@
 from __future__ import annotations
 
 import datetime as dt
-from dataclasses import dataclass
-from typing import Dict, Iterable, List, Optional, Tuple
-
-import pandas as pd
 import os
-
+from collections.abc import Iterable
+from dataclasses import dataclass
 
 try:
     import tushare as ts
@@ -28,10 +25,10 @@ class MarketDataService:
             raise RuntimeError("tushare library not installed")
         ts.set_token(config.token)
         self.pro = ts.pro_api()
-        self.cache: Dict[str, Dict[str, object]] = {}
+        self.cache: dict[str, dict[str, object]] = {}
 
     @staticmethod
-    def _to_ts_code(symbol: str) -> Optional[str]:
+    def _to_ts_code(symbol: str) -> str | None:
         if not symbol:
             return None
         sym = symbol.strip().upper()
@@ -57,13 +54,13 @@ class MarketDataService:
             return f"{sym}.SH"
         return None
 
-    def get_last_price(self, symbols: Iterable[str]) -> Dict[str, float]:
+    def get_last_price(self, symbols: Iterable[str]) -> dict[str, float]:
         quotes = self.get_realtime_quotes(symbols)
         return {code: data["price"] for code, data in quotes.items() if data["price"] is not None}
 
-    def get_realtime_quotes(self, symbols: Iterable[str], src: str = "sina") -> Dict[str, Dict[str, object]]:
+    def get_realtime_quotes(self, symbols: Iterable[str], src: str = "sina") -> dict[str, dict[str, object]]:
         seen: set[str] = set()
-        original_symbols: List[str] = []
+        original_symbols: list[str] = []
         for s in symbols:
             if not s:
                 continue
@@ -76,8 +73,8 @@ class MarketDataService:
         if not original_symbols:
             return {}
 
-        ts_codes: List[str] = []
-        alias_map: Dict[str, str] = {}
+        ts_codes: list[str] = []
+        alias_map: dict[str, str] = {}
         for symbol in original_symbols:
             ts_code = self._to_ts_code(symbol)
             if ts_code:
@@ -87,10 +84,10 @@ class MarketDataService:
         if not ts_codes:
             return {}
 
-        result_by_ts: Dict[str, Dict[str, object]] = {}
-        now = dt.datetime.now().strftime("%Y%m%d%H%M%S")
+        result_by_ts: dict[str, dict[str, object]] = {}
+        dt.datetime.now().strftime("%Y%m%d%H%M%S")
 
-        batches: List[List[str]] = []
+        batches: list[list[str]] = []
         step = 50 if src == "sina" else 1
         for i in range(0, len(ts_codes), step):
             batches.append(ts_codes[i : i + step])
@@ -122,7 +119,7 @@ class MarketDataService:
                 self.cache[code] = payload
                 result_by_ts[code] = payload
 
-        final_result: Dict[str, Dict[str, object]] = {}
+        final_result: dict[str, dict[str, object]] = {}
         for ts_code, original in alias_map.items():
             payload = result_by_ts.get(ts_code)
             if payload:

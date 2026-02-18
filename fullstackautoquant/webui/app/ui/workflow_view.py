@@ -4,25 +4,25 @@ from __future__ import annotations
 
 import datetime as dt
 import math
+from collections.abc import Iterable
 from dataclasses import dataclass
-from typing import Any, Dict, Iterable, Optional
+from typing import Any
 
 import pandas as pd
 import streamlit as st
-
 from app.database import Database
 from app.market_data import MarketDataService
-from app.ui.positions_data import digits_only_symbol, to_payload
 from app.services.data_access import DataAccess
+from app.ui.positions_data import digits_only_symbol, to_payload
 from app.workflow import WorkflowError, run_full_workflow, run_single_step
 
 
 @dataclass(frozen=True)
 class WorkflowDependencies:
-    config: Dict[str, object]
+    config: dict[str, object]
     data_access: DataAccess
-    db: Optional[Database] = None
-    market: Optional[MarketDataService] = None
+    db: Database | None = None
+    market: MarketDataService | None = None
 
 
 class WorkflowPage:
@@ -100,7 +100,7 @@ class WorkflowPage:
                             if outputs:
                                 st.write(outputs)
 
-    def _render_targets_section(self, result: Dict[str, object]) -> None:
+    def _render_targets_section(self, result: dict[str, object]) -> None:
         st.subheader("Plan Results", divider="blue")
 
         signals_info = result.get("signals", {})
@@ -153,7 +153,7 @@ class WorkflowPage:
 
     def _render_summary_and_orders(
         self,
-        result: Dict[str, object],
+        result: dict[str, object],
         summary_cols,
         remaining_cash: float,
         available_cash: float,
@@ -193,8 +193,8 @@ class WorkflowPage:
     def _render_orders_section(
         self,
         orders_df: pd.DataFrame,
-        signal_strengths: Dict[str, float],
-        signal_order: Dict[str, int],
+        signal_strengths: dict[str, float],
+        signal_order: dict[str, int],
     ) -> None:
         if orders_df.empty:
             st.caption("No buy/sell orders.")
@@ -283,7 +283,7 @@ class WorkflowPage:
         self,
         orders_df: pd.DataFrame,
         available_cash: float,
-        signal_order: Dict[str, int],
+        signal_order: dict[str, int],
     ) -> pd.DataFrame:
         if orders_df.empty or "side" not in orders_df or "price" not in orders_df:
             return orders_df
@@ -339,7 +339,7 @@ class WorkflowPage:
         others = capped_df.loc[~buy_mask]
         return pd.concat([buy_orders, others], ignore_index=True)
 
-    def _pick_strength_column(self, columns: Iterable[str]) -> Optional[str]:
+    def _pick_strength_column(self, columns: Iterable[str]) -> str | None:
         for candidate in [
             "signal_strength",
             "confidence",
@@ -413,7 +413,7 @@ class WorkflowPage:
             mime="text/csv",
         )
 
-    def _render_risk_section(self, result: Dict[str, object], debug_mode: bool) -> None:
+    def _render_risk_section(self, result: dict[str, object], debug_mode: bool) -> None:
         risk_state = result.get("risk_state")
         if isinstance(risk_state, dict):
             allow_buy = bool(risk_state.get("allow_buy", True))
@@ -459,7 +459,7 @@ class WorkflowPage:
         else:
             st.caption("No historical position records.")
 
-    def _fetch_names(self, symbols: set[str]) -> Dict[str, str]:
+    def _fetch_names(self, symbols: set[str]) -> dict[str, str]:
         market = self._deps.market
         if not symbols or market is None:
             return {}
@@ -470,7 +470,7 @@ class WorkflowPage:
             st.warning(f"Failed to get stock names:{exc}")
             return {}
 
-    def _serialize_step(self, step: Any) -> Dict[str, Any]:
+    def _serialize_step(self, step: Any) -> dict[str, Any]:
         outputs = {}
         for key, value in getattr(step, "output_paths", {}).items():
             outputs[key] = str(value)
@@ -482,7 +482,7 @@ class WorkflowPage:
             "recorded_at": dt.datetime.utcnow().isoformat(),
         }
 
-    def _extract_signal_strengths(self, result: Dict[str, object]) -> Dict[str, float]:
+    def _extract_signal_strengths(self, result: dict[str, object]) -> dict[str, float]:
         signals_info = result.get("signals")
         if isinstance(signals_info, dict):
             signals = signals_info.get("signals")
@@ -498,7 +498,7 @@ class WorkflowPage:
             strength_column = "confidence"
         if strength_column is None or "instrument" not in df.columns:
             return {}
-        mapping: Dict[str, float] = {}
+        mapping: dict[str, float] = {}
         column = "instrument" if "instrument" in df.columns else "symbol" if "symbol" in df.columns else None
         if column is None:
             return {}
@@ -511,7 +511,7 @@ class WorkflowPage:
                 mapping[alias] = val
         return mapping
 
-    def _extract_signal_order(self, result: Dict[str, object]) -> Dict[str, int]:
+    def _extract_signal_order(self, result: dict[str, object]) -> dict[str, int]:
         signals_info = result.get("signals")
         if isinstance(signals_info, dict):
             signals = signals_info.get("signals")
@@ -525,13 +525,13 @@ class WorkflowPage:
         column = "instrument" if "instrument" in df.columns else "symbol" if "symbol" in df.columns else None
         if column is None:
             return {}
-        order: Dict[str, int] = {}
+        order: dict[str, int] = {}
         for rank, instrument in enumerate(df[column].tolist(), start=1):
             for alias in self._expand_symbol_aliases(instrument):
                 order[alias] = rank
         return order
 
-    def _lookup_signal_value(self, signal_map: Dict[str, float], symbol: str, default: float) -> float:
+    def _lookup_signal_value(self, signal_map: dict[str, float], symbol: str, default: float) -> float:
         if not isinstance(symbol, str):
             return default
         for alias in self._expand_symbol_aliases(symbol):

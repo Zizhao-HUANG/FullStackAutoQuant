@@ -1,9 +1,8 @@
 from __future__ import annotations
 
-import datetime as dt
 import math
+from collections.abc import Sequence
 from dataclasses import dataclass
-from typing import Iterable, List, Sequence, Tuple
 
 import pandas as pd
 
@@ -32,13 +31,13 @@ def normalize_symbol(symbol: object) -> str:
 
 @dataclass
 class ApplyResult:
-    positions: List[dict[str, float]]
-    sold: List[dict[str, float]]
+    positions: list[dict[str, float]]
+    sold: list[dict[str, float]]
     cash_delta: float
     buy_notional: float
     sell_notional: float
     processed: int
-    warnings: List[str]
+    warnings: list[str]
 
 
 def _to_dataframe(rows: Sequence[dict[str, object]], columns: Sequence[str]) -> pd.DataFrame:
@@ -90,8 +89,8 @@ def apply_orders(
     orders_df["volume"] = pd.to_numeric(orders_df["volume"], errors="coerce").fillna(0.0)
     orders_df["price"] = pd.to_numeric(orders_df["price"], errors="coerce").fillna(0.0)
 
-    sold_records: List[dict[str, float]] = []
-    warnings: List[str] = []
+    sold_records: list[dict[str, float]] = []
+    warnings: list[str] = []
     cash_delta = 0.0
     buy_notional = 0.0
     sell_notional = 0.0
@@ -153,7 +152,7 @@ def apply_orders(
         else:
             warnings.append(f"Unknown side {side}, Order {symbol} skipped.")
 
-    updated_positions: List[dict[str, float]] = []
+    updated_positions: list[dict[str, float]] = []
     for symbol in sorted(positions_map):
         pos = positions_map[symbol]
         qty = float(pos.get("qty", 0.0) or 0.0)
@@ -182,7 +181,7 @@ def cap_buy_orders_by_cash(
     orders: Sequence[dict[str, object]] | pd.DataFrame,
     available_cash: float,
     lot_size: int = 1,
-) -> Tuple[pd.DataFrame, List[str]]:
+) -> tuple[pd.DataFrame, list[str]]:
     """Limit buy order count by available capital, return adjusted orders and trimmed symbols."""
 
     lot = max(1, int(lot_size or 1))
@@ -224,8 +223,8 @@ def cap_buy_orders_by_cash(
         sell_cash += row.price * sell_qty
 
     remaining_cash = cash + sell_cash
-    trimmed_symbols: List[str] = []
-    new_volumes: List[float] = []
+    trimmed_symbols: list[str] = []
+    new_volumes: list[float] = []
 
     for row in orders_df.itertuples(index=False):
         volume = float(getattr(row, "volume", 0.0) or 0.0)

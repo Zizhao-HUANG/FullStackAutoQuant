@@ -1,9 +1,9 @@
-import os
 import argparse
+import os
 import subprocess
 import sys
 
-from utils import load_config, ensure_logs_dir
+from utils import ensure_logs_dir, load_config
 
 
 def parse_args():

@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 
 """
 Daily update of combined_factors_df.parquet(native Experiment/Runner alternative):
@@ -11,10 +10,10 @@ Daily update of combined_factors_df.parquet(native Experiment/Runner alternative
 from __future__ import annotations
 
 import argparse
-from pathlib import Path
-import os
-import logging
 import datetime as dt
+import logging
+import os
+from pathlib import Path
 
 import pandas as pd
 import qlib
@@ -58,8 +57,8 @@ def main() -> int:
     # Minimum intrusion: install fixed version only if missing, for stable behavior.
     try:
         import importlib
-        import sys
         import subprocess
+        import sys
         importlib.import_module("polars")
     except Exception:
         logger.info("polars not installed, installing polars==1.32.0 to support factor computation……")
@@ -91,8 +90,8 @@ def main() -> int:
     qlib.init(provider_uri=provider_uri, region=args.region)
 
     # Set RD-Agent factor execution data directory (overrides both debug and full). Must be set before importing RD-Agent components!
-    os.environ["FACTOR_CoSTEER_DATA_FOLDER"] = str(base_dir)
-    os.environ["FACTOR_CoSTEER_DATA_FOLDER_DEBUG"] = str(base_dir)
+    os.environ["FACTOR_COSTEER_DATA_FOLDER"] = str(base_dir)
+    os.environ["FACTOR_COSTEER_DATA_FOLDER_DEBUG"] = str(base_dir)
 
     # Strict strategy: disable native execution path, always locally execute both factor.py and merge results
     def _save_dataframe_to_parquet(df: pd.DataFrame, out_path: Path) -> None:

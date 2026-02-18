@@ -1,10 +1,11 @@
 from __future__ import annotations
 
-from copy import deepcopy
-from pathlib import Path
-from typing import Any, Dict, Iterable, Optional, Union, Set, Sequence
 import sys
 import warnings
+from collections.abc import Iterable, Sequence
+from copy import deepcopy
+from pathlib import Path
+from typing import Any
 
 import pandas as pd
 import yaml
@@ -19,7 +20,7 @@ except ModuleNotFoundError:
 
 from fullstackautoquant.model.io.data_loader import load_combined_factors
 
-TaskCfg = Dict[str, Any]
+TaskCfg = dict[str, Any]
 
 __all__ = [
     "TaskConfigError",
@@ -40,7 +41,7 @@ _REPO_ROOT = Path(__file__).resolve().parents[2]  # fullstackautoquant project r
 TASK_DEFAULT_PATH = _REPO_ROOT / "configs" / "task_rendered.yaml"
 
 
-def _normalize_date(value: Union[str, Any]) -> str:
+def _normalize_date(value: str | Any) -> str:
     if hasattr(value, "isoformat"):
         try:
             return value.isoformat()
@@ -49,7 +50,7 @@ def _normalize_date(value: Union[str, Any]) -> str:
     return str(value)
 
 
-def _normalize_date(value: Union[str, Any]) -> str:
+def _normalize_date(value: str | Any) -> str:
     if hasattr(value, "isoformat"):
         try:
             return value.isoformat()
@@ -71,7 +72,7 @@ def load_task_config(path: Path) -> TaskCfg:
     return data
 
 
-def _locate_handler_cfg(task_cfg: TaskCfg) -> Dict[str, Any]:
+def _locate_handler_cfg(task_cfg: TaskCfg) -> dict[str, Any]:
     dataset_cfg = task_cfg.get("dataset")
     if not isinstance(dataset_cfg, dict):
         raise TaskConfigError("task_rendered.yaml is missing dataset config")
@@ -84,7 +85,7 @@ def _locate_handler_cfg(task_cfg: TaskCfg) -> Dict[str, Any]:
     return handler_cfg
 
 
-def _resolve_instrument_universe(spec: Union[str, Sequence[str], None]) -> Optional[Set[str]]:
+def _resolve_instrument_universe(spec: str | Sequence[str] | None) -> set[str] | None:
     if spec is None:
         return None
     if isinstance(spec, str):
@@ -129,18 +130,17 @@ def _filter_factor_df_by_instruments(df, instrument_spec, strict: bool = False) 
 
 
 def _inject_combined_factors(
-    dl_sequence: Iterable[Dict[str, Any]],
+    dl_sequence: Iterable[dict[str, Any]],
     combined_factors_path: Path,
 ) -> None:
     cf_df = load_combined_factors(combined_factors_path)
     # Infer the target instrument universe (assuming consistent instruments across the handler)
-    instrument_spec = None
     for loader_cfg in dl_sequence:
         if not isinstance(loader_cfg, dict):
             continue
         if loader_cfg.get("class") in {"qlib.contrib.data.loader.Alpha158DL", "Alpha158DL"}:
             loader_kwargs = loader_cfg.get("kwargs", {})
-            instrument_spec = loader_kwargs.get("instruments")
+            loader_kwargs.get("instruments")
     # If spec was not captured above, leave it to handler_kwargs for further filtering
     for loader_cfg in dl_sequence:
         if not isinstance(loader_cfg, dict):
@@ -155,8 +155,8 @@ def _inject_combined_factors(
 def build_handler_from_task(
     task_cfg: TaskCfg,
     combined_factors_path: Path,
-    start_time: Optional[str] = None,
-    end_time: Optional[str] = None,
+    start_time: str | None = None,
+    end_time: str | None = None,
 ) -> Any:
     handler_cfg = deepcopy(_locate_handler_cfg(task_cfg))
     handler_kwargs = handler_cfg.setdefault("kwargs", {})
@@ -183,7 +183,7 @@ def build_handler_from_task(
     return init_instance_by_config(handler_cfg)
 
 
-def get_dataset_step_len(task_cfg: TaskCfg) -> Optional[int]:
+def get_dataset_step_len(task_cfg: TaskCfg) -> int | None:
     dataset_cfg = task_cfg.get("dataset", {})
     dataset_kwargs = dataset_cfg.get("kwargs", {})
     step_len = dataset_kwargs.get("step_len")
@@ -195,7 +195,7 @@ def get_dataset_step_len(task_cfg: TaskCfg) -> Optional[int]:
     return None
 
 
-def get_dataset_segments(task_cfg: TaskCfg) -> Dict[str, Any]:
+def get_dataset_segments(task_cfg: TaskCfg) -> dict[str, Any]:
     dataset_cfg = task_cfg.get("dataset", {})
     dataset_kwargs = dataset_cfg.get("kwargs", {})
     segments = dataset_kwargs.get("segments")
@@ -204,7 +204,7 @@ def get_dataset_segments(task_cfg: TaskCfg) -> Dict[str, Any]:
     return segments
 
 
-def get_training_time_range(task_cfg: TaskCfg) -> Dict[str, str]:
+def get_training_time_range(task_cfg: TaskCfg) -> dict[str, str]:
     handler_cfg = _locate_handler_cfg(task_cfg)
     handler_kwargs = handler_cfg.get("kwargs", {})
     start = handler_kwargs.get("start_time")

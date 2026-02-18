@@ -4,14 +4,14 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any
 
 
 class RiskReaderError(Exception):
     pass
 
 
-def load_risk_state(path: Path) -> Dict[str, Any]:
+def load_risk_state(path: Path) -> dict[str, Any]:
     if not path.exists():
         raise RiskReaderError(f"Not foundRisk state file: {path}")
     with path.open("r", encoding="utf-8") as fh:

@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Iterable, List
 
 import pandas as pd
 
@@ -21,7 +20,7 @@ def parse_ranked_scores(
     dataframe: pd.DataFrame,
     confidence_floor: float,
     topk: int,
-) -> List[SignalRecord]:
+) -> list[SignalRecord]:
     _ensure_required_columns(dataframe)
     date_str = _extract_single_date(dataframe)
     filtered = dataframe[dataframe["confidence"] >= confidence_floor].copy()

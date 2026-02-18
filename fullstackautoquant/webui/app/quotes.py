@@ -3,14 +3,12 @@
 from __future__ import annotations
 
 import datetime as dt
+from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
-from typing import Dict, Iterable, Mapping, Optional
 
 import pandas as pd
 import streamlit as st
-
 from app.ui.positions_data import normalize_symbols
-
 
 _QUOTE_STATE_KEY = "positions_quotes"
 _QUOTE_UPDATED_AT_KEY = "positions_quotes_updated_at"
@@ -20,8 +18,8 @@ _QUOTE_UPDATED_AT_KEY = "positions_quotes_updated_at"
 class QuoteFetchResult:
     """Return quote dict and update time."""
 
-    quotes: Dict[str, Dict[str, object]]
-    updated_at: Optional[dt.datetime]
+    quotes: dict[str, dict[str, object]]
+    updated_at: dt.datetime | None
 
 
 def format_currency(value: float) -> str:
@@ -62,7 +60,7 @@ def fetch_quotes(
         if symbol not in cached or price_missing or (recompute_missing and name_missing):
             need_refresh.append(symbol)
 
-    quotes: Dict[str, Dict[str, object]] = {}
+    quotes: dict[str, dict[str, object]] = {}
     if need_refresh or force:
         try:
             target_symbols = normalized if force else need_refresh
@@ -76,7 +74,7 @@ def fetch_quotes(
     updated.update(quotes)
     st.session_state[_QUOTE_STATE_KEY] = updated
 
-    updated_at: Optional[dt.datetime] = None
+    updated_at: dt.datetime | None = None
     if quotes:
         updated_at = dt.datetime.now()
         st.session_state[_QUOTE_UPDATED_AT_KEY] = updated_at

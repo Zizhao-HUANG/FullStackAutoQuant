@@ -3,9 +3,10 @@
 from __future__ import annotations
 
 import copy
+from collections.abc import Mapping
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, Mapping
+from typing import Any
 
 import streamlit as st
 
@@ -21,16 +22,16 @@ class StrategyDefaults:
 
 @dataclass(frozen=True)
 class StrategyOverrides:
-    config: Dict[str, object]
+    config: dict[str, object]
     daily_pv: Path
     initial_capital: float
     logs_root: Path
 
 
-def render_strategy_sections(strategy_cfg: Dict[str, object], defaults: StrategyDefaults) -> StrategyOverrides:
+def render_strategy_sections(strategy_cfg: dict[str, object], defaults: StrategyDefaults) -> StrategyOverrides:
     """Render all strategy-related tabs and return collected overrides."""
 
-    working_cfg: Dict[str, Any] = copy.deepcopy(strategy_cfg)
+    working_cfg: dict[str, Any] = copy.deepcopy(strategy_cfg)
 
     portfolio_cfg = _ensure_dict(working_cfg.get("portfolio"))
     weights_cfg = _ensure_dict(working_cfg.get("weights"))
@@ -72,7 +73,7 @@ def render_strategy_sections(strategy_cfg: Dict[str, object], defaults: Strategy
     )
 
 
-def _render_portfolio_tab(tab, portfolio: Dict[str, Any]) -> Dict[str, Any]:
+def _render_portfolio_tab(tab, portfolio: dict[str, Any]) -> dict[str, Any]:
     with tab:
         col1, col2, col3 = st.columns(3)
         portfolio["topk"] = int(col1.number_input("TopK Count", value=int(portfolio.get("topk", 20)), step=1))
@@ -109,7 +110,7 @@ def _render_portfolio_tab(tab, portfolio: Dict[str, Any]) -> Dict[str, Any]:
     return portfolio
 
 
-def _render_weights_tab(tab, weights: Dict[str, Any]) -> Dict[str, Any]:
+def _render_weights_tab(tab, weights: dict[str, Any]) -> dict[str, Any]:
     with tab:
         options = ["equal", "ranked"]
         current_mode = str(weights.get("mode", "equal"))
@@ -148,7 +149,7 @@ def _render_weights_tab(tab, weights: Dict[str, Any]) -> Dict[str, Any]:
     return weights
 
 
-def _render_order_tab(tab, order: Dict[str, Any]) -> Dict[str, Any]:
+def _render_order_tab(tab, order: dict[str, Any]) -> dict[str, Any]:
     with tab:
         modes = ["auto", "manual"]
         current_mode = str(order.get("mode", "auto"))
@@ -213,7 +214,7 @@ def _render_order_tab(tab, order: Dict[str, Any]) -> Dict[str, Any]:
     return order
 
 
-def _render_risk_tab(tab, risk: Dict[str, Any]) -> Dict[str, Any]:
+def _render_risk_tab(tab, risk: dict[str, Any]) -> dict[str, Any]:
     with tab:
         col1, col2 = st.columns(2)
         risk["day_drawdown_limit"] = float(
@@ -237,7 +238,7 @@ def _render_risk_tab(tab, risk: Dict[str, Any]) -> Dict[str, Any]:
     return risk
 
 
-def _render_capital_tab(tab, capital: Dict[str, Any]) -> Dict[str, Any]:
+def _render_capital_tab(tab, capital: dict[str, Any]) -> dict[str, Any]:
     with tab:
         capital["initial"] = float(
             st.number_input(
@@ -250,7 +251,7 @@ def _render_capital_tab(tab, capital: Dict[str, Any]) -> Dict[str, Any]:
     return capital
 
 
-def _render_paths_tab(tab, paths: Dict[str, Any], defaults: StrategyDefaults) -> Dict[str, Any]:
+def _render_paths_tab(tab, paths: dict[str, Any], defaults: StrategyDefaults) -> dict[str, Any]:
     with tab:
         st.markdown("#### Path Configuration")
         col1, col2, col3 = st.columns(3)
@@ -270,7 +271,7 @@ def _render_paths_tab(tab, paths: Dict[str, Any], defaults: StrategyDefaults) ->
     return paths
 
 
-def _render_rebalance_tab(tab, rebalance: Dict[str, Any]) -> Dict[str, Any]:
+def _render_rebalance_tab(tab, rebalance: dict[str, Any]) -> dict[str, Any]:
     with tab:
         col1, col2, col3 = st.columns(3)
         rebalance["max_non_target_to_replace"] = int(
@@ -306,7 +307,7 @@ def _resolve_daily_pv(paths_cfg: Mapping[str, Any], default_daily_pv: Path) -> P
         return default_daily_pv
 
 
-def _ensure_dict(payload: Any) -> Dict[str, Any]:
+def _ensure_dict(payload: Any) -> dict[str, Any]:
     return dict(payload) if isinstance(payload, Mapping) else {}
 
 

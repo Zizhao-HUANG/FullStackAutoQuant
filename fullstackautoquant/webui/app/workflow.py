@@ -3,16 +3,16 @@
 from __future__ import annotations
 
 import json
+import os
 import re
 import subprocess
+import sys
 import tempfile
+from collections.abc import Iterable
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, Iterable, List, Optional
 
 import pandas as pd
-import sys
-import os
 
 
 def _ensure_repo_paths() -> None:
@@ -43,7 +43,7 @@ class StepResult:
     name: str
     stdout: str
     stderr: str
-    output_paths: Dict[str, Path]
+    output_paths: dict[str, Path]
 
 
 def _resolve_path(base: Path, value: str | None, default: str) -> Path:
@@ -88,7 +88,7 @@ def _filter_science_board_symbols(csv_path: Path) -> Path:
     return Path(tmp_file.name)
 
 
-def _run(cmd: List[str], cwd: Path) -> StepResult:
+def _run(cmd: list[str], cwd: Path) -> StepResult:
     try:
         env = dict(os.environ)
         pythonpath = env.get("PYTHONPATH", "")
@@ -117,8 +117,8 @@ def _run(cmd: List[str], cwd: Path) -> StepResult:
 def run_full_workflow(
     config: dict[str, object],
     *,
-    current_positions: Optional[Iterable[dict[str, object]]] = None,
-) -> Dict[str, object]:
+    current_positions: Iterable[dict[str, object]] | None = None,
+) -> dict[str, object]:
     base_dir = Path(__file__).resolve().parents[1]
     paths_cfg = config.get("paths", {})  # type: ignore[assignment]
     trading_dir = _resolve_path(base_dir, str(paths_cfg.get("trading_dir", "../trading")), "../trading")
@@ -133,13 +133,13 @@ def run_full_workflow(
     risk_path = temp_dir / "risk_state.json"
     targets_path = temp_dir / "targets.json"
     orders_path = temp_dir / "orders.json"
-    current_positions_path: Optional[Path] = None
+    current_positions_path: Path | None = None
     if current_positions is not None:
         payload = {"positions": list(current_positions)}
         current_positions_path = temp_dir / "current_positions.json"
         current_positions_path.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
 
-    steps: List[StepResult] = []
+    steps: list[StepResult] = []
     step = _run(
         [python_exec, "signals_from_csv.py", "--csv", str(ranked_csv), "--config", str(config_path), "--out", str(signals_path)],
         cwd=trading_dir,
@@ -176,7 +176,7 @@ def run_full_workflow(
     step.output_paths.update({"targets": targets_path, "orders": orders_path})
     steps.append(step)
 
-    result: Dict[str, object] = {
+    result: dict[str, object] = {
         "steps": [
             {
                 "name": s.name,
@@ -257,7 +257,7 @@ def run_single_step(
     config: dict[str, object],
     step: str,
     *,
-    current_positions: Optional[Iterable[dict[str, object]]] = None,
+    current_positions: Iterable[dict[str, object]] | None = None,
 ) -> StepResult:
     base_dir = Path(__file__).resolve().parents[1]
     paths_cfg = config.get("paths", {})  # type: ignore[assignment]

@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 
 """
 Production inference script that strictly replicates the training data pipeline.
@@ -31,8 +30,8 @@ import shutil
 import sys
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
 from types import SimpleNamespace
+from typing import Any
 
 
 def _ensure_conda_env() -> None:
@@ -69,11 +68,11 @@ from fullstackautoquant.model.task_config import (
     TASK_DEFAULT_PATH,
     TaskConfigError,
     build_handler_from_task,
-    get_dataset_segments,
     get_dataset_step_len,
     get_training_time_range,
     load_task_config,
 )
+
 CONFIG_SCHEMA_PATH = Path(__file__).resolve().parents[1] / "configs" / "schema" / "model_inference.schema.json"
 
 
@@ -82,7 +81,7 @@ class ModelPaths:
     combined_factors: Path
     params: Path
     output_csv: Path
-    archive_dir: Optional[Path]
+    archive_dir: Path | None
 
 
 @dataclass(frozen=True)
@@ -110,10 +109,10 @@ class OutputSettings:
 @dataclass(frozen=True)
 class InferenceConfig:
     calendar: CalendarRange
-    data: Dict[str, Any]
+    data: dict[str, Any]
     model: ModelSettings
     output: OutputSettings
-    logging: Dict[str, Any]
+    logging: dict[str, Any]
     task_config: Path
 
 
@@ -218,21 +217,21 @@ class ConfigError(Exception):
     """Configuration validation failed."""
 
 
-def _load_json(path: Path) -> Dict[str, Any]:
+def _load_json(path: Path) -> dict[str, Any]:
     try:
         return json.loads(path.read_text(encoding="utf-8"))
     except Exception as exc:  # pragma: no cover - defensive
         raise ConfigError(f"Cannot read config file {path}: {exc}") from exc
 
 
-def _load_schema() -> Dict[str, Any]:
+def _load_schema() -> dict[str, Any]:
     try:
         return json.loads(CONFIG_SCHEMA_PATH.read_text(encoding="utf-8"))
     except FileNotFoundError as exc:
         raise ConfigError(f"Missing config schema: {CONFIG_SCHEMA_PATH}") from exc
 
 
-def _validate_config(raw_cfg: Dict[str, Any]) -> Dict[str, Any]:
+def _validate_config(raw_cfg: dict[str, Any]) -> dict[str, Any]:
     schema = _load_schema()
     try:
         jsonschema.validate(instance=raw_cfg, schema=schema)
@@ -241,7 +240,7 @@ def _validate_config(raw_cfg: Dict[str, Any]) -> Dict[str, Any]:
     return raw_cfg
 
 
-def _dataclass_from_config(raw_cfg: Dict[str, Any]) -> InferenceConfig:
+def _dataclass_from_config(raw_cfg: dict[str, Any]) -> InferenceConfig:
     calendar = raw_cfg["calendar"]
     data = raw_cfg["data"]
     model = raw_cfg["model"]
@@ -272,13 +271,13 @@ def _dataclass_from_config(raw_cfg: Dict[str, Any]) -> InferenceConfig:
 
 
 def _build_paths(cfg: InferenceConfig, args: argparse.Namespace) -> ModelPaths:
-    combined_source: Optional[str] = args.combined_factors or cfg.data.get("combined_factors_out")
+    combined_source: str | None = args.combined_factors or cfg.data.get("combined_factors_out")
     if not combined_source:
         raise ConfigError("Missing combined_factors path. Provide via --combined_factors or config file.")
-    params_source: Optional[str] = args.params or str(cfg.model.weights)
+    params_source: str | None = args.params or str(cfg.model.weights)
     if not params_source:
         raise ConfigError("Missing model weights path. Provide via --params or config file.")
-    output_target: Optional[str] = args.out or str(cfg.output.latest_csv)
+    output_target: str | None = args.out or str(cfg.output.latest_csv)
     if not output_target:
         raise ConfigError("Missing output CSV path. Provide via --out or config file.")
 
@@ -367,7 +366,7 @@ def main() -> int:
     # 2) Build training-equivalent Handler + Dataset (TSDatasetH)
     paths = _build_paths(cfg, args)
     _ensure_paths(paths)
-    instruments = args.instruments or cfg.data.get("instruments", "csi300")
+    args.instruments or cfg.data.get("instruments", "csi300")
 
     task_cfg_path = Path(args.task_config) if args.task_config else cfg.task_config
     try:
@@ -400,10 +399,9 @@ def main() -> int:
         start_time=start_date,
         end_time=handler_end,
     )
-    from qlib.data.dataset import TSDatasetH
-
     # Determine the trading day for inference: prefer the nearest date <= target (no strict N=300 requirement)
     from qlib.data.dataset import DataHandlerLP as DH
+    from qlib.data.dataset import TSDatasetH
     try:
         full_feat = handler.fetch(selector=slice(None, None), level="datetime", col_set="feature", data_key=DH.DK_I)
         if full_feat.empty:
@@ -462,7 +460,9 @@ def main() -> int:
 
     # 5) Compute confidence (based on MC Dropout prediction std; near 0 without Dropout) and persist
     try:
-        from qlib.data.dataset import DataHandlerLP as DH  # ensure DH available even if previous try failed
+        from qlib.data.dataset import (
+            DataHandlerLP as DH,  # ensure DH available even if previous try failed
+        )
         # Data preparation consistent with GeneralPTNN.predict
         dl_test = dataset.prepare("test", col_set=["feature", "label"], data_key=DH.DK_I)
         if hasattr(dl_test, "config"):
@@ -476,7 +476,7 @@ def main() -> int:
         )
 
         dropout_passes = int(getattr(cfg.model, "dropout_samples", 0) or 0)
-        preds_runs: List[np.ndarray] = []
+        preds_runs: list[np.ndarray] = []
 
         if dropout_passes > 0:
             dropout_model = copy.deepcopy(model)

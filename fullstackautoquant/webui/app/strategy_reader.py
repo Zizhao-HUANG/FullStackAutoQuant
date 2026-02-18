@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any
 
 import pandas as pd
 
@@ -13,7 +13,7 @@ class StrategyReaderError(Exception):
     pass
 
 
-def load_targets_from_json(path: Path) -> List[Dict[str, Any]]:
+def load_targets_from_json(path: Path) -> list[dict[str, Any]]:
     if not path.exists():
         raise StrategyReaderError(f"Target positions file does not exist: {path}")
     with path.open("r", encoding="utf-8") as fh:

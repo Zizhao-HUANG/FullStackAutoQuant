@@ -1,9 +1,9 @@
 from __future__ import annotations
 
+from math import isfinite
+
 import numpy as np
 import pandas as pd
-
-from math import isfinite
 
 from .components.records import BacktestSummary
 

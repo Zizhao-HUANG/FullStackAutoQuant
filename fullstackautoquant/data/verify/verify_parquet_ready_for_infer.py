@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 
 """
 Verify that the built inference feature parquet satisfies training consistency requirements:
@@ -19,20 +18,18 @@ Usage:
 from __future__ import annotations
 
 import argparse
-from typing import List
 
 import numpy as np
 import pandas as pd
 
-
-ALPHA158_NAMES: List[str] = [
+ALPHA158_NAMES: list[str] = [
     "RESI5", "WVMA5", "RSQR5", "KLEN", "RSQR10", "CORR5", "CORD5", "CORR10",
     "ROC60", "RESI10", "VSTD5", "RSQR60", "CORR60", "WVMA60", "STD5",
     "RSQR20", "CORD60", "CORD10", "CORR20", "KLOW",
 ]
 
 
-def load_new_factor_names(cf_path: str) -> List[str]:
+def load_new_factor_names(cf_path: str) -> list[str]:
     df = pd.read_parquet(cf_path)
     if not isinstance(df.columns, pd.MultiIndex):
         df.columns = pd.MultiIndex.from_tuples([("feature", str(c)) for c in df.columns])
@@ -41,7 +38,7 @@ def load_new_factor_names(cf_path: str) -> List[str]:
 
 def verify(path: str, cf_path: str | None) -> int:
     df = pd.read_parquet(path)
-    issues: List[str] = []
+    issues: list[str] = []
 
     # index check
     if not isinstance(df.index, pd.MultiIndex) or df.index.names != ["datetime", "instrument"]:

@@ -1,19 +1,18 @@
-import os
 import json
 import math
-from typing import Dict, List, Tuple, Optional
+import os
 
 import pandas as pd
 import yaml
 
 
-def load_config(config_path: Optional[str]) -> dict:
+def load_config(config_path: str | None) -> dict:
     """Load YAML config; if None, use default path next to this file."""
     if config_path is None:
         config_path = os.path.join(os.path.dirname(__file__), "config.yaml")
     elif not os.path.isabs(config_path):
         config_path = os.path.abspath(os.path.join(os.getcwd(), config_path))
-    with open(config_path, "r", encoding="utf-8") as f:
+    with open(config_path, encoding="utf-8") as f:
         cfg = yaml.safe_load(f)
     # ensure logs dir
     logs_dir = cfg.get("paths", {}).get("logs_dir")
@@ -35,7 +34,7 @@ def load_config(config_path: Optional[str]) -> dict:
     return cfg
 
 
-def fetch_tushare_quotes(gm_symbols: List[str], src: str = "sina") -> Dict[str, Dict[str, float]]:
+def fetch_tushare_quotes(gm_symbols: list[str], src: str = "sina") -> dict[str, dict[str, float]]:
     """Fetch realtime quotes from Tushare and return mapping of GM symbols."""
 
     gm_symbols = [s for s in gm_symbols if isinstance(s, str)]
@@ -43,7 +42,7 @@ def fetch_tushare_quotes(gm_symbols: List[str], src: str = "sina") -> Dict[str, 
         return {}
 
     ts_codes = []
-    gm_map: Dict[str, str] = {}
+    gm_map: dict[str, str] = {}
     for gm_symbol in gm_symbols:
         ts_code = gm_to_ts_code(gm_symbol)
         if ts_code:
@@ -66,7 +65,7 @@ def fetch_tushare_quotes(gm_symbols: List[str], src: str = "sina") -> Dict[str, 
     if df is None or df.empty:
         return {}
 
-    result: Dict[str, Dict[str, float]] = {}
+    result: dict[str, dict[str, float]] = {}
     for _, row in df.iterrows():
         row_dict = {str(col).lower(): row[col] for col in df.columns}
         ts_code = str(row_dict.get("ts_code") or row_dict.get("symbol") or "").upper()
@@ -89,7 +88,7 @@ def fetch_tushare_quotes(gm_symbols: List[str], src: str = "sina") -> Dict[str, 
     return result
 
 
-def instrument_to_gm(symbol: str) -> Optional[str]:
+def instrument_to_gm(symbol: str) -> str | None:
     symbol = symbol.strip().upper()
     if len(symbol) != 8:
         return None
@@ -104,7 +103,7 @@ def instrument_to_gm(symbol: str) -> Optional[str]:
     return None
 
 
-def gm_to_instrument(gm_symbol: str) -> Optional[str]:
+def gm_to_instrument(gm_symbol: str) -> str | None:
     gm_symbol = gm_symbol.strip().upper()
     if gm_symbol.startswith("SHSE."):
         return f"SH{gm_symbol.split('.')[1]}"
@@ -113,7 +112,7 @@ def gm_to_instrument(gm_symbol: str) -> Optional[str]:
     return None
 
 
-def gm_to_ts_code(gm_symbol: str) -> Optional[str]:
+def gm_to_ts_code(gm_symbol: str) -> str | None:
     """Map GM symbol to Tushare ts_code, e.g., SHSE.600000 -> 600000.SH"""
     gm_symbol = gm_symbol.strip().upper()
     if gm_symbol.startswith("SHSE."):
@@ -123,7 +122,7 @@ def gm_to_ts_code(gm_symbol: str) -> Optional[str]:
     return None
 
 
-def ts_code_to_gm(ts_code: str) -> Optional[str]:
+def ts_code_to_gm(ts_code: str) -> str | None:
     ts_code = ts_code.strip().upper()
     if ts_code.endswith(".SH"):
         return f"SHSE.{ts_code.split('.')[0]}"
@@ -306,13 +305,13 @@ def clamp_volume_to_lot(gm_symbol: str, volume: int) -> int:
     return (int(volume) // lot) * lot
 
 
-def read_close_prices_from_h5(h5_path: str, instruments: List[str]) -> Dict[str, float]:
+def read_close_prices_from_h5(h5_path: str, instruments: list[str]) -> dict[str, float]:
     if not os.path.exists(h5_path):
         return {}
     df = pd.read_hdf(h5_path, key="data")
     last_dt = df.index.get_level_values("datetime").max()
     df_last = df.xs(last_dt, level="datetime")
-    res: Dict[str, float] = {}
+    res: dict[str, float] = {}
     for ins in instruments:
         if ins in df_last.index and "$close" in df_last.columns:
             close_val = float(df_last.loc[ins, "$close"])  # type: ignore
@@ -337,7 +336,7 @@ def save_json(obj, path: str) -> None:
 
 
 def load_json(path: str):
-    with open(path, "r", encoding="utf-8") as f:
+    with open(path, encoding="utf-8") as f:
         return json.load(f)
 
 

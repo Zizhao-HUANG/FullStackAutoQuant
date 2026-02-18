@@ -97,7 +97,21 @@ select = [
 ignore = [
     "E203",
     "E266",
+    "E501",   # line-too-long (black handles code formatting)
+    "E402",   # module-level import not at top (intentional for sys.path setup)
+    "SIM105", # suppressible-exception (contextlib.suppress less readable for these cases)
+    "SIM108", # if-else-block-instead-of-if-exp (readability)
+    "SIM102", # collapsible-if (readability in symbol normalization)
+    "SIM115", # open-file-with-context-handler (NamedTemporaryFile pattern)
+    "B023",   # function-uses-loop-variable (inner helpers in iteration)
+    "B904",   # raise-without-from-inside-except (mixed re-raise patterns)
 ]
+
+[tool.ruff.lint.per-file-ignores]
+"fullstackautoquant/trading/strategy.py" = ["F401"]  # imports used at runtime via fallback
+"fullstackautoquant/trading/execution.py" = ["F841"]  # variables kept for documentation
+"tests/test_backtest_engine.py" = ["B009"]  # getattr with constant needed for dynamic import
+"fullstackautoquant/webui/app/services/__init__.py" = ["F401", "UP035"]  # re-exports for downstream
 
 [tool.mypy]
 python_version = "3.10"
@@ -105,6 +119,7 @@ warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = false
 ignore_missing_imports = true
+exclude = ["fullstackautoquant/model/factors/"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 import datetime as dt
-from typing import Any, Dict, Sequence
+from collections.abc import Sequence
+from typing import Any
 
 import pandas as pd
 import streamlit as st
@@ -28,7 +29,7 @@ def render_apply_plan_section(
     current_positions_df: Sequence[dict[str, object]] | pd.DataFrame,
     workflow_result: dict[str, Any] | None,
     data_access: DataAccess,
-    config: Dict[str, Any],
+    config: dict[str, Any],
     key_prefix: str,
 ) -> None:
     """Display and execute"apply daily plan"operation, reusing apply_orders logic."""

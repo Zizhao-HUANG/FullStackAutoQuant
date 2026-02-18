@@ -2,15 +2,15 @@ from __future__ import annotations
 
 import datetime as dt
 import json
+from collections.abc import Iterable
 from pathlib import Path
-from typing import Dict, Iterable, List, Optional, Tuple
 
 import pandas as pd
 
 MANUAL_DECISIONS_VERSION = 1
 
 
-def _resolve_manual_dir(config: Dict[str, object]) -> Path:
+def _resolve_manual_dir(config: dict[str, object]) -> Path:
     base_dir = Path(__file__).resolve().parents[1]
     paths_cfg = config.get("paths", {}) if isinstance(config.get("paths"), dict) else {}
     manual_dir_ref = paths_cfg.get("manual_logs_dir", "../trading/logs/manual")
@@ -19,12 +19,12 @@ def _resolve_manual_dir(config: Dict[str, object]) -> Path:
     return manual_dir
 
 
-def _signal_lookup(signals_payload: Optional[object]) -> Tuple[str | None, Dict[str, Dict[str, object]]]:
+def _signal_lookup(signals_payload: object | None) -> tuple[str | None, dict[str, dict[str, object]]]:
     if not isinstance(signals_payload, dict):
         return None, {}
     signal_date = str(signals_payload.get("date")) if signals_payload.get("date") else None
     entries = signals_payload.get("signals", [])
-    lookup: Dict[str, Dict[str, object]] = {}
+    lookup: dict[str, dict[str, object]] = {}
     if isinstance(entries, Iterable):
         for item in entries:
             if not isinstance(item, dict):
@@ -36,7 +36,7 @@ def _signal_lookup(signals_payload: Optional[object]) -> Tuple[str | None, Dict[
     return signal_date, lookup
 
 
-def _coerce_float(value: object) -> Optional[float]:
+def _coerce_float(value: object) -> float | None:
     if value is None:
         return None
     try:
@@ -47,12 +47,12 @@ def _coerce_float(value: object) -> Optional[float]:
 
 def build_manual_decisions(
     orders: pd.DataFrame,
-    signals_payload: Optional[object] = None,
+    signals_payload: object | None = None,
     *,
-    applied_at: Optional[dt.datetime] = None,
-    note: Optional[str] = None,
-    approved_by: Optional[str] = None,
-) -> Tuple[List[Dict[str, object]], dt.datetime]:
+    applied_at: dt.datetime | None = None,
+    note: str | None = None,
+    approved_by: str | None = None,
+) -> tuple[list[dict[str, object]], dt.datetime]:
     if orders.empty:
         return [], applied_at or dt.datetime.now(dt.timezone.utc)
 
@@ -60,7 +60,7 @@ def build_manual_decisions(
     signal_date, signal_lookup = _signal_lookup(signals_payload)
     executed_date = applied_ts.date().isoformat()
 
-    decisions: List[Dict[str, object]] = []
+    decisions: list[dict[str, object]] = []
     base_prefix = applied_ts.strftime("%Y%m%d%H%M%S")
 
     for idx, row in orders.iterrows():
@@ -105,15 +105,15 @@ def build_manual_decisions(
 
 
 def append_manual_decisions(
-    config: Dict[str, object],
-    decisions: List[Dict[str, object]],
+    config: dict[str, object],
+    decisions: list[dict[str, object]],
     *,
     applied_at: dt.datetime,
 ) -> Path:
     manual_dir = _resolve_manual_dir(config)
     aggregate_path = manual_dir / "manual_decisions.json"
 
-    existing: List[Dict[str, object]] = []
+    existing: list[dict[str, object]] = []
     existing_version: int | None = None
     if aggregate_path.exists():
         try:
@@ -153,13 +153,13 @@ def append_manual_decisions(
 
 
 def log_manual_decisions(
-    config: Dict[str, object],
+    config: dict[str, object],
     orders: pd.DataFrame,
-    signals_payload: Optional[object] = None,
+    signals_payload: object | None = None,
     *,
-    note: Optional[str] = None,
-    approved_by: Optional[str] = None,
-) -> Tuple[Optional[Path], List[Dict[str, object]]]:
+    note: str | None = None,
+    approved_by: str | None = None,
+) -> tuple[Path | None, list[dict[str, object]]]:
     decisions, applied_at = build_manual_decisions(
         orders,
         signals_payload,

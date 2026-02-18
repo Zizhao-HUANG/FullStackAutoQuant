@@ -3,15 +3,13 @@
 from __future__ import annotations
 
 import json
+from collections.abc import Iterable
 from dataclasses import dataclass
-from typing import Dict, Iterable, List, Optional, Tuple
 
 import pandas as pd
-
 from app.database import Database
 
-
-_POSITION_ALIASES: Dict[str, str] = {
+_POSITION_ALIASES: dict[str, str] = {
     "symbol": "symbol",
     "Symbol": "symbol",
     "Symbol (symbol)": "symbol",
@@ -41,7 +39,7 @@ class PositionDiffResult:
     diff: pd.DataFrame
 
 
-def rename_columns(df: pd.DataFrame, mapping: Dict[str, str]) -> pd.DataFrame:
+def rename_columns(df: pd.DataFrame, mapping: dict[str, str]) -> pd.DataFrame:
     """Rename columns by mapping, keep original if key not found."""
     cols = {col: mapping.get(col, col) for col in df.columns}
     return df.rename(columns=cols)
@@ -49,7 +47,7 @@ def rename_columns(df: pd.DataFrame, mapping: Dict[str, str]) -> pd.DataFrame:
 
 def standardize_positions_dataframe(df: pd.DataFrame) -> pd.DataFrame:
     """Normalize broker import format to unified fields."""
-    renamed: Dict[str, str] = {}
+    renamed: dict[str, str] = {}
     for col in df.columns:
         key = col.strip().lower()
         if key in _POSITION_ALIASES:
@@ -129,13 +127,13 @@ def fill_missing_numeric(df: pd.DataFrame, columns: Iterable[str]) -> pd.DataFra
     return converted
 
 
-def to_payload(db: Optional[Database]) -> Tuple[List[Dict[str, object]], List[str]]:
+def to_payload(db: Database | None) -> tuple[list[dict[str, object]], list[str]]:
     """Generate GM symbol payload for workflow."""
     if db is None:
         return [], []
     df = get_positions_dataframe(db)
-    aggregated: Dict[str, int] = {}
-    skipped: List[str] = []
+    aggregated: dict[str, int] = {}
+    skipped: list[str] = []
     for row in df.itertuples(index=False):
         qty = float(getattr(row, "qty", 0.0) or 0.0)
         shares = int(round(qty))
@@ -151,9 +149,9 @@ def to_payload(db: Optional[Database]) -> Tuple[List[Dict[str, object]], List[st
     return payload, skipped
 
 
-def normalize_symbols(symbols: Iterable[str]) -> List[str]:
+def normalize_symbols(symbols: Iterable[str]) -> list[str]:
     """Deduplicate and clean symbols."""
-    normalized: List[str] = []
+    normalized: list[str] = []
     seen: set[str] = set()
     for symbol in symbols:
         if symbol is None:
@@ -187,7 +185,7 @@ def digits_only_symbol(symbol: str) -> str:
     return "".join(ch for ch in str(symbol).strip() if ch.isdigit())
 
 
-def to_gm_symbol(symbol: str) -> Optional[str]:
+def to_gm_symbol(symbol: str) -> str | None:
     """Convert to GM symbol encoding."""
     if symbol is None:
         return None

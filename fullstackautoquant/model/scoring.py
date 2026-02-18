@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Iterable, Tuple
+from collections.abc import Iterable
 
 import numpy as np
 import pandas as pd
@@ -8,7 +8,7 @@ import pandas as pd
 __all__ = ["rank_signals", "compute_confidence"]
 
 
-def rank_signals(predictions: pd.Series, target_date: str) -> Tuple[pd.Series, str]:
+def rank_signals(predictions: pd.Series, target_date: str) -> tuple[pd.Series, str]:
     mi_dt = predictions.index.get_level_values("datetime")
     dt_index = pd.DatetimeIndex(mi_dt)
     available_dates = {str(d.date()) for d in dt_index}

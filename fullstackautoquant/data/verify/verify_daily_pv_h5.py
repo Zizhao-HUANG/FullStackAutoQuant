@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 Verify daily_pv.h5 file structure and basic health (consistent with RD Agent conventions):
 - Can be read by pd.read_hdf(path, key='data')
@@ -12,7 +11,7 @@ from __future__ import annotations
 
 import argparse
 from pathlib import Path
-import sys
+
 import pandas as pd
 
 

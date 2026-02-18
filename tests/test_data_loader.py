@@ -3,7 +3,6 @@ from __future__ import annotations
 from pathlib import Path
 
 import pandas as pd
-
 from fullstackautoquant.model.io.data_loader import load_combined_factors
 
 

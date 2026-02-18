@@ -5,7 +5,6 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
-from typing import Dict
 
 import pandas as pd
 import streamlit as st
@@ -27,7 +26,10 @@ except ModuleNotFoundError:
     try:
         from trading.backtest.config import BacktestConfig as BTConfig  # type: ignore
         from trading.backtest.engine import BacktestEngine  # type: ignore
-        from trading.backtest.storage import list_backtest_runs, load_backtest_result  # type: ignore
+        from trading.backtest.storage import (  # type: ignore
+            list_backtest_runs,
+            load_backtest_result,
+        )
     except ModuleNotFoundError as exc:  # noqa: BLE001
         BTConfig = None  # type: ignore
         BacktestEngine = None  # type: ignore
@@ -48,7 +50,7 @@ else:
 
 @dataclass(frozen=True)
 class BacktestDependencies:
-    config: Dict[str, object]
+    config: dict[str, object]
 
 
 class BacktestPage:
@@ -74,7 +76,7 @@ class BacktestPage:
             self._run_backtest(inputs)
         self._render_history()
 
-    def _collect_inputs(self) -> "BacktestInputs":
+    def _collect_inputs(self) -> BacktestInputs:
         config_path = resolve_trading_config_path(self._deps.config)
         try:
             raw_strategy_cfg = load_strategy_config(config_path)
@@ -139,7 +141,7 @@ class BacktestPage:
             backtest_logs_root=overrides.logs_root,
         )
 
-    def _run_backtest(self, inputs: "BacktestInputs") -> None:
+    def _run_backtest(self, inputs: BacktestInputs) -> None:
         with st.spinner("Running backtest..."):
             try:
                 portfolio_cfg = (
@@ -161,7 +163,7 @@ class BacktestPage:
                 confidence_floor = (
                     float(portfolio_cfg.get("confidence_floor", 0.9)) if isinstance(portfolio_cfg, dict) else 0.9
                 )
-                portfolio_payload: Dict[str, object] = {
+                portfolio_payload: dict[str, object] = {
                     "invest_ratio": invest_ratio,
                     "confidence_floor": confidence_floor,
                 }
@@ -318,5 +320,5 @@ class BacktestInputs:
     provider_uri: str
     run_button: bool
     strategy_config_path: Path
-    strategy_config: Dict[str, object]
+    strategy_config: dict[str, object]
     backtest_logs_root: Path

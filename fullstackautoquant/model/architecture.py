@@ -3,6 +3,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+
 # Helper: Causal 1D Conv with explicit left padding
 class CausalConv1d(nn.Module):
     def __init__(self, in_channels, out_channels, kernel_size, dilation=1):
@@ -105,7 +106,7 @@ class LocalSelfAttentionOverlap(nn.Module):
         # x: (B, L, D)
         B, L, D = x.shape
         w, s = self.window_size, self.stride
-        assert L >= w, "Sequence too short for windowed attention"
+        assert w <= L, "Sequence too short for windowed attention"
         # Number of windows covering [0, L)
         num_win = 1 + (max(L - w, 0) // s)
         # Prepare accumulators

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+
 import pandas as pd
 
 __all__ = ["load_combined_factors"]

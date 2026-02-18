@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import datetime as dt
-from typing import Iterable, List, Sequence
+from collections.abc import Sequence
 
 import numpy as np
 import pandas as pd
@@ -38,7 +38,7 @@ def compute_max_drawdown(equity_curve: Sequence[float]) -> float:
 
 
 def align_to_trading_days(
-    calendar: List[dt.date],
+    calendar: list[dt.date],
     series: pd.Series,
     fill_method: str | None = "ffill",
 ) -> pd.Series:

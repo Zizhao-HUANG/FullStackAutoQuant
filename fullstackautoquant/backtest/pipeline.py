@@ -1,59 +1,57 @@
 from __future__ import annotations
 
 import datetime as dt
+from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Callable, Dict, List, Optional
 
-import pandas as pd
-
+from ..trading.manual_workflow.simulator import ManualWorkflowSimulator
 from .components.execution import ExecutionEngine
 from .components.nav_tracker import NavTracker
 from .components.records import BacktestIntermediate, PositionSnapshot
 from .components.risk_evaluator import RiskEvaluator
 from .components.signal_provider import SignalProvider
 from .components.strategy_runner import StrategyRunner
-from ..trading.manual_workflow.simulator import ManualWorkflowSimulator
 
 
 @dataclass
 class BacktestContext:
-    calendar: List[dt.date]
+    calendar: list[dt.date]
     signal_provider: SignalProvider
     risk_evaluator: RiskEvaluator
     strategy_runner: StrategyRunner
     execution: ExecutionEngine
     nav_tracker: NavTracker
     logs_dir: Path
-    manual_simulator: Optional["ManualWorkflowSimulator"] = None
+    manual_simulator: ManualWorkflowSimulator | None = None
 
 
 class BacktestPipeline:
     def __init__(self, ctx: BacktestContext) -> None:
         self._ctx = ctx
-        self._risk_records: List[Dict[str, object]] = []
-        self._signal_records: List[Dict[str, object]] = []
-        self._manual_records: List[Dict[str, object]] = []
+        self._risk_records: list[dict[str, object]] = []
+        self._signal_records: list[dict[str, object]] = []
+        self._manual_records: list[dict[str, object]] = []
 
     def run(
         self,
         initial_cash: float,
-        portfolio_value_getter: Callable[[dt.date, Dict[str, float]], float],
-        snapshot_collector: Callable[[dt.date, Dict[str, float]], List[PositionSnapshot]],
+        portfolio_value_getter: Callable[[dt.date, dict[str, float]], float],
+        snapshot_collector: Callable[[dt.date, dict[str, float]], list[PositionSnapshot]],
     ) -> BacktestIntermediate:
         cash = initial_cash
-        positions: Dict[str, float] = {}
-        equities: List = []
-        trades: List = []
-        snapshots: List[PositionSnapshot] = []
+        positions: dict[str, float] = {}
+        equities: list = []
+        trades: list = []
+        snapshots: list[PositionSnapshot] = []
         prev_equity = initial_cash
-        prev_cash: Optional[float] = None
-        prev_market_value: Optional[float] = None
+        prev_cash: float | None = None
+        prev_market_value: float | None = None
         manual_sim = getattr(self._ctx, "manual_simulator", None)
 
         for trade_date, signal_date, signals in self._ctx.signal_provider.iterate(self._ctx.calendar):
             active_signals = signals
-            manual_log: List[Dict[str, object]] = []
+            manual_log: list[dict[str, object]] = []
             queued_total = 0
             if manual_sim is not None:
                 active_signals, manual_log, queued_total = manual_sim.process(
@@ -112,7 +110,7 @@ class BacktestPipeline:
             self._manual_records,
         )
 
-    def flush(self, run_dir: Path, intermediate: BacktestIntermediate, meta: Dict[str, object]) -> None:
+    def flush(self, run_dir: Path, intermediate: BacktestIntermediate, meta: dict[str, object]) -> None:
         logs_dir = run_dir / "logs"
         logs_dir.mkdir(exist_ok=True)
         self._ctx.nav_tracker.write_csv(logs_dir / "nav_history.csv")

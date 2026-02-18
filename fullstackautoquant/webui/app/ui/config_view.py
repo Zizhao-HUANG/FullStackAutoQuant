@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict
 
 import streamlit as st
 import yaml
@@ -12,7 +11,7 @@ import yaml
 
 @dataclass(frozen=True)
 class ConfigDependencies:
-    config: Dict[str, object]
+    config: dict[str, object]
 
 
 class ConfigPage:
@@ -71,7 +70,7 @@ class ConfigPage:
         # If still not found, default to webui base path
         return (Path(__file__).resolve().parents[2] / candidate_rel).resolve()
 
-    def _render_portfolio_section(self, cfg_data: Dict[str, object]) -> None:
+    def _render_portfolio_section(self, cfg_data: dict[str, object]) -> None:
         st.markdown("### Portfolio Parameters")
         portfolio = cfg_data.get("portfolio", {})
         col1, col2, col3 = st.columns(3)
@@ -98,7 +97,7 @@ class ConfigPage:
             )
         cfg_data["portfolio"] = portfolio
 
-    def _render_weights_section(self, cfg_data: Dict[str, object]) -> None:
+    def _render_weights_section(self, cfg_data: dict[str, object]) -> None:
         st.markdown("### Weight Mode")
         weights = cfg_data.get("weights", {}) or {}
         current_mode = str(weights.get("mode", "equal"))
@@ -150,7 +149,7 @@ class ConfigPage:
 
         cfg_data["weights"] = weights
 
-    def _render_order_section(self, cfg_data: Dict[str, object]) -> None:
+    def _render_order_section(self, cfg_data: dict[str, object]) -> None:
         st.markdown("### Order Parameters")
         order = cfg_data.get("order", {})
         price_source_options = ["qlib_close", "tushare"]
@@ -191,7 +190,7 @@ class ConfigPage:
             )
         cfg_data["order"] = order
 
-    def _render_risk_section(self, cfg_data: Dict[str, object]) -> None:
+    def _render_risk_section(self, cfg_data: dict[str, object]) -> None:
         st.markdown("### Risk Parameters")
         risk = cfg_data.get("risk", {})
         col1, col2 = st.columns(2)
@@ -208,7 +207,7 @@ class ConfigPage:
             )
         cfg_data["risk"] = risk
 
-    def _render_capital_paths_section(self, cfg_data: Dict[str, object]) -> None:
+    def _render_capital_paths_section(self, cfg_data: dict[str, object]) -> None:
         st.markdown("### Capital & Paths")
         capital = cfg_data.get("capital", {})
         capital["initial"] = st.number_input(

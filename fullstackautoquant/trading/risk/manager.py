@@ -4,7 +4,6 @@ import argparse
 import json
 import sys
 from pathlib import Path
-from typing import Dict, List, Tuple
 
 import pandas as pd
 
@@ -16,12 +15,20 @@ for candidate in (REPO_ROOT, TRADING_ROOT):
     if candidate_str not in sys.path:
         sys.path.insert(0, candidate_str)
 
-from fullstackautoquant.trading.risk.service import RiskEvaluatorService, RiskInputs, detect_limit_states
-from fullstackautoquant.trading.utils import ensure_logs_dir, load_config, save_json
-from fullstackautoquant.trading.utils import gm_to_instrument
+from fullstackautoquant.trading.risk.service import (
+    RiskEvaluatorService,
+    RiskInputs,
+    detect_limit_states,
+)
+from fullstackautoquant.trading.utils import (
+    ensure_logs_dir,
+    gm_to_instrument,
+    load_config,
+    save_json,
+)
 
 
-def compute_drawdowns(logs_dir: str) -> Tuple[float, float]:
+def compute_drawdowns(logs_dir: str) -> tuple[float, float]:
     nav_path = Path(logs_dir) / "nav_history.csv"
     if not nav_path.exists():
         return 0.0, 0.0
