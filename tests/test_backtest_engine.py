@@ -8,6 +8,7 @@ from pathlib import Path
 import sys
 
 import pandas as pd
+import pytest
 
 ROOT = Path(__file__).resolve().parents[4]
 TRADING_ROOT = ROOT / "Trading" / "trading"
@@ -38,6 +39,10 @@ def _formal_config() -> BacktestConfig:
     return cfg
 
 
+@pytest.mark.skipif(
+    not (ROOT / "Trading").is_dir(),
+    reason="Legacy Trading module not available (CI environment)",
+)
 def test_engine_with_formal_data() -> None:
     engine_module = importlib.import_module("Trading.trading.backtest.engine")
     BacktestEngine = getattr(engine_module, "BacktestEngine")
@@ -49,6 +54,10 @@ def test_engine_with_formal_data() -> None:
     assert not result.equity_curve.empty
 
 
+@pytest.mark.skipif(
+    not (ROOT / "Trading").is_dir(),
+    reason="Legacy Trading module not available (CI environment)",
+)
 def test_strategy_config_reflects_portfolio_overrides() -> None:
     engine_module = importlib.import_module("Trading.trading.backtest.engine")
     BacktestEngine = getattr(engine_module, "BacktestEngine")
@@ -69,3 +78,4 @@ def test_strategy_config_reflects_portfolio_overrides() -> None:
     assert strat_cfg["portfolio"]["lot"] == 200
     assert strat_cfg["portfolio"]["weight_mode"] == "ranked"
     assert strat_cfg["weights"]["mode"] == "ranked"
+
