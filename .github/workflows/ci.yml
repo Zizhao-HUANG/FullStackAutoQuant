@@ -28,6 +28,27 @@ jobs:
       - name: Run ruff
         run: ruff check fullstackautoquant/ tests/
 
+  # ── Format Check ─────────────────────────────────────────────────
+  format:
+    name: Format Check (black + isort)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install formatters
+        run: pip install "black>=23.0" "isort>=5.0"
+
+      - name: Check black formatting
+        run: black --check --diff --line-length=100 --target-version=py310 fullstackautoquant/ tests/
+
+      - name: Check isort import ordering
+        run: isort --check --diff --profile=black --line-length=100 fullstackautoquant/ tests/
+
   # ── Type Check ──────────────────────────────────────────────────────
   typecheck:
     name: Type Check (mypy)
@@ -50,7 +71,7 @@ jobs:
       - name: Run mypy
         run: mypy fullstackautoquant/ --ignore-missing-imports
 
-  # ── Tests ───────────────────────────────────────────────────────────
+  # ── Tests + Coverage ───────────────────────────────────────────────
   test:
     name: Test (Python ${{ matrix.python-version }})
     runs-on: ubuntu-latest
@@ -80,10 +101,154 @@ jobs:
         run: pip install torch --index-url https://download.pytorch.org/whl/cpu
 
       - name: Install package with dev dependencies
-        run: pip install -e ".[dev]"
+        run: pip install -e ".[dev]" pytest-cov
 
-      - name: Run tests
-        run: pytest tests/ -v --tb=short
+      - name: Run tests with coverage
+        run: |
+          pytest tests/ -v --tb=short \
+            --cov=fullstackautoquant \
+            --cov-report=term-missing \
+            --cov-report=xml:coverage.xml \
+            --cov-config=pyproject.toml
+
+      - name: Upload coverage artifact
+        if: matrix.python-version == '3.10'
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage.xml
+          retention-days: 30
+
+      - name: Coverage summary
+        if: matrix.python-version == '3.10'
+        run: |
+          echo "## 📊 Coverage Report" >> $GITHUB_STEP_SUMMARY
+          python -c "
+          import xml.etree.ElementTree as ET
+          tree = ET.parse('coverage.xml')
+          root = tree.getroot()
+          rate = float(root.attrib.get('line-rate', 0)) * 100
+          lines = root.attrib.get('lines-valid', '?')
+          covered = root.attrib.get('lines-covered', '?')
+          print(f'| Metric | Value |')
+          print(f'|--------|-------|')
+          print(f'| **Line coverage** | **{rate:.1f}%** |')
+          print(f'| Lines covered | {covered} / {lines} |')
+          # Per-package breakdown
+          print()
+          print('### Per-package breakdown')
+          print('| Package | Coverage |')
+          print('|---------|----------|')
+          for pkg in root.findall('.//package'):
+              name = pkg.attrib.get('name', '?')
+              pkg_rate = float(pkg.attrib.get('line-rate', 0)) * 100
+              print(f'| \`{name}\` | {pkg_rate:.1f}% |')
+          " >> $GITHUB_STEP_SUMMARY
+
+  # ── Config / Schema Validation ─────────────────────────────────────
+  config-validation:
+    name: Config & Schema Validation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install validators
+        run: pip install jsonschema pyyaml check-jsonschema
+
+      - name: Validate JSON schemas are well-formed (meta-validation)
+        run: |
+          echo "Validating JSON schemas against JSON Schema Draft 2020-12..."
+          for schema in configs/schema/*.schema.json; do
+            echo "  ✓ Checking $(basename $schema)"
+            check-jsonschema --check-metaschema "$schema"
+          done
+          echo "All schemas pass meta-validation ✅"
+
+      - name: Validate YAML configs parse correctly
+        run: |
+          python -c "
+          import yaml, sys, pathlib, json
+
+          errors = []
+
+          # 1. Validate all YAML files parse without errors
+          yaml_files = list(pathlib.Path('configs').glob('**/*.yaml')) + \
+                       list(pathlib.Path('configs').glob('**/*.yml')) + \
+                       list(pathlib.Path('configs').glob('**/*.yaml.example'))
+          for f in yaml_files:
+              try:
+                  with open(f) as fh:
+                      yaml.safe_load(fh)
+                  print(f'  ✓ {f} — valid YAML')
+              except yaml.YAMLError as e:
+                  errors.append(f'{f}: {e}')
+                  print(f'  ✗ {f} — INVALID: {e}')
+
+          # 2. Validate all JSON schema files parse without errors
+          schema_files = list(pathlib.Path('configs/schema').glob('*.json'))
+          for f in schema_files:
+              try:
+                  with open(f) as fh:
+                      schema = json.load(fh)
+                  # Verify required top-level keys exist
+                  assert 'type' in schema, 'Missing top-level \"type\"'
+                  assert 'properties' in schema, 'Missing top-level \"properties\"'
+                  print(f'  ✓ {f} — valid JSON schema structure')
+              except (json.JSONDecodeError, AssertionError) as e:
+                  errors.append(f'{f}: {e}')
+                  print(f'  ✗ {f} — INVALID: {e}')
+
+          if errors:
+              print(f'\n❌ {len(errors)} config errors found:')
+              for e in errors:
+                  print(f'   • {e}')
+              sys.exit(1)
+          else:
+              print(f'\n✅ All {len(yaml_files) + len(schema_files)} config files valid')
+          "
+
+      - name: Validate trading.yaml.example against trading schema
+        run: |
+          python -c "
+          import yaml, json, sys
+          from jsonschema import validate, ValidationError, Draft202012Validator
+
+          # Load the trading example config
+          with open('configs/trading.yaml.example') as f:
+              config = yaml.safe_load(f)
+
+          # The trading.yaml.example uses a different structure (portfolio/weights/order)
+          # than trading.schema.json (signal/risk/strategy/execution).
+          # trading.yaml.example is the execution-layer config for run_trading_once.py.
+          # Validate structural integrity: required top-level keys.
+          required_keys = {'portfolio', 'order', 'risk', 'paths'}
+          found_keys = set(config.keys())
+          missing = required_keys - found_keys
+          if missing:
+              print(f'❌ trading.yaml.example missing required keys: {missing}')
+              sys.exit(1)
+
+          # Type-check critical numeric fields
+          checks = [
+              ('portfolio.topk', config.get('portfolio', {}).get('topk'), int),
+              ('portfolio.max_weight', config.get('portfolio', {}).get('max_weight'), (int, float)),
+              ('portfolio.invest_ratio', config.get('portfolio', {}).get('invest_ratio'), (int, float)),
+              ('order.buy_limit_offset', config.get('order', {}).get('buy_limit_offset'), (int, float)),
+              ('risk.day_drawdown_limit', config.get('risk', {}).get('day_drawdown_limit'), (int, float)),
+          ]
+          for name, val, expected_type in checks:
+              if val is not None and not isinstance(val, expected_type):
+                  print(f'❌ {name}: expected {expected_type}, got {type(val).__name__}')
+                  sys.exit(1)
+              print(f'  ✓ {name} = {val} ({type(val).__name__})')
+
+          print('✅ trading.yaml.example structural validation passed')
+          "
 
   # ── Build Verification ──────────────────────────────────────────────
   build:
