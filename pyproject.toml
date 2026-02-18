@@ -145,12 +145,23 @@ omit = [
     "fullstackautoquant/webui/*",
     "fullstackautoquant/model/factors/*",
     "*/tests/*",
+    # Standalone scripts with non-package imports (from utils import ...)
+    "fullstackautoquant/trading/execution.py",
+    "fullstackautoquant/trading/scheduler.py",
+    "fullstackautoquant/trading/run_once.py",
+    "fullstackautoquant/trading/signals.py",
+    # Heavy external deps (qlib, RD-Agent) – tested via integration tests
+    "fullstackautoquant/data/build_features.py",
+    "fullstackautoquant/data/export_daily_pv.py",
+    "fullstackautoquant/data/factor_synthesis.py",
+    "fullstackautoquant/data/verify/*",
+    "fullstackautoquant/model/inference.py",
 ]
 
 [tool.coverage.report]
 show_missing = true
 skip_covered = false
-fail_under = 0          # Raise gradually once baseline is established
+fail_under = 60          # Baseline coverage threshold
 exclude_lines = [
     "pragma: no cover",
     "if __name__ == .__main__.",

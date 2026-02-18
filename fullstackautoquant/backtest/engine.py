@@ -9,7 +9,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from ..manual_workflow import ManualWorkflowSimulator
+from ..trading.manual_workflow.simulator import ManualWorkflowSimulator
 from .components.execution import ExecutionEngine
 from .components.nav_tracker import NavTracker
 from .components.records import BacktestIntermediate, BacktestResult, PositionSnapshot
