@@ -8,10 +8,14 @@ from datetime import datetime, time, timedelta
 
 try:
     from zoneinfo import ZoneInfo  # Python 3.9+
-except Exception:  # noqa: E722
+except ImportError:  # pragma: no cover
     ZoneInfo = None  # type: ignore
 
-from utils import ensure_logs_dir, load_config
+from fullstackautoquant.logging_config import get_logger
+from fullstackautoquant.resilience import validate_data_credentials
+from fullstackautoquant.trading.utils import ensure_logs_dir, load_config
+
+logger = get_logger(__name__)
 
 
 def parse_args():
@@ -144,6 +148,7 @@ def _run_once(
         f.write(proc.stdout + "\n")
         f.write(f"RET={proc.returncode}\n\n")
     if proc.returncode != 0:
+        logger.error("Scheduled run failed with code %d", proc.returncode)
         raise RuntimeError(f"Scheduled run failed with code {proc.returncode}")
 
 
@@ -151,6 +156,10 @@ def main():
     args = parse_args()
     cfg = load_config(args.config)
     logs_dir = ensure_logs_dir(cfg)
+
+    # Fail fast if credentials are missing before entering the scheduling loop
+    validate_data_credentials()
+    logger.info("Scheduler starting, credentials validated")
 
     sh = _tz_shanghai()
     second_slice_times = [
@@ -206,8 +215,9 @@ def main():
                     config_path=args.config,
                     account_id=args.account_id,
                 )
-            except Exception as e:  # noqa: E722
+            except Exception as e:  # noqa: BLE001
                 # log and continue to next event
+                logger.error("Scheduled run error: %s", e, exc_info=True)
                 log_path = os.path.join(logs_dir, "scheduler.log")
                 with open(log_path, "a", encoding="utf-8") as f:
                     f.write(f"[UTC {datetime.utcnow().isoformat()}] ERROR: {e}\n\n")

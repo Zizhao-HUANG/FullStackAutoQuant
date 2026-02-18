@@ -5,12 +5,19 @@ from datetime import datetime, time
 
 try:
     from zoneinfo import ZoneInfo  # py3.9+
-except Exception:  # noqa: E722
+except ImportError:  # pragma: no cover
     ZoneInfo = None  # type: ignore
 from pathlib import Path
 
 from dotenv import load_dotenv
-from utils import (
+
+from fullstackautoquant.logging_config import get_logger
+from fullstackautoquant.resilience import (
+    RateLimiter,
+    retry_on_exception,
+    validate_trading_credentials,
+)
+from fullstackautoquant.trading.utils import (
     clamp_volume_to_lot,
     compute_auction_price,
     compute_manual_price,
@@ -22,6 +29,11 @@ from utils import (
     min_order_lot_for_symbol,
     save_json,
 )
+
+logger = get_logger(__name__)
+
+# Rate limiter for Tushare API (2 calls/second to stay within limits)
+_tushare_limiter = RateLimiter(calls_per_second=2.0)
 
 # trade api
 try:
@@ -38,7 +50,7 @@ try:
         set_endpoint,
         set_token,
     )
-except Exception:  # noqa: E722
+except ImportError:  # pragma: no cover
     set_token = None
     set_endpoint = None
     account = None
@@ -54,7 +66,7 @@ except Exception:  # noqa: E722
 # tushare realtime
 try:
     import tushare as ts
-except Exception:  # noqa: E722
+except ImportError:  # pragma: no cover
     ts = None
 
 
@@ -123,6 +135,11 @@ def gm_login(cfg: dict, alias: str = "", account_id_override: str | None = None)
     return acc_id
 
 
+@retry_on_exception(
+    max_retries=2,
+    base_delay=1.0,
+    description="fetch_realtime_quotes_tushare",
+)
 def fetch_realtime_quotes_tushare(
     ts_codes: list[str], src: str = "sina"
 ) -> dict[str, dict[str, float]]:
@@ -138,6 +155,7 @@ def fetch_realtime_quotes_tushare(
     out: dict[str, dict[str, float]] = {}
     batch_size = 1 if src == "dc" else 50
     for i in range(0, len(ts_codes), batch_size):
+        _tushare_limiter.wait()
         batch = ts_codes[i : i + batch_size]
         query_arg = ",".join(batch) if src == "sina" else batch[0]
         df = ts.realtime_quote(ts_code=query_arg, src=src)
@@ -298,7 +316,7 @@ def place_orders(
     buys = [od for od in orders if str(od.get("side", "")).upper() == "BUY"]
 
     gm_symbols = [od["symbol"] for od in orders]
-    ts_codes = [gm_to_ts_code(s) for s in gm_symbols if gm_to_ts_code(s)]
+    ts_codes = [tc for s in gm_symbols if (tc := gm_to_ts_code(s)) is not None]
     if src == "dc":
         quotes = fetch_realtime_quotes_tushare(ts_codes, src="dc") if ts_codes else {}
         used_fallback: set[str] = set()
@@ -786,7 +804,9 @@ def main():
 
     placed = False
     acc_id = None
+    # Validate credentials before attempting live trading
     if args.place and len(orders) > 0:
+        validate_trading_credentials(require_gm=True)
         acc_id = gm_login(cfg, alias=args.alias, account_id_override=(args.account_id or None))
         placed = True
 
@@ -803,11 +823,11 @@ def main():
     save_json(
         {"date": date_str, "receipts": receipts, "placed": placed, "account_id": acc_id}, out_path
     )
-    print(
-        json.dumps(
-            {"status": "ok", "out": out_path, "placed": placed, "num_orders": len(orders)},
-            ensure_ascii=False,
-        )
+    logger.info(
+        "Execution complete: placed=%s, orders=%d, out=%s",
+        placed,
+        len(orders),
+        out_path,
     )
 
 

@@ -3,7 +3,11 @@ import os
 import subprocess
 import sys
 
-from utils import ensure_logs_dir, load_config
+from fullstackautoquant.logging_config import get_logger
+from fullstackautoquant.resilience import validate_data_credentials
+from fullstackautoquant.trading.utils import ensure_logs_dir, load_config
+
+logger = get_logger(__name__)
 
 
 def parse_args():
@@ -42,18 +46,25 @@ def parse_args():
     return p.parse_args()
 
 
-def run_cmd(cmd: list):
+def run_cmd(cmd: list) -> None:
     proc = subprocess.run(cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-    print(proc.stdout)
+    logger.info("CMD: %s", " ".join(cmd))
+    if proc.stdout:
+        for line in proc.stdout.strip().splitlines():
+            logger.info("  %s", line)
     if proc.returncode != 0:
+        logger.error("Command failed (code %d): %s", proc.returncode, " ".join(cmd))
         raise RuntimeError(f"Command failed: {' '.join(cmd)}")
-    return proc
 
 
 def main():
     args = parse_args()
     cfg = load_config(args.config)
     logs_dir = ensure_logs_dir(cfg)
+
+    # Fail fast if credentials are missing
+    validate_data_credentials()
+    logger.info("Starting one-shot trading pipeline")
 
     # 1) signals
     sig_out = os.path.join(logs_dir, "signals_AUTO.json")
