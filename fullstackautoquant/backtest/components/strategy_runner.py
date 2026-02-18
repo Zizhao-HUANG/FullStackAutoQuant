@@ -4,10 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from fullstackautoquant.trading.strategy import (
-    build_targets,
-    dynamic_adjust_with_positions,
-)
+from fullstackautoquant.trading.strategy import build_targets, dynamic_adjust_with_positions
 
 
 class StrategyRunner:

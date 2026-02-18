@@ -26,14 +26,21 @@ from app.inference_runner import (
 def _page_header() -> None:
     st.set_page_config(page_title="Research & Inference", layout="wide")
     st.title("Research & Inference (Training-Equivalent Pipeline)")
-    st.caption("Update Qlib → export daily → Factor Synthesis → Inference Ranking, one-stop execution with visual assertions and logs.")
+    st.caption(
+        "Update Qlib → export daily → Factor Synthesis → Inference Ranking, one-stop execution with visual assertions and logs."
+    )
 
 
 def _collect_paths(cfg: dict) -> dict[str, Path]:
     base_dir = Path(__file__).resolve().parents[2]
     paths_cfg = cfg.get("paths", {})  # type: ignore[index]
-    infer_dir = (base_dir / paths_cfg.get("model_infer_dir", "../../ModelInferenceBundle")).resolve()
-    ranked_csv = (base_dir / paths_cfg.get("ranked_csv", "../../ModelInferenceBundle/ranked_scores_AUTO_via_qlib.csv")).resolve()
+    infer_dir = (
+        base_dir / paths_cfg.get("model_infer_dir", "../../ModelInferenceBundle")
+    ).resolve()
+    ranked_csv = (
+        base_dir
+        / paths_cfg.get("ranked_csv", "../../ModelInferenceBundle/ranked_scores_AUTO_via_qlib.csv")
+    ).resolve()
     pv_h5 = infer_dir / "daily_pv.h5"
     factors_pq = infer_dir / "combined_factors_df.parquet"
     feature_pq = infer_dir / "features_ready_infer_AUTO.parquet"
@@ -119,7 +126,7 @@ def _format_filesize(size: int) -> str:
         return "0 B"
     units = ["B", "KB", "MB", "GB", "TB"]
     idx = min(int(np.log(size) / np.log(1024)), len(units) - 1)
-    value = size / (1024 ** idx)
+    value = size / (1024**idx)
     return f"{value:.1f} {units[idx]}"
 
 
@@ -143,8 +150,8 @@ def _human_timedelta(ts: dt.datetime | None) -> str:
 def _disk_usage_summary(path: Path) -> dict[str, Any]:
     try:
         usage = shutil.disk_usage(path)
-        total_gb = usage.total / 1024 ** 3
-        free_gb = usage.free / 1024 ** 3
+        total_gb = usage.total / 1024**3
+        free_gb = usage.free / 1024**3
         used_pct = (usage.used / usage.total) * 100 if usage.total > 0 else None
         return {
             "total_gb": total_gb,
@@ -268,9 +275,18 @@ def _build_time_series(series: pd.Series, title: str, value_name: str) -> go.Fig
         return None
     counts = counts.tail(30)
     fig = go.Figure(
-        data=[go.Scatter(x=counts.index.tolist(), y=counts.values.tolist(), mode="lines+markers", line_color="#1f77b4")]
+        data=[
+            go.Scatter(
+                x=counts.index.tolist(),
+                y=counts.values.tolist(),
+                mode="lines+markers",
+                line_color="#1f77b4",
+            )
+        ]
     )
-    fig.update_layout(title=title, xaxis_title="Date", yaxis_title=value_name, hovermode="x unified")
+    fig.update_layout(
+        title=title, xaxis_title="Date", yaxis_title=value_name, hovermode="x unified"
+    )
     return fig
 
 
@@ -299,7 +315,11 @@ def _build_score_heatmap(df: pd.DataFrame) -> go.Figure | None:
             colorbar=dict(title="Score"),
         )
     )
-    fig.update_layout(title="Top100 Score Distribution Heatmap", xaxis_title="Model Column", yaxis_title="Instrument")
+    fig.update_layout(
+        title="Top100 Score Distribution Heatmap",
+        xaxis_title="Model Column",
+        yaxis_title="Instrument",
+    )
     return fig
 
 
@@ -349,7 +369,11 @@ def _env_overview(cfg: dict) -> dict[str, Path]:
         st.code(str(paths["infer_dir"]))
         usage = _disk_usage_summary(paths["infer_dir"])
         if usage.get("used_pct") is not None:
-            st.metric("Disk Usage", f"{usage['used_pct']:.1f}%", help=f"Available {usage['free_gb']:.2f} GB / Total {usage['total_gb']:.2f} GB")
+            st.metric(
+                "Disk Usage",
+                f"{usage['used_pct']:.1f}%",
+                help=f"Available {usage['free_gb']:.2f} GB / Total {usage['total_gb']:.2f} GB",
+            )
         elif usage.get("error"):
             st.error(f"Disk query failed: {usage['error']}")
 
@@ -361,7 +385,11 @@ def _env_overview(cfg: dict) -> dict[str, Path]:
         st.caption("Python Executable Path")
         st.code(str(python_exec))
 
-    day_txt = Path(os.path.expanduser(infer_cfg.get("qlib_data", "~/.qlib/qlib_data/cn_data"))) / "calendars" / "day.txt"
+    day_txt = (
+        Path(os.path.expanduser(infer_cfg.get("qlib_data", "~/.qlib/qlib_data/cn_data")))
+        / "calendars"
+        / "day.txt"
+    )
     day_meta = _file_metadata(day_txt)
     with cols[2]:
         st.caption("Qlib day.txt tail")
@@ -473,10 +501,14 @@ def _artifacts(cfg: dict, paths: dict[str, Path]) -> None:
             st.dataframe(result_h5["df"].head(10))
             latest_day = _latest_trading_day(result_h5["df"]) or "-"
             meta = _file_metadata(paths["daily_pv"])
-            st.caption(f"Latest date:{latest_day}｜Updated:{_human_timedelta(meta.get('mtime'))}｜Size:{_format_filesize(int(meta.get('size', 0)))}")
+            st.caption(
+                f"Latest date:{latest_day}｜Updated:{_human_timedelta(meta.get('mtime'))}｜Size:{_format_filesize(int(meta.get('size', 0)))}"
+            )
             dt_series = _extract_datetime_series(result_h5["df"])
             if dt_series is not None:
-                fig_ts = _build_time_series(dt_series, "Last 30 Days daily_pv Entry Count", "Entry Count")
+                fig_ts = _build_time_series(
+                    dt_series, "Last 30 Days daily_pv Entry Count", "Entry Count"
+                )
                 if fig_ts is not None:
                     st.plotly_chart(fig_ts, use_container_width=True)
             missing = _missing_summary(result_h5["df"])
@@ -490,23 +522,37 @@ def _artifacts(cfg: dict, paths: dict[str, Path]) -> None:
         st.markdown("**combined_factors_df.parquet**")
         if result_pq.get("exists") and "df" in result_pq:
             df = result_pq["df"]
-            st.metric("Latest date", str(df.index.get_level_values(0).max()) if isinstance(df.index, pd.MultiIndex) else "-")
+            st.metric(
+                "Latest date",
+                (
+                    str(df.index.get_level_values(0).max())
+                    if isinstance(df.index, pd.MultiIndex)
+                    else "-"
+                ),
+            )
             if isinstance(df.columns, pd.MultiIndex):
                 st.write("Column groups:", df.columns.names)
             st.dataframe(df.tail(20))
             latest_day = _latest_trading_day(df) or "-"
             meta = _file_metadata(paths["combined_factors"])
-            st.caption(f"Latest date:{latest_day}｜Updated:{_human_timedelta(meta.get('mtime'))}｜Size:{_format_filesize(int(meta.get('size', 0)))}")
+            st.caption(
+                f"Latest date:{latest_day}｜Updated:{_human_timedelta(meta.get('mtime'))}｜Size:{_format_filesize(int(meta.get('size', 0)))}"
+            )
             missing = _missing_summary(df)
             fig_missing = _build_missing_chart(missing, "Missing Rate Top10 (factors)")
             if fig_missing is not None:
                 st.plotly_chart(fig_missing, use_container_width=True)
             zeros = _zero_variance_columns(df)
             if not zeros.empty:
-                st.warning("The following fields have zero variance and may need cleaning:" + ", ".join([str(col) for col in zeros.index]))
+                st.warning(
+                    "The following fields have zero variance and may need cleaning:"
+                    + ", ".join([str(col) for col in zeros.index])
+                )
             dt_series = _extract_datetime_series(df)
             if dt_series is not None:
-                fig_ts = _build_time_series(dt_series, "Last 30 Days Factor Record Count", "Row Count")
+                fig_ts = _build_time_series(
+                    dt_series, "Last 30 Days Factor Record Count", "Row Count"
+                )
                 if fig_ts is not None:
                     st.plotly_chart(fig_ts, use_container_width=True)
         else:
@@ -535,13 +581,16 @@ def _artifacts(cfg: dict, paths: dict[str, Path]) -> None:
                     st.plotly_chart(heatmap_fig, use_container_width=True)
             dt_series = _extract_datetime_series(df)
             if dt_series is not None:
-                fig_ts = _build_time_series(dt_series, "Last 30 Days Ranking Record Count", "Row Count")
+                fig_ts = _build_time_series(
+                    dt_series, "Last 30 Days Ranking Record Count", "Row Count"
+                )
                 if fig_ts is not None:
                     st.plotly_chart(fig_ts, use_container_width=True)
             meta = _file_metadata(paths["ranked_csv"])
+            st.caption(f"Latest trading day:{result_csv.get('last_day', '-')}")
             st.caption(
-                f"Latest trading day:{result_csv.get('last_day', '-')}")
-            st.caption(f"Updated:{_human_timedelta(meta.get('mtime'))}｜Size:{_format_filesize(int(meta.get('size', 0)))}")
+                f"Updated:{_human_timedelta(meta.get('mtime'))}｜Size:{_format_filesize(int(meta.get('size', 0)))}"
+            )
             st.download_button(
                 "Download Full Ranking CSV",
                 df.to_csv(index=False).encode("utf-8"),
@@ -551,13 +600,17 @@ def _artifacts(cfg: dict, paths: dict[str, Path]) -> None:
         else:
             st.error(result_csv.get("error", "File does not exist"))
 
-    st.caption("If CSI300 instruments on the last day are fewer than 300, it will be highlighted here; outputs are preserved for manual review.")
+    st.caption(
+        "If CSI300 instruments on the last day are fewer than 300, it will be highlighted here; outputs are preserved for manual review."
+    )
     st.caption(
         "If missing rate >5%、distribution cliff or execution time spike, pause automated dispatch and contact quant researcher to verify upstream data."
     )
 
     if st.button("Use this CSV as trading page input"):
-        st.success("Now pointing to paths.ranked_csv. Go to Manual Trading Console to run the workflow.")
+        st.success(
+            "Now pointing to paths.ranked_csv. Go to Manual Trading Console to run the workflow."
+        )
 
 
 def _build_history_timeline(history: list[dict[str, Any]]) -> go.Figure | None:
@@ -604,10 +657,19 @@ def _render_execution_history(executions: list[StepResult]) -> None:
     st.subheader("Execution History / Diagnostics", divider="gray")
     history: list[dict[str, Any]] = st.session_state.get("infer_history", [])  # type: ignore[assignment]
     if executions:
-        last_run_label = executions[-1].started_at.strftime("%Y-%m-%d %H:%M:%S") if executions[-1].started_at else "Recent execution"
-        st.success(f"Latest execution batch:{last_run_label}, {len(executions)}  steps.Check duration and stderr for anomalies.")
+        last_run_label = (
+            executions[-1].started_at.strftime("%Y-%m-%d %H:%M:%S")
+            if executions[-1].started_at
+            else "Recent execution"
+        )
+        st.success(
+            f"Latest execution batch:{last_run_label}, {len(executions)}  steps.Check duration and stderr for anomalies."
+        )
         for step in executions:
-            with st.expander(f"Step {step.name}(Duration { _format_duration(step.duration_sec) })", expanded=False):
+            with st.expander(
+                f"Step {step.name}(Duration { _format_duration(step.duration_sec) })",
+                expanded=False,
+            ):
                 st.text("STDOUT:\n" + (step.stdout or "<empty>"))
                 if step.stderr:
                     st.error(step.stderr)
@@ -647,5 +709,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
-

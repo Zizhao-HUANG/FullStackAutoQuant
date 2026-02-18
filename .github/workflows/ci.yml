@@ -30,7 +30,7 @@ jobs:
 
   # ── Format Check ─────────────────────────────────────────────────
   format:
-    name: Format Check (black + isort)
+    name: Format Check (black + ruff imports)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -41,13 +41,13 @@ jobs:
           python-version: "3.10"
 
       - name: Install formatters
-        run: pip install "black>=23.0" "isort>=5.0"
+        run: pip install "black>=23.0" "ruff>=0.1.0"
 
       - name: Check black formatting
         run: black --check --diff --line-length=100 --target-version=py310 fullstackautoquant/ tests/
 
-      - name: Check isort import ordering
-        run: isort --check --diff --profile=black --line-length=100 fullstackautoquant/ tests/
+      - name: Check import ordering (ruff isort rules)
+        run: ruff check --select I --diff fullstackautoquant/ tests/
 
   # ── Type Check ──────────────────────────────────────────────────────
   typecheck:

@@ -184,7 +184,9 @@ class ManualWorkflowParams:
             return cls()
         strategy_field = data.get("strategy_field")
         strategy_field = str(strategy_field).strip() if strategy_field else None
-        limits_raw = data.get("strategy_limits") if isinstance(data.get("strategy_limits"), Mapping) else {}
+        limits_raw = (
+            data.get("strategy_limits") if isinstance(data.get("strategy_limits"), Mapping) else {}
+        )
         strategy_limits: dict[str, int] = {}
         if isinstance(limits_raw, Mapping):
             for key, value in limits_raw.items():
@@ -308,7 +310,9 @@ class BacktestConfig:
         cursor[parts[-1]] = value
 
 
-def expand_parameter_grid(base: BacktestConfig, grid: Mapping[str, Sequence[Any]]) -> Iterator[BacktestConfig]:
+def expand_parameter_grid(
+    base: BacktestConfig, grid: Mapping[str, Sequence[Any]]
+) -> Iterator[BacktestConfig]:
     """Generate parameter combinations.
 
     Args:

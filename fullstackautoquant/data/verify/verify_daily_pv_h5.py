@@ -24,7 +24,11 @@ def parse_required(csv_fields: str | None) -> list[str]:
 def main() -> int:
     parser = argparse.ArgumentParser(description="Validate daily_pv.h5 structure and basic health")
     parser.add_argument("--path", required=True, help="Path to daily_pv.h5")
-    parser.add_argument("--require", default="$close", help="Comma-separated required columns, e.g., '$open,$high,$low,$close,$volume,$factor'")
+    parser.add_argument(
+        "--require",
+        default="$close",
+        help="Comma-separated required columns, e.g., '$open,$high,$low,$close,$volume,$factor'",
+    )
     args = parser.parse_args()
 
     path = Path(args.path).expanduser().resolve()
@@ -44,7 +48,9 @@ def main() -> int:
         print("[ERROR] Index is not a pandas.MultiIndex")
         return 1
     if list(df.index.names) != ["datetime", "instrument"]:
-        print(f"[ERROR] Index names mismatch: got {df.index.names}, expect ['datetime','instrument']")
+        print(
+            f"[ERROR] Index names mismatch: got {df.index.names}, expect ['datetime','instrument']"
+        )
         return 1
 
     # 2) Index ascending order
@@ -85,5 +91,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-
-

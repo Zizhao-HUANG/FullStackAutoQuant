@@ -37,8 +37,14 @@ def parse_args():
         default=0.0025,
         help="epsilon tilt for midpoint pricing in continuous session (e.g., 0.0025 for 0.25%)",
     )
-    p.add_argument("--account-id", default=None, help="override GM account id (env GM_ACCOUNT_ID otherwise)")
-    p.add_argument("--trade-cal", default=None, help="optional Tushare trade calendar CSV (columns cal_date,is_open) to skip non-trading days")
+    p.add_argument(
+        "--account-id", default=None, help="override GM account id (env GM_ACCOUNT_ID otherwise)"
+    )
+    p.add_argument(
+        "--trade-cal",
+        default=None,
+        help="optional Tushare trade calendar CSV (columns cal_date,is_open) to skip non-trading days",
+    )
     return p.parse_args()
 
 
@@ -57,13 +63,17 @@ def _parse_time_str(tstr: str) -> time:
     raise ValueError(f"Invalid time format: {tstr}")
 
 
-def _build_today_schedule(times_str: str, now_sh: datetime, open_dates: set[str] | None = None) -> list[datetime]:
+def _build_today_schedule(
+    times_str: str, now_sh: datetime, open_dates: set[str] | None = None
+) -> list[datetime]:
     sh = _tz_shanghai()
     times = [t for t in (s.strip() for s in times_str.split(",")) if t]
     sched: list[datetime] = []
     for ts in times:
         tt = _parse_time_str(ts)
-        dt = datetime(now_sh.year, now_sh.month, now_sh.day, tt.hour, tt.minute, tt.second, tzinfo=sh)
+        dt = datetime(
+            now_sh.year, now_sh.month, now_sh.day, tt.hour, tt.minute, tt.second, tzinfo=sh
+        )
         if dt <= now_sh:
             dt = dt + timedelta(days=1)
         if open_dates:
@@ -72,7 +82,9 @@ def _build_today_schedule(times_str: str, now_sh: datetime, open_dates: set[str]
                 dt = dt + timedelta(days=1)
                 guard += 1
                 if guard > 366:
-                    raise RuntimeError("trade calendar appears to contain no open days within a year; please verify")
+                    raise RuntimeError(
+                        "trade calendar appears to contain no open days within a year; please verify"
+                    )
         sched.append(dt)
     sched.sort()
     return sched
@@ -89,14 +101,30 @@ def _should_use_second_slice(t_sh: time, second_slice_times: list[time]) -> bool
     return False
 
 
-def _run_once(cfg: dict, logs_dir: str, csv_path: str, src: str, place: bool, override_buy: bool, auction_mode: bool, open_eps: float, max_slices_open: int, config_path: str = None, account_id: str = None) -> None:
+def _run_once(
+    cfg: dict,
+    logs_dir: str,
+    csv_path: str,
+    src: str,
+    place: bool,
+    override_buy: bool,
+    auction_mode: bool,
+    open_eps: float,
+    max_slices_open: int,
+    config_path: str = None,
+    account_id: str = None,
+) -> None:
     cmd = [
         sys.executable,
         os.path.join(os.path.dirname(__file__), "run_trading_once.py"),
-        "--csv", csv_path,
-        "--src", src,
-        "--open_eps", str(float(open_eps)),
-        "--max_slices_open", str(int(max_slices_open)),
+        "--csv",
+        csv_path,
+        "--src",
+        src,
+        "--open_eps",
+        str(float(open_eps)),
+        "--max_slices_open",
+        str(int(max_slices_open)),
     ]
     if config_path:
         cmd += ["--config", config_path]
@@ -125,7 +153,10 @@ def main():
     logs_dir = ensure_logs_dir(cfg)
 
     sh = _tz_shanghai()
-    second_slice_times = [_parse_time_str(s) for s in [t.strip() for t in args.second_slice_times.split(",") if t.strip()]]
+    second_slice_times = [
+        _parse_time_str(s)
+        for s in [t.strip() for t in args.second_slice_times.split(",") if t.strip()]
+    ]
 
     open_dates: set[str] | None = None
     if args.trade_cal:
@@ -189,7 +220,9 @@ def main():
                 next_day = next_day + timedelta(days=1)
                 guard += 1
                 if guard > 366:
-                    raise RuntimeError("trade calendar iteration failed: cannot locate next trading day")
+                    raise RuntimeError(
+                        "trade calendar iteration failed: cannot locate next trading day"
+                    )
             # sleep until 06:00 Beijing time on next trading day to rebuild schedule
             next_anchor = datetime(next_day.year, next_day.month, next_day.day, 6, 0, 0, tzinfo=sh)
             while True:
@@ -205,5 +238,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-

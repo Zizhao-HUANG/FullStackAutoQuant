@@ -40,4 +40,3 @@ def find_latest_targets(targets_dir: Path) -> Path:
     if not files:
         raise StrategyReaderError(f"directory {targets_dir} contains no targets_* files")
     return files[0]
-

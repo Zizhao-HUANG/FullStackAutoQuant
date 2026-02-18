@@ -73,7 +73,9 @@ from fullstackautoquant.model.task_config import (
     load_task_config,
 )
 
-CONFIG_SCHEMA_PATH = Path(__file__).resolve().parents[1] / "configs" / "schema" / "model_inference.schema.json"
+CONFIG_SCHEMA_PATH = (
+    Path(__file__).resolve().parents[1] / "configs" / "schema" / "model_inference.schema.json"
+)
 
 
 @dataclass(frozen=True)
@@ -189,6 +191,7 @@ def _ensure_cuda_stub() -> None:
     original_untyped = torch.UntypedStorage
 
     if not getattr(torch, "_untype_storage_cpu_patched", False):
+
         class _CpuUntypedStorage(original_untyped):  # type: ignore[misc]
             def __new__(cls, *args, device=None, **kwargs):
                 device = _normalize_device(device)
@@ -273,7 +276,9 @@ def _dataclass_from_config(raw_cfg: dict[str, Any]) -> InferenceConfig:
 def _build_paths(cfg: InferenceConfig, args: argparse.Namespace) -> ModelPaths:
     combined_source: str | None = args.combined_factors or cfg.data.get("combined_factors_out")
     if not combined_source:
-        raise ConfigError("Missing combined_factors path. Provide via --combined_factors or config file.")
+        raise ConfigError(
+            "Missing combined_factors path. Provide via --combined_factors or config file."
+        )
     params_source: str | None = args.params or str(cfg.model.weights)
     if not params_source:
         raise ConfigError("Missing model weights path. Provide via --params or config file.")
@@ -361,7 +366,11 @@ def main() -> int:
     ideal_workers = 0
 
     # 1) Determine target trading day
-    target_date = _auto_last_trading_day() if (args.date is None or str(args.date).lower() == "auto") else args.date
+    target_date = (
+        _auto_last_trading_day()
+        if (args.date is None or str(args.date).lower() == "auto")
+        else args.date
+    )
 
     # 2) Build training-equivalent Handler + Dataset (TSDatasetH)
     paths = _build_paths(cfg, args)
@@ -402,8 +411,11 @@ def main() -> int:
     # Determine the trading day for inference: prefer the nearest date <= target (no strict N=300 requirement)
     from qlib.data.dataset import DataHandlerLP as DH
     from qlib.data.dataset import TSDatasetH
+
     try:
-        full_feat = handler.fetch(selector=slice(None, None), level="datetime", col_set="feature", data_key=DH.DK_I)
+        full_feat = handler.fetch(
+            selector=slice(None, None), level="datetime", col_set="feature", data_key=DH.DK_I
+        )
         if full_feat.empty:
             raise KeyError("Processed features empty; please check data coverage")
         all_dates = full_feat.index.get_level_values("datetime").unique().sort_values()
@@ -463,6 +475,7 @@ def main() -> int:
         from qlib.data.dataset import (
             DataHandlerLP as DH,  # ensure DH available even if previous try failed
         )
+
         # Data preparation consistent with GeneralPTNN.predict
         dl_test = dataset.prepare("test", col_set=["feature", "label"], data_key=DH.DK_I)
         if hasattr(dl_test, "config"):

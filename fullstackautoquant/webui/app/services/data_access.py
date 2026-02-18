@@ -28,7 +28,9 @@ class DataAccess:
     def get_workflow_result(self) -> dict[str, Any] | None:
         return self._workflow.result
 
-    def set_workflow_result(self, result: dict[str, Any], *, run_at: dt.datetime | None = None) -> None:
+    def set_workflow_result(
+        self, result: dict[str, Any], *, run_at: dt.datetime | None = None
+    ) -> None:
         self._workflow.result = result
         self._workflow.last_run_at = run_at or dt.datetime.utcnow()
         self.clear_debug_steps()

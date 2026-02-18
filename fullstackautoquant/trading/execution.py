@@ -64,13 +64,34 @@ def parse_args():
     p.add_argument("--config", default=None, help="config.yaml path")
     p.add_argument("--place", action="store_true", help="actually place orders")
     p.add_argument("--alias", default="", help="optional account alias")
-    p.add_argument("--src", default="sina", choices=["sina", "dc"], help="tushare source (sina primary with dc fallback)")
+    p.add_argument(
+        "--src",
+        default="sina",
+        choices=["sina", "dc"],
+        help="tushare source (sina primary with dc fallback)",
+    )
     # execution behavior extensions
-    p.add_argument("--auction-mode", action="store_true", help="use opening auction pricing when within 09:15–09:25 Beijing time")
-    p.add_argument("--max_slices_open", type=int, default=1, help="max slices for open execution after 09:30 (default 1; set 2 when condition triggers)")
-    p.add_argument("--open_eps", type=float, default=0.0025, help="epsilon tilt for midpoint pricing in continuous session (e.g., 0.0025 for 0.25%)")
+    p.add_argument(
+        "--auction-mode",
+        action="store_true",
+        help="use opening auction pricing when within 09:15–09:25 Beijing time",
+    )
+    p.add_argument(
+        "--max_slices_open",
+        type=int,
+        default=1,
+        help="max slices for open execution after 09:30 (default 1; set 2 when condition triggers)",
+    )
+    p.add_argument(
+        "--open_eps",
+        type=float,
+        default=0.0025,
+        help="epsilon tilt for midpoint pricing in continuous session (e.g., 0.0025 for 0.25%)",
+    )
     # explicit GM overrides
-    p.add_argument("--account-id", default=None, help="override GM account id (env GM_ACCOUNT_ID otherwise)")
+    p.add_argument(
+        "--account-id", default=None, help="override GM account id (env GM_ACCOUNT_ID otherwise)"
+    )
     return p.parse_args()
 
 
@@ -88,7 +109,9 @@ def gm_login(cfg: dict, alias: str = "", account_id_override: str | None = None)
             load_dotenv(p.as_posix(), override=True)
     endpoint = os.getenv("GM_ENDPOINT") or cfg.get("gm", {}).get("endpoint")
     token = os.getenv("GM_TOKEN") or cfg.get("gm", {}).get("token")
-    acc_id = account_id_override or os.getenv("GM_ACCOUNT_ID") or cfg.get("gm", {}).get("account_id")
+    acc_id = (
+        account_id_override or os.getenv("GM_ACCOUNT_ID") or cfg.get("gm", {}).get("account_id")
+    )
     if not all([endpoint, token, acc_id]):
         raise RuntimeError("Missing GM credentials: endpoint/token/account_id")
     if set_endpoint is None:
@@ -100,7 +123,9 @@ def gm_login(cfg: dict, alias: str = "", account_id_override: str | None = None)
     return acc_id
 
 
-def fetch_realtime_quotes_tushare(ts_codes: list[str], src: str = "sina") -> dict[str, dict[str, float]]:
+def fetch_realtime_quotes_tushare(
+    ts_codes: list[str], src: str = "sina"
+) -> dict[str, dict[str, float]]:
     if ts is None:
         raise RuntimeError("tushare not installed; pip install tushare>=1.3.3")
     load_dotenv()
@@ -123,18 +148,49 @@ def fetch_realtime_quotes_tushare(ts_codes: list[str], src: str = "sina") -> dic
             ts_code_val = rec.get("ts_code") or rec.get("TS_CODE")
             if not ts_code_val:
                 continue
+
             # robust field extraction across sources
             def _get_first(keys, default=0.0):
                 for k in keys:
                     if k in rec and rec.get(k) not in (None, "", " "):
                         return rec.get(k)
                 return default
+
             price = _get_first(["price", "PRICE", "last", "LAST"]) or 0.0
-            pre_close = _get_first(["pre_close", "PRE_CLOSE", "preclose", "PRECLOSE", "yesterday_close", "YESTERDAY_CLOSE"]) or 0.0
+            pre_close = (
+                _get_first(
+                    [
+                        "pre_close",
+                        "PRE_CLOSE",
+                        "preclose",
+                        "PRECLOSE",
+                        "yesterday_close",
+                        "YESTERDAY_CLOSE",
+                    ]
+                )
+                or 0.0
+            )
             bid = _get_first(["bid", "BID", "B1_P", "b1_p", "buy", "BUY"]) or 0.0
             ask = _get_first(["ask", "ASK", "A1_P", "a1_p", "sell", "SELL"]) or 0.0
-            limit_up = _get_first(["limit_up", "LIMIT_UP", "up_limit", "UP_LIMIT", "high_limit", "HIGH_LIMIT"]) or 0.0
-            limit_down = _get_first(["limit_down", "LIMIT_DOWN", "down_limit", "DOWN_LIMIT", "low_limit", "LOW_LIMIT"]) or 0.0
+            limit_up = (
+                _get_first(
+                    ["limit_up", "LIMIT_UP", "up_limit", "UP_LIMIT", "high_limit", "HIGH_LIMIT"]
+                )
+                or 0.0
+            )
+            limit_down = (
+                _get_first(
+                    [
+                        "limit_down",
+                        "LIMIT_DOWN",
+                        "down_limit",
+                        "DOWN_LIMIT",
+                        "low_limit",
+                        "LOW_LIMIT",
+                    ]
+                )
+                or 0.0
+            )
             out[str(ts_code_val)] = {
                 "price": float(price) if price else 0.0,
                 "pre_close": float(pre_close) if pre_close else 0.0,
@@ -146,7 +202,9 @@ def fetch_realtime_quotes_tushare(ts_codes: list[str], src: str = "sina") -> dic
     return out
 
 
-def fetch_realtime_with_fallback(ts_codes: list[str]) -> tuple[dict[str, dict[str, float]], set[str]]:
+def fetch_realtime_with_fallback(
+    ts_codes: list[str],
+) -> tuple[dict[str, dict[str, float]], set[str]]:
     """Try sina first, then fallback dc for missing or invalid records. Return (quotes, used_fallback_codes)."""
     used_fallback: set[str] = set()
     quotes: dict[str, dict[str, float]] = {}
@@ -225,7 +283,15 @@ def _is_before_auction_cut(now_sh: datetime) -> bool:
     return now_sh.time() <= t1
 
 
-def place_orders(orders: list[dict], do_place: bool, cfg: dict, src: str, auction_mode: bool, max_slices_open: int, open_eps: float) -> list[dict]:
+def place_orders(
+    orders: list[dict],
+    do_place: bool,
+    cfg: dict,
+    src: str,
+    auction_mode: bool,
+    max_slices_open: int,
+    open_eps: float,
+) -> list[dict]:
     receipts: list[dict] = []
     # split sells and buys to avoid cash freeze issue
     sells = [od for od in orders if str(od.get("side", "")).upper() == "SELL"]
@@ -259,7 +325,9 @@ def place_orders(orders: list[dict], do_place: bool, cfg: dict, src: str, auctio
 
     manual_budget = invest_cap if mode_manual else None
 
-    def compute_price_note(sym: str, side: str, fallback_used: bool, supplied_price: float) -> tuple[float, str]:
+    def compute_price_note(
+        sym: str, side: str, fallback_used: bool, supplied_price: float
+    ) -> tuple[float, str]:
         ts_code = gm_to_ts_code(sym)
         q = quotes.get(ts_code, {}) if ts_code else {}
         pre_close = float(q.get("pre_close", 0.0))
@@ -270,7 +338,15 @@ def place_orders(orders: list[dict], do_place: bool, cfg: dict, src: str, auctio
         rt_price = float(q.get("price", 0.0))
 
         if mode_manual:
-            ref_price = pre_close if pre_close > 0 else supplied_price if supplied_price and supplied_price > 0 else rt_price if rt_price > 0 else tick
+            ref_price = (
+                pre_close
+                if pre_close > 0
+                else (
+                    supplied_price
+                    if supplied_price and supplied_price > 0
+                    else rt_price if rt_price > 0 else tick
+                )
+            )
             if ref_price <= 0:
                 ref_price = tick
             price_manual = compute_manual_price(side, ref_price, buy_offset, sell_offset, tick)
@@ -376,7 +452,11 @@ def place_orders(orders: list[dict], do_place: bool, cfg: dict, src: str, auctio
         vol = int(od["volume"]) if str(od["volume"]).isdigit() else int(float(od["volume"]))
         # auction uses single shot; open session can slice
         now_sh = _now_in_beijing()
-        slices = 1 if (auction_mode and _is_in_auction_window(now_sh) and _is_before_auction_cut(now_sh)) else max(1, int(max_slices_open))
+        slices = (
+            1
+            if (auction_mode and _is_in_auction_window(now_sh) and _is_before_auction_cut(now_sh))
+            else max(1, int(max_slices_open))
+        )
         vols = split_by_slices(sym, vol, slices)
         fb = gm_to_ts_code(sym) in used_fallback
         for vol_i in vols:
@@ -384,29 +464,102 @@ def place_orders(orders: list[dict], do_place: bool, cfg: dict, src: str, auctio
                 continue
             price, note = compute_price_note(sym, side, fb, float(od.get("price", 0.0)))
             if not do_place:
-                receipts.append({"symbol": sym, "side": side, "volume": vol_i, "price": price, "status": "DRY_RUN", "note": note})
+                receipts.append(
+                    {
+                        "symbol": sym,
+                        "side": side,
+                        "volume": vol_i,
+                        "price": price,
+                        "status": "DRY_RUN",
+                        "note": note,
+                    }
+                )
                 continue
             try:
                 side_enum = OrderSide_Sell
                 effect_enum = PositionEffect_Close
-                odr = order_volume(symbol=sym, volume=vol_i, side=side_enum, order_type=OrderType_Limit, position_effect=effect_enum, price=price)
+                odr = order_volume(
+                    symbol=sym,
+                    volume=vol_i,
+                    side=side_enum,
+                    order_type=OrderType_Limit,
+                    position_effect=effect_enum,
+                    price=price,
+                )
                 oid = _extract_order_id(odr)
                 if not oid:
                     # Do not re-submit to avoid duplicate orders; log unknown ID
-                    receipts.append({"symbol": sym, "side": side, "volume": vol_i, "price": price, "status": "SUBMITTED", "order_id": "", "note": (note or "") + "|NO_ORDER_ID"})
+                    receipts.append(
+                        {
+                            "symbol": sym,
+                            "side": side,
+                            "volume": vol_i,
+                            "price": price,
+                            "status": "SUBMITTED",
+                            "order_id": "",
+                            "note": (note or "") + "|NO_ORDER_ID",
+                        }
+                    )
                 else:
-                    receipts.append({"symbol": sym, "side": side, "volume": vol_i, "price": price, "status": "SUBMITTED", "order_id": oid, "note": note})
+                    receipts.append(
+                        {
+                            "symbol": sym,
+                            "side": side,
+                            "volume": vol_i,
+                            "price": price,
+                            "status": "SUBMITTED",
+                            "order_id": oid,
+                            "note": note,
+                        }
+                    )
             except Exception as e1:  # noqa: E722
                 try:
-                    odr = order_volume(symbol=sym, volume=-vol_i, side=side_enum, order_type=OrderType_Limit, position_effect=effect_enum, price=price)
+                    odr = order_volume(
+                        symbol=sym,
+                        volume=-vol_i,
+                        side=side_enum,
+                        order_type=OrderType_Limit,
+                        position_effect=effect_enum,
+                        price=price,
+                    )
                     oid = _extract_order_id(odr)
                     note2 = f"FALLBACK:{note}" if note else "FALLBACK"
                     if oid:
-                        receipts.append({"symbol": sym, "side": side, "volume": vol_i, "price": price, "status": "SUBMITTED", "order_id": oid, "note": note2})
+                        receipts.append(
+                            {
+                                "symbol": sym,
+                                "side": side,
+                                "volume": vol_i,
+                                "price": price,
+                                "status": "SUBMITTED",
+                                "order_id": oid,
+                                "note": note2,
+                            }
+                        )
                     else:
-                        receipts.append({"symbol": sym, "side": side, "volume": vol_i, "price": price, "status": "SUBMITTED", "order_id": "", "note": note2 + "|NO_ORDER_ID"})
+                        receipts.append(
+                            {
+                                "symbol": sym,
+                                "side": side,
+                                "volume": vol_i,
+                                "price": price,
+                                "status": "SUBMITTED",
+                                "order_id": "",
+                                "note": note2 + "|NO_ORDER_ID",
+                            }
+                        )
                 except Exception as e2:  # noqa: E722
-                    receipts.append({"symbol": sym, "side": side, "volume": vol_i, "price": price, "status": "ERROR", "error": f"{e1} | {e2}", "note": note})
+                    receipts.append(
+                        {
+                            "symbol": sym,
+                            "side": side,
+                            "volume": vol_i,
+                            "price": price,
+                            "status": "ERROR",
+                            "error": f"{e1} | {e2}",
+                            "note": note,
+                        }
+                    )
 
     available_cash = get_available_cash_amount() if do_place else 1e18
     cash_check_valid = True
@@ -427,14 +580,27 @@ def place_orders(orders: list[dict], do_place: bool, cfg: dict, src: str, auctio
         vol = int(od["volume"]) if str(od["volume"]).isdigit() else int(float(od["volume"]))
         fb = gm_to_ts_code(sym) in used_fallback
         now_sh = _now_in_beijing()
-        slices = 1 if (auction_mode and _is_in_auction_window(now_sh) and _is_before_auction_cut(now_sh)) else max(1, int(max_slices_open))
+        slices = (
+            1
+            if (auction_mode and _is_in_auction_window(now_sh) and _is_before_auction_cut(now_sh))
+            else max(1, int(max_slices_open))
+        )
         price, note = compute_price_note(sym, side, fb, float(od.get("price", 0.0)))
         # align to market lot and enforce max volume
         min_lot = min_order_lot_for_symbol(sym)
         max_vol = max_order_volume_for_symbol(sym)
         vol = clamp_volume_to_lot(sym, vol)
         if vol < min_lot:
-            receipts.append({"symbol": sym, "side": side, "volume": vol, "price": price, "status": "SKIPPED_MIN_LOT", "note": note})
+            receipts.append(
+                {
+                    "symbol": sym,
+                    "side": side,
+                    "volume": vol,
+                    "price": price,
+                    "status": "SKIPPED_MIN_LOT",
+                    "note": note,
+                }
+            )
             continue
         if vol > max_vol:
             vol = (max_vol // min_lot) * min_lot
@@ -444,7 +610,16 @@ def place_orders(orders: list[dict], do_place: bool, cfg: dict, src: str, auctio
             # Manual mode: if the amount cap cannot reach the minimum lot, force minimum lot size
             max_vol_by_cap = min_lot
         if max_vol_by_cap <= 0:
-            receipts.append({"symbol": sym, "side": side, "volume": 0, "price": price, "status": "SKIPPED_CAP_ZERO", "note": note})
+            receipts.append(
+                {
+                    "symbol": sym,
+                    "side": side,
+                    "volume": 0,
+                    "price": price,
+                    "status": "SKIPPED_CAP_ZERO",
+                    "note": note,
+                }
+            )
             continue
         if vol > max_vol_by_cap:
             vol = max_vol_by_cap
@@ -464,7 +639,18 @@ def place_orders(orders: list[dict], do_place: bool, cfg: dict, src: str, auctio
             if manual_budget is not None:
                 available_limit = min(available_limit, manual_budget)
             if total_need_all > available_limit + 1e-6:
-                receipts.append({"symbol": sym, "side": side, "volume": sum(vols), "price": price, "status": "SKIPPED_INSUFFICIENT_CASH", "need": round(total_need_all, 2), "available": round(available_cash, 2), "note": note + "|NO_CASH_INFO" if not cash_check_valid else note})
+                receipts.append(
+                    {
+                        "symbol": sym,
+                        "side": side,
+                        "volume": sum(vols),
+                        "price": price,
+                        "status": "SKIPPED_INSUFFICIENT_CASH",
+                        "need": round(total_need_all, 2),
+                        "available": round(available_cash, 2),
+                        "note": note + "|NO_CASH_INFO" if not cash_check_valid else note,
+                    }
+                )
                 continue
             for v, need_v in per_costs:
                 if v <= 0:
@@ -472,41 +658,119 @@ def place_orders(orders: list[dict], do_place: bool, cfg: dict, src: str, auctio
                 try:
                     side_enum = OrderSide_Buy
                     effect_enum = PositionEffect_Open
-                    odr = order_volume(symbol=sym, volume=v, side=side_enum, order_type=OrderType_Limit, position_effect=effect_enum, price=price)
+                    odr = order_volume(
+                        symbol=sym,
+                        volume=v,
+                        side=side_enum,
+                        order_type=OrderType_Limit,
+                        position_effect=effect_enum,
+                        price=price,
+                    )
                     oid = _extract_order_id(odr)
                     if not oid:
                         # Do not re-submit to avoid duplicates
-                        receipts.append({"symbol": sym, "side": side, "volume": v, "price": price, "status": "SUBMITTED", "order_id": "", "note": (note if cash_check_valid else (note + "|NO_CASH_CHECK")) + "|NO_ORDER_ID"})
+                        receipts.append(
+                            {
+                                "symbol": sym,
+                                "side": side,
+                                "volume": v,
+                                "price": price,
+                                "status": "SUBMITTED",
+                                "order_id": "",
+                                "note": (note if cash_check_valid else (note + "|NO_CASH_CHECK"))
+                                + "|NO_ORDER_ID",
+                            }
+                        )
                         if cash_check_valid:
                             available_cash -= need_v
                         if manual_budget is not None:
                             manual_budget -= need_v
                     else:
-                        receipts.append({"symbol": sym, "side": side, "volume": v, "price": price, "status": "SUBMITTED", "order_id": oid, "note": note if cash_check_valid else (note + "|NO_CASH_CHECK")})
+                        receipts.append(
+                            {
+                                "symbol": sym,
+                                "side": side,
+                                "volume": v,
+                                "price": price,
+                                "status": "SUBMITTED",
+                                "order_id": oid,
+                                "note": note if cash_check_valid else (note + "|NO_CASH_CHECK"),
+                            }
+                        )
                         if cash_check_valid:
                             available_cash -= need_v
                         if manual_budget is not None:
                             manual_budget -= need_v
                 except Exception as e1:  # noqa: E722
                     try:
-                        odr = order_volume(symbol=sym, volume=v, side=side_enum, order_type=OrderType_Limit, position_effect=effect_enum, price=price)
+                        odr = order_volume(
+                            symbol=sym,
+                            volume=v,
+                            side=side_enum,
+                            order_type=OrderType_Limit,
+                            position_effect=effect_enum,
+                            price=price,
+                        )
                         oid = _extract_order_id(odr)
-                        note2 = (f"FALLBACK:{note}") if cash_check_valid else (f"FALLBACK:{note}|NO_CASH_CHECK")
+                        note2 = (
+                            (f"FALLBACK:{note}")
+                            if cash_check_valid
+                            else (f"FALLBACK:{note}|NO_CASH_CHECK")
+                        )
                         if oid:
-                            receipts.append({"symbol": sym, "side": side, "volume": v, "price": price, "status": "SUBMITTED", "order_id": oid, "note": note2})
+                            receipts.append(
+                                {
+                                    "symbol": sym,
+                                    "side": side,
+                                    "volume": v,
+                                    "price": price,
+                                    "status": "SUBMITTED",
+                                    "order_id": oid,
+                                    "note": note2,
+                                }
+                            )
                             if cash_check_valid:
                                 available_cash -= need_v
                             if manual_budget is not None:
                                 manual_budget -= need_v
                         else:
-                            receipts.append({"symbol": sym, "side": side, "volume": v, "price": price, "status": "SUBMITTED", "order_id": "", "note": note2 + "|NO_ORDER_ID"})
+                            receipts.append(
+                                {
+                                    "symbol": sym,
+                                    "side": side,
+                                    "volume": v,
+                                    "price": price,
+                                    "status": "SUBMITTED",
+                                    "order_id": "",
+                                    "note": note2 + "|NO_ORDER_ID",
+                                }
+                            )
                     except Exception as e2:  # noqa: E722
-                        receipts.append({"symbol": sym, "side": side, "volume": v, "price": price, "status": "ERROR", "error": f"{e1} | {e2}", "note": note})
+                        receipts.append(
+                            {
+                                "symbol": sym,
+                                "side": side,
+                                "volume": v,
+                                "price": price,
+                                "status": "ERROR",
+                                "error": f"{e1} | {e2}",
+                                "note": note,
+                            }
+                        )
         else:
             for v in vols:
                 if v <= 0:
                     continue
-                receipts.append({"symbol": sym, "side": side, "volume": v, "price": price, "status": "DRY_RUN", "note": note})
+                receipts.append(
+                    {
+                        "symbol": sym,
+                        "side": side,
+                        "volume": v,
+                        "price": price,
+                        "status": "DRY_RUN",
+                        "note": note,
+                    }
+                )
 
     return receipts
 
@@ -526,10 +790,25 @@ def main():
         acc_id = gm_login(cfg, alias=args.alias, account_id_override=(args.account_id or None))
         placed = True
 
-    receipts = place_orders(orders, do_place=placed, cfg=cfg, src=args.src, auction_mode=bool(args.auction_mode), max_slices_open=int(args.max_slices_open), open_eps=float(args.open_eps))
+    receipts = place_orders(
+        orders,
+        do_place=placed,
+        cfg=cfg,
+        src=args.src,
+        auction_mode=bool(args.auction_mode),
+        max_slices_open=int(args.max_slices_open),
+        open_eps=float(args.open_eps),
+    )
     out_path = os.path.join(logs_dir, f"receipts_{date_str}.json")
-    save_json({"date": date_str, "receipts": receipts, "placed": placed, "account_id": acc_id}, out_path)
-    print(json.dumps({"status": "ok", "out": out_path, "placed": placed, "num_orders": len(orders)}, ensure_ascii=False))
+    save_json(
+        {"date": date_str, "receipts": receipts, "placed": placed, "account_id": acc_id}, out_path
+    )
+    print(
+        json.dumps(
+            {"status": "ok", "out": out_path, "placed": placed, "num_orders": len(orders)},
+            ensure_ascii=False,
+        )
+    )
 
 
 if __name__ == "__main__":

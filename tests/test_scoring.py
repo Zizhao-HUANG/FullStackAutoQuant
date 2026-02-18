@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import numpy as np
 import pandas as pd
+
 from fullstackautoquant.model.scoring import compute_confidence, rank_signals
 
 
@@ -24,7 +25,3 @@ def test_compute_confidence() -> None:
     runs = [np.array([0.5, 0.5]), np.array([1.0, 0.5])]
     out = compute_confidence(runs)
     assert np.allclose(out, [1 / (1 + 0.25), 1.0])
-
-
-
-

@@ -12,11 +12,7 @@ import pandas as pd
 from ..manual_workflow import ManualWorkflowSimulator
 from .components.execution import ExecutionEngine
 from .components.nav_tracker import NavTracker
-from .components.records import (
-    BacktestIntermediate,
-    BacktestResult,
-    PositionSnapshot,
-)
+from .components.records import BacktestIntermediate, BacktestResult, PositionSnapshot
 from .components.risk_evaluator import RiskEvaluator
 from .components.signal_provider import SignalProvider
 from .components.strategy_runner import StrategyRunner
@@ -62,7 +58,10 @@ class BacktestEngine:
             strategy_runner=StrategyRunner(self._strategy_config),
             execution=ExecutionEngine(config.costs),
             nav_tracker=nav_tracker,
-            logs_dir=Path(self._config.metadata.get("logs_dir") or Path(__file__).resolve().parents[2] / "logs/backtest"),
+            logs_dir=Path(
+                self._config.metadata.get("logs_dir")
+                or Path(__file__).resolve().parents[2] / "logs/backtest"
+            ),
             manual_simulator=manual_simulator,
         )
         self._pipeline = BacktestPipeline(ctx)
@@ -125,7 +124,11 @@ class BacktestEngine:
 
     def _load_strategy_config(self) -> dict:
         cfg_path = self._config.metadata.get("config_path")
-        path = Path(cfg_path) if cfg_path else Path(__file__).resolve().parents[1] / "config.auto.local.yaml"
+        path = (
+            Path(cfg_path)
+            if cfg_path
+            else Path(__file__).resolve().parents[1] / "config.auto.local.yaml"
+        )
         cfg = load_config(str(path))
 
         overrides = self._config.metadata.get("config_payload")
@@ -256,7 +259,9 @@ class BacktestEngine:
         self._symbol_cache[sym] = normalized
         return normalized
 
-    def _collect_snapshots(self, date: dt.date, positions: dict[str, float]) -> list[PositionSnapshot]:
+    def _collect_snapshots(
+        self, date: dt.date, positions: dict[str, float]
+    ) -> list[PositionSnapshot]:
         snaps: list[PositionSnapshot] = []
         for sym, qty in positions.items():
             if qty <= 0:
@@ -272,7 +277,9 @@ class BacktestEngine:
             )
         return snaps
 
-    def _write_artifacts(self, run_dir: Path, result: BacktestResult, intermediate: BacktestIntermediate) -> None:
+    def _write_artifacts(
+        self, run_dir: Path, result: BacktestResult, intermediate: BacktestIntermediate
+    ) -> None:
         logs_dir = run_dir / "logs"
         logs_dir.mkdir(exist_ok=True)
         self._nav_tracker.write_csv(logs_dir / "nav_history.csv")
@@ -302,4 +309,6 @@ class BacktestEngine:
             "signal_records": intermediate.signal_records,
             "manual_decisions": intermediate.manual_decisions,
         }
-        (run_dir / "metadata.json").write_text(json.dumps(metadata_payload, ensure_ascii=False, indent=2), encoding="utf-8")
+        (run_dir / "metadata.json").write_text(
+            json.dumps(metadata_payload, ensure_ascii=False, indent=2), encoding="utf-8"
+        )

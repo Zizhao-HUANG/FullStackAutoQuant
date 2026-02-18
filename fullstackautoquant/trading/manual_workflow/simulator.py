@@ -65,8 +65,12 @@ class ManualWorkflowSimulator:
         if self._params.confirm_delay_days == 0:
             executed_same_day = self._release(trade_date)
             if executed_same_day:
-                active_signals.extend(self._decorate_signal(item, trade_date) for item in executed_same_day)
-                manual_log.extend(self._decision_record(item, "executed") for item in executed_same_day)
+                active_signals.extend(
+                    self._decorate_signal(item, trade_date) for item in executed_same_day
+                )
+                manual_log.extend(
+                    self._decision_record(item, "executed") for item in executed_same_day
+                )
 
         queued_total = sum(len(items) for items in self._pending.values())
         return active_signals, manual_log, queued_total
@@ -136,7 +140,9 @@ class ManualWorkflowSimulator:
         self,
         raw_signals: list[dict[str, Any]],
     ) -> tuple[list[dict[str, Any]], list[tuple[dict[str, Any], str]]]:
-        filtered = sorted(raw_signals, key=lambda s: float(s.get("confidence", 0.0) or 0.0), reverse=True)
+        filtered = sorted(
+            raw_signals, key=lambda s: float(s.get("confidence", 0.0) or 0.0), reverse=True
+        )
         accepted: list[dict[str, Any]] = []
         rejected: list[tuple[dict[str, Any], str]] = []
         min_conf = self._params.min_confidence
@@ -221,7 +227,9 @@ class ManualWorkflowSimulator:
             payload["fill_ratio"] = ratio
         return payload
 
-    def _rejection_record(self, signal: dict[str, Any], signal_date: dt.date, reason: str) -> dict[str, Any]:
+    def _rejection_record(
+        self, signal: dict[str, Any], signal_date: dt.date, reason: str
+    ) -> dict[str, Any]:
         payload = {
             "decision_id": None,
             "signal_date": signal_date.isoformat(),

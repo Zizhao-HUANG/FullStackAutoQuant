@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 import pandas as pd
+
 from fullstackautoquant.trading.risk.service import RiskEvaluatorService, RiskInputs
 
 
@@ -22,7 +23,3 @@ def test_risk_service_returns_state(tmp_path: Path) -> None:
     state = service.evaluate()
     assert not state.allow_buy
     assert any("day_drawdown_exceed" in reason for reason in state.reasons)
-
-
-
-

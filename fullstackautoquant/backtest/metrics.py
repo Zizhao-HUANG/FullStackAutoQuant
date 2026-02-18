@@ -31,7 +31,12 @@ def compute_summary(equity_df: pd.DataFrame) -> BacktestSummary:
     max_dd = max_drawdown(equity_df["equity"].to_numpy())
     risk_free_daily = RISK_FREE_ANNUAL / ANNUALIZATION_DAYS
     sharpe = float("nan")
-    if periods >= MIN_PERIODS_FOR_ANNUALIZATION and volatility and isfinite(volatility) and volatility > 1e-9:
+    if (
+        periods >= MIN_PERIODS_FOR_ANNUALIZATION
+        and volatility
+        and isfinite(volatility)
+        and volatility > 1e-9
+    ):
         excess_return = (mean_daily - risk_free_daily) * ANNUALIZATION_DAYS
         sharpe = excess_return / volatility
     calmar = float("nan")

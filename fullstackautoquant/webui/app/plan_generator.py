@@ -25,14 +25,16 @@ def generate_plan(
     fallback_price_map: dict[str, float] | None = None,
 ) -> PlanResult:
     positions = db.get_positions()
-    pos_df = pd.DataFrame([
-        {
-            "symbol": p.symbol,
-            "qty_current": p.qty,
-            "market_value_current": p.market_value,
-        }
-        for p in positions
-    ])
+    pos_df = pd.DataFrame(
+        [
+            {
+                "symbol": p.symbol,
+                "qty_current": p.qty,
+                "market_value_current": p.market_value,
+            }
+            for p in positions
+        ]
+    )
 
     if pos_df.empty:
         pos_df = pd.DataFrame(columns=["symbol", "qty_current", "market_value_current"])
@@ -40,7 +42,9 @@ def generate_plan(
     targets_df = targets.copy()
     if "symbol" not in targets_df.columns:
         raise ValueError("targets is missing symbol column")
-    targets_df["target_qty"] = pd.to_numeric(targets_df.get("target_qty", 0.0), errors="coerce").fillna(0.0)
+    targets_df["target_qty"] = pd.to_numeric(
+        targets_df.get("target_qty", 0.0), errors="coerce"
+    ).fillna(0.0)
     if "weight" not in targets_df.columns:
         targets_df["weight"] = 0.0
 
@@ -72,17 +76,19 @@ def generate_plan(
     merged["current_value"] = merged["qty_current"] * merged["last_price"]
 
     date = dt.date.today()
-    result_rows = merged[[
-        "symbol",
-        "target_qty",
-        "delta_qty",
-        "qty_current",
-        "last_price",
-        "delta_value",
-        "target_value",
-        "current_value",
-        "weight",
-    ]]
+    result_rows = merged[
+        [
+            "symbol",
+            "target_qty",
+            "delta_qty",
+            "qty_current",
+            "last_price",
+            "delta_value",
+            "target_value",
+            "current_value",
+            "weight",
+        ]
+    ]
 
     db.upsert_plans(result_rows.to_dict("records"), date)
 
@@ -91,4 +97,3 @@ def generate_plan(
         table=result_rows,
         fallback_price=used_fallback,
     )
-

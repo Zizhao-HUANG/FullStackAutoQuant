@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 
 import pandas as pd
+
 from fullstackautoquant.model.io.data_loader import load_combined_factors
 
 
@@ -25,7 +26,3 @@ def test_load_combined_factors(tmp_path: Path) -> None:
         ("feature", "alpha2"),
     ]
     assert loaded.index.names == ["datetime", "instrument"]
-
-
-
-

@@ -15,7 +15,3 @@ def test_local_archive(tmp_path: Path) -> None:
 
     assert target.exists()
     assert target.read_text(encoding="utf-8") == source.read_text(encoding="utf-8")
-
-
-
-

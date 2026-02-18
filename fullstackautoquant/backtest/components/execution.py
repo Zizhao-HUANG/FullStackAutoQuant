@@ -25,13 +25,21 @@ class ExecutionEngine:
     ) -> tuple[float, dict[str, float], list[TradeRecord], DailyEquity]:
         trades: list[TradeRecord] = []
         cash_after = cash
-        sell_orders = [od for od in orders if self._is_valid_order(od) and str(od["side"]).upper() == "SELL"]
-        buy_orders = [od for od in orders if self._is_valid_order(od) and str(od["side"]).upper() == "BUY"]
+        sell_orders = [
+            od for od in orders if self._is_valid_order(od) and str(od["side"]).upper() == "SELL"
+        ]
+        buy_orders = [
+            od for od in orders if self._is_valid_order(od) and str(od["side"]).upper() == "BUY"
+        ]
 
         for order in sell_orders:
-            cash_after, positions = self._execute_sell(trade_date, order, cash_after, positions, trades)
+            cash_after, positions = self._execute_sell(
+                trade_date, order, cash_after, positions, trades
+            )
         for order in buy_orders:
-            cash_after, positions = self._execute_buy(trade_date, order, cash_after, positions, trades)
+            cash_after, positions = self._execute_buy(
+                trade_date, order, cash_after, positions, trades
+            )
 
         portfolio_value = market_value_func(trade_date, positions)
         equity_value = cash_after + portfolio_value
@@ -110,4 +118,3 @@ class ExecutionEngine:
             )
         )
         return cash, positions
-

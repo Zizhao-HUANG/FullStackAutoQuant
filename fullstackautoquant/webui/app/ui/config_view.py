@@ -43,7 +43,9 @@ class ConfigPage:
                 yaml.safe_dump(cfg_data, allow_unicode=True, sort_keys=False),
                 encoding="utf-8",
             )
-            st.success(f"Written to {trading_config_path}, please use the latest config for subsequent runs.")
+            st.success(
+                f"Written to {trading_config_path}, please use the latest config for subsequent runs."
+            )
 
     def _resolve_config_path(self) -> Path:
         raw_value = None
@@ -87,7 +89,9 @@ class ConfigPage:
                 "Replaceable Non-Target Positions", value=int(portfolio.get("n_drop", 5)), step=1
             )
             portfolio["confidence_floor"] = st.number_input(
-                "Confidence Threshold", value=float(portfolio.get("confidence_floor", 0.96)), step=0.01
+                "Confidence Threshold",
+                value=float(portfolio.get("confidence_floor", 0.96)),
+                step=0.01,
             )
         with col3:
             portfolio["invest_ratio"] = st.number_input(
@@ -161,24 +165,40 @@ class ConfigPage:
         col1, col2, col3 = st.columns(3)
         with col1:
             order["mode"] = st.selectbox(
-                "Trading Mode", ["auto", "manual"], index=0 if order.get("mode", "auto") == "auto" else 1
+                "Trading Mode",
+                ["auto", "manual"],
+                index=0 if order.get("mode", "auto") == "auto" else 1,
             )
             order["price_source"] = st.selectbox(
-                "Reference Price Source", price_source_options, index=price_source_options.index(current_source)
+                "Reference Price Source",
+                price_source_options,
+                index=price_source_options.index(current_source),
             )
         with col2:
             order["buy_limit_offset"] = st.number_input(
-                "Buy Limit Offset", value=float(order.get("buy_limit_offset", 0.02)), step=0.001, format="%.3f"
+                "Buy Limit Offset",
+                value=float(order.get("buy_limit_offset", 0.02)),
+                step=0.001,
+                format="%.3f",
             )
             order["sell_limit_offset"] = st.number_input(
-                "Sell Limit Offset", value=float(order.get("sell_limit_offset", -0.02)), step=0.001, format="%.3f"
+                "Sell Limit Offset",
+                value=float(order.get("sell_limit_offset", -0.02)),
+                step=0.001,
+                format="%.3f",
             )
         with col3:
             order["limit_threshold"] = st.number_input(
-                "Limit Up/Down Threshold", value=float(order.get("limit_threshold", 0.095)), step=0.001, format="%.3f"
+                "Limit Up/Down Threshold",
+                value=float(order.get("limit_threshold", 0.095)),
+                step=0.001,
+                format="%.3f",
             )
             order["clamp_tick"] = st.number_input(
-                "Limit Price Min Step", value=float(order.get("clamp_tick", 0.01)), step=0.001, format="%.3f"
+                "Limit Price Min Step",
+                value=float(order.get("clamp_tick", 0.01)),
+                step=0.001,
+                format="%.3f",
             )
 
         if order.get("price_source") == "tushare":
@@ -197,14 +217,19 @@ class ConfigPage:
         col1, col2 = st.columns(2)
         with col1:
             risk["day_drawdown_limit"] = st.number_input(
-                "Max Intraday Drawdown", value=float(risk.get("day_drawdown_limit", 0.03)), step=0.005
+                "Max Intraday Drawdown",
+                value=float(risk.get("day_drawdown_limit", 0.03)),
+                step=0.005,
             )
             risk["rolling5d_drawdown_limit"] = st.number_input(
-                "5-Day Rolling Drawdown", value=float(risk.get("rolling5d_drawdown_limit", 0.08)), step=0.005
+                "5-Day Rolling Drawdown",
+                value=float(risk.get("rolling5d_drawdown_limit", 0.08)),
+                step=0.005,
             )
         with col2:
             risk["enforce_limit_up_down_filter"] = st.checkbox(
-                "Enable Limit-Up/Down Filter", value=bool(risk.get("enforce_limit_up_down_filter", True))
+                "Enable Limit-Up/Down Filter",
+                value=bool(risk.get("enforce_limit_up_down_filter", True)),
             )
         cfg_data["risk"] = risk
 
@@ -223,7 +248,9 @@ class ConfigPage:
                 "Daily PV H5 Path", value=str(paths_cfg.get("daily_pv", ""))
             )
         with col2:
-            paths_cfg["logs_dir"] = st.text_input("Log Directory", value=str(paths_cfg.get("logs_dir", "")))
+            paths_cfg["logs_dir"] = st.text_input(
+                "Log Directory", value=str(paths_cfg.get("logs_dir", ""))
+            )
         with col3:
             paths_cfg["tushare_token"] = st.text_input(
                 "TuShare Token",

@@ -59,7 +59,11 @@ def main() -> None:
     logs_dir = ensure_logs_dir(cfg)
     out_path = Path(args.out) if args.out else Path(logs_dir) / f"signals_{date}.json"
     save_json(payload, str(out_path))
-    print(json.dumps({"status": "ok", "count": len(records), "out": str(out_path)}, ensure_ascii=False))
+    print(
+        json.dumps(
+            {"status": "ok", "count": len(records), "out": str(out_path)}, ensure_ascii=False
+        )
+    )
 
 
 if __name__ == "__main__":

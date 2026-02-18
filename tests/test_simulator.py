@@ -64,8 +64,18 @@ def test_manual_workflow_strategy_limits_and_partial_fill() -> None:
     )
     sim = ManualWorkflowSimulator(params, calendar)
     signals = [
-        {"instrument": "SZ000001", "symbol": "SZSE.000001", "confidence": 0.95, "strategy": "alpha"},
-        {"instrument": "SZ000002", "symbol": "SZSE.000002", "confidence": 0.90, "strategy": "alpha"},
+        {
+            "instrument": "SZ000001",
+            "symbol": "SZSE.000001",
+            "confidence": 0.95,
+            "strategy": "alpha",
+        },
+        {
+            "instrument": "SZ000002",
+            "symbol": "SZSE.000002",
+            "confidence": 0.90,
+            "strategy": "alpha",
+        },
         {"instrument": "SZ000003", "symbol": "SZSE.000003", "confidence": 0.85, "strategy": "beta"},
         {"instrument": "SZ000004", "symbol": "SZSE.000004", "confidence": 0.80, "strategy": "beta"},
         {"instrument": "SZ000005", "symbol": "SZSE.000005", "confidence": 0.70, "strategy": "beta"},

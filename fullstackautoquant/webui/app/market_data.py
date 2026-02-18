@@ -59,7 +59,9 @@ class MarketDataService:
         quotes = self.get_realtime_quotes(symbols)
         return {code: data["price"] for code, data in quotes.items() if data["price"] is not None}
 
-    def get_realtime_quotes(self, symbols: Iterable[str], src: str = "sina") -> dict[str, dict[str, Any]]:
+    def get_realtime_quotes(
+        self, symbols: Iterable[str], src: str = "sina"
+    ) -> dict[str, dict[str, Any]]:
         seen: set[str] = set()
         original_symbols: list[str] = []
         for s in symbols:
@@ -109,7 +111,11 @@ class MarketDataService:
                 price = float(price_val) if price_val not in (None, "") else None
                 name = str(row_dict.get("name") or row_dict.get("security_name") or "").strip()
                 trade_time = str(row_dict.get("time") or row_dict.get("trade_time") or "")
-                pre_close_val = row_dict.get("pre_close") or row_dict.get("preclose") or row_dict.get("prev_close")
+                pre_close_val = (
+                    row_dict.get("pre_close")
+                    or row_dict.get("preclose")
+                    or row_dict.get("prev_close")
+                )
                 pre_close = float(pre_close_val) if pre_close_val not in (None, "") else None
                 payload = {
                     "price": price,
@@ -144,4 +150,3 @@ def build_market_service(config: dict[str, Any]) -> MarketDataService:
     if not token:
         raise RuntimeError("TuShare Token not configured")
     return MarketDataService(MarketDataConfig(token=token))
-

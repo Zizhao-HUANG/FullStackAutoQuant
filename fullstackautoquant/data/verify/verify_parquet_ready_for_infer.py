@@ -23,9 +23,26 @@ import numpy as np
 import pandas as pd
 
 ALPHA158_NAMES: list[str] = [
-    "RESI5", "WVMA5", "RSQR5", "KLEN", "RSQR10", "CORR5", "CORD5", "CORR10",
-    "ROC60", "RESI10", "VSTD5", "RSQR60", "CORR60", "WVMA60", "STD5",
-    "RSQR20", "CORD60", "CORD10", "CORR20", "KLOW",
+    "RESI5",
+    "WVMA5",
+    "RSQR5",
+    "KLEN",
+    "RSQR10",
+    "CORR5",
+    "CORD5",
+    "CORR10",
+    "ROC60",
+    "RESI10",
+    "VSTD5",
+    "RSQR60",
+    "CORR60",
+    "WVMA60",
+    "STD5",
+    "RSQR20",
+    "CORD60",
+    "CORD10",
+    "CORR20",
+    "KLOW",
 ]
 
 
@@ -102,12 +119,12 @@ def verify(path: str, cf_path: str | None) -> int:
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--path", required=True, help="parquet path to verify")
-    ap.add_argument("--combined_factors", default=None, help="combined_factors_df.parquet path for order check")
+    ap.add_argument(
+        "--combined_factors", default=None, help="combined_factors_df.parquet path for order check"
+    )
     args = ap.parse_args()
     return verify(args.path, args.combined_factors)
 
 
 if __name__ == "__main__":
     raise SystemExit(main())
-
-

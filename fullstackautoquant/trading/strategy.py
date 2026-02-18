@@ -46,9 +46,22 @@ def parse_args():
     p.add_argument("--config", default=None, help="config.yaml path")
     p.add_argument("--targets", required=False, default=None, help="output targets json path")
     p.add_argument("--orders", required=False, default=None, help="output orders json path")
-    p.add_argument("--current_positions", required=False, default=None, help="optional current positions json path")
-    p.add_argument("--capital_override", required=False, default=None, help="override total capital(float)")
-    p.add_argument("--account-id", dest="account_id", required=False, default=None, help="override GM account id for fetching positions")
+    p.add_argument(
+        "--current_positions",
+        required=False,
+        default=None,
+        help="optional current positions json path",
+    )
+    p.add_argument(
+        "--capital_override", required=False, default=None, help="override total capital(float)"
+    )
+    p.add_argument(
+        "--account-id",
+        dest="account_id",
+        required=False,
+        default=None,
+        help="override GM account id for fetching positions",
+    )
     return p.parse_args()
 
 
@@ -57,10 +70,13 @@ def load_json(path: str):
         return json.load(f)
 
 
-def fetch_current_positions_from_gm(cfg: dict, account_id_override: str | None = None) -> dict[str, int]:
+def fetch_current_positions_from_gm(
+    cfg: dict, account_id_override: str | None = None
+) -> dict[str, int]:
     """Fetch current positions from gmtrade; return {GM symbol: shares}. Empty on failure."""
     try:
         from gm_api_wrapper import gm_login  # type: ignore
+
         try:
             from gmtrade.api import get_positions  # type: ignore
         except Exception:  # noqa: E722
@@ -81,7 +97,14 @@ def fetch_current_positions_from_gm(cfg: dict, account_id_override: str | None =
                 sym = p.get("symbol")
             sh = None
             for fn in [
-                "volume", "qty", "current_qty", "position", "amount", "shares", "quantity", "current_amount",
+                "volume",
+                "qty",
+                "current_qty",
+                "position",
+                "amount",
+                "shares",
+                "quantity",
+                "current_amount",
             ]:
                 if hasattr(p, fn):
                     try:
@@ -102,7 +125,9 @@ def fetch_current_positions_from_gm(cfg: dict, account_id_override: str | None =
         return {}
 
 
-def infer_reference_prices(cfg: dict, qlib_instruments: list[str]) -> tuple[dict[str, float], dict[str, dict[str, float]]]:
+def infer_reference_prices(
+    cfg: dict, qlib_instruments: list[str]
+) -> tuple[dict[str, float], dict[str, dict[str, float]]]:
     price_src = cfg["order"].get("price_source", "qlib_close")
     if price_src == "tushare":
         gm_symbols: list[str] = []
@@ -114,7 +139,13 @@ def infer_reference_prices(cfg: dict, qlib_instruments: list[str]) -> tuple[dict
         res: dict[str, float] = {}
         for gm_symbol in gm_symbols:
             info = quotes.get(gm_symbol, {})
-            price = float(info.get("price") or info.get("ask") or info.get("bid") or info.get("pre_close") or 0.0)
+            price = float(
+                info.get("price")
+                or info.get("ask")
+                or info.get("bid")
+                or info.get("pre_close")
+                or 0.0
+            )
             if price > 0:
                 res[gm_symbol] = price
         return res, quotes
@@ -177,7 +208,9 @@ def _ranked_weight_candidates(signals_top: list[dict], weight_cfg: dict) -> np.n
     n = len(signals_top)
     if n == 0:
         return np.array([], dtype=float)
-    metric = str(weight_cfg.get("rank_metric") or weight_cfg.get("metric") or "rank").strip().lower()
+    metric = (
+        str(weight_cfg.get("rank_metric") or weight_cfg.get("metric") or "rank").strip().lower()
+    )
     exponent = weight_cfg.get("rank_exponent", weight_cfg.get("rank_power", 1.0))
     try:
         exponent_val = float(exponent)
@@ -211,7 +244,7 @@ def compute_weight_candidates(signals_top: list[dict], cfg: dict) -> list[float]
 
     confidence_tilt = weight_cfg.get("confidence_tilt")
     if confidence_tilt is None:
-        confidence_tilt = (mode == "equal")
+        confidence_tilt = mode == "equal"
     elif isinstance(confidence_tilt, str):
         confidence_tilt = confidence_tilt.strip().lower() in {"1", "true", "yes", "on"}
     else:
@@ -247,7 +280,9 @@ def build_targets(
     limit_threshold = float(cfg["order"]["limit_threshold"])
     tick = float(cfg["order"]["clamp_tick"])
 
-    signals_sorted = sorted(signals, key=lambda x: (x.get("score", 0.0), x.get("confidence", 0.0)), reverse=True)
+    signals_sorted = sorted(
+        signals, key=lambda x: (x.get("score", 0.0), x.get("confidence", 0.0)), reverse=True
+    )
     signals_top = signals_sorted[:topk]
 
     price_source = cfg["order"].get("price_source", "qlib_close")
@@ -298,9 +333,13 @@ def build_targets(
                         tick,
                     )
                 else:
-                    limit_buy = compute_allowed_price("BUY", ref, buy_offset, sell_offset, limit_threshold, tick)
+                    limit_buy = compute_allowed_price(
+                        "BUY", ref, buy_offset, sell_offset, limit_threshold, tick
+                    )
             else:
-                limit_buy = compute_allowed_price("BUY", ref, buy_offset, sell_offset, limit_threshold, tick)
+                limit_buy = compute_allowed_price(
+                    "BUY", ref, buy_offset, sell_offset, limit_threshold, tick
+                )
 
         lot = max(default_lot, min_order_lot_for_symbol(symbol))
         lot_value = limit_buy * lot
@@ -324,27 +363,31 @@ def build_targets(
             if quote:
                 quote_details.setdefault(symbol, {}).update(quote)
 
-        targets.append({
-            "symbol": symbol,
-            "instrument": ins,
-            "target_shares": int(target_shares),
-            "weight": float(w),
-            "ref_price": float(display_price),
-        })
+        targets.append(
+            {
+                "symbol": symbol,
+                "instrument": ins,
+                "target_shares": int(target_shares),
+                "weight": float(w),
+                "ref_price": float(display_price),
+            }
+        )
         total_target_value += float(display_price) * int(target_shares)
         if allow_buy:
             est_cost = float(limit_buy) * int(target_shares)
             buy_volume = int(target_shares)
             if cfg.get("order", {}).get("mode", "auto") == "manual":
                 buy_volume = max(lot, int(target_shares * 0.4) // lot * lot)
-            provisional_buys.append({
-                "symbol": symbol,
-                "side": "BUY",
-                "volume": int(buy_volume),
-                "price": float(limit_buy),
-                "type": "limit",
-                "est_cost": float(limit_buy) * int(buy_volume),
-            })
+            provisional_buys.append(
+                {
+                    "symbol": symbol,
+                    "side": "BUY",
+                    "volume": int(buy_volume),
+                    "price": float(limit_buy),
+                    "type": "limit",
+                    "est_cost": float(limit_buy) * int(buy_volume),
+                }
+            )
 
     budget = invest_cap
     rank_lookup = rank_map or {}
@@ -376,11 +419,13 @@ def build_targets(
             est_cost_adjusted = float(od.get("price", 0.0) or 0.0) * adjusted_volume
             if min_buy_cash > 0 and est_cost_adjusted < min_buy_cash:
                 continue
-            orders.append({
-                **od,
-                "volume": adjusted_volume,
-                "est_cost": est_cost_adjusted,
-            })
+            orders.append(
+                {
+                    **od,
+                    "volume": adjusted_volume,
+                    "est_cost": est_cost_adjusted,
+                }
+            )
             budget -= est_cost_adjusted
 
     return targets, orders, ref_prices_map, quote_details, invest_cap, total_target_value
@@ -403,7 +448,9 @@ def dynamic_adjust_with_positions(
 
     order_cfg = cfg.get("order", {})
     min_buy_cash = float(order_cfg.get("min_buy_cash") or order_cfg.get("min_buy_notional") or 0.0)
-    min_sell_cash = float(order_cfg.get("min_sell_cash") or order_cfg.get("min_sell_notional") or 0.0)
+    min_sell_cash = float(
+        order_cfg.get("min_sell_cash") or order_cfg.get("min_sell_notional") or 0.0
+    )
 
     buy_offset = float(cfg["order"]["buy_limit_offset"])
     sell_offset = float(cfg["order"]["sell_limit_offset"])
@@ -459,19 +506,25 @@ def dynamic_adjust_with_positions(
                         tick,
                     )
                 else:
-                    price = compute_allowed_price("SELL", ref, buy_offset, sell_offset, limit_threshold, tick)
+                    price = compute_allowed_price(
+                        "SELL", ref, buy_offset, sell_offset, limit_threshold, tick
+                    )
             else:
-                price = compute_allowed_price("SELL", ref, buy_offset, sell_offset, limit_threshold, tick)
+                price = compute_allowed_price(
+                    "SELL", ref, buy_offset, sell_offset, limit_threshold, tick
+                )
         est_cash = float(price) * int(vol)
         if min_sell_cash > 0 and est_cash < min_sell_cash:
             continue
-        orders.append({
-            "symbol": sym,
-            "side": "SELL",
-            "volume": int(vol),
-            "price": float(price),
-            "type": "limit",
-        })
+        orders.append(
+            {
+                "symbol": sym,
+                "side": "SELL",
+                "volume": int(vol),
+                "price": float(price),
+                "type": "limit",
+            }
+        )
 
     if allow_buy:
         existing_names: list[tuple[str, int]] = []
@@ -498,7 +551,9 @@ def dynamic_adjust_with_positions(
             else:
                 if price_source == "tushare":
                     quote = quote_details.get(sym, {})
-                    rt_price = float(quote.get("ask") or quote.get("price") or quote.get("bid") or ref)
+                    rt_price = float(
+                        quote.get("ask") or quote.get("price") or quote.get("bid") or ref
+                    )
                     pre_close = float(quote.get("pre_close") or ref)
                     if rt_price > 0 and pre_close > 0:
                         price = compute_limit_price_from_rt_preclose(
@@ -511,19 +566,25 @@ def dynamic_adjust_with_positions(
                             tick,
                         )
                     else:
-                        price = compute_allowed_price("BUY", ref, buy_offset, sell_offset, limit_threshold, tick)
+                        price = compute_allowed_price(
+                            "BUY", ref, buy_offset, sell_offset, limit_threshold, tick
+                        )
                 else:
-                    price = compute_allowed_price("BUY", ref, buy_offset, sell_offset, limit_threshold, tick)
+                    price = compute_allowed_price(
+                        "BUY", ref, buy_offset, sell_offset, limit_threshold, tick
+                    )
             est_cash = float(price) * int(vol)
             if min_buy_cash > 0 and est_cash < min_buy_cash:
                 continue
-            orders.append({
-                "symbol": sym,
-                "side": "BUY",
-                "volume": int(vol),
-                "price": float(price),
-                "type": "limit",
-            })
+            orders.append(
+                {
+                    "symbol": sym,
+                    "side": "BUY",
+                    "volume": int(vol),
+                    "price": float(price),
+                    "type": "limit",
+                }
+            )
 
     return orders
 
@@ -536,7 +597,9 @@ def main():
     sig = load_json(args.signals)
     signals = sig.get("signals", [])
     # build rank map by (score, confidence) desc for prioritization
-    signals_sorted = sorted(signals, key=lambda x: (x.get("score", 0.0), x.get("confidence", 0.0)), reverse=True)
+    signals_sorted = sorted(
+        signals, key=lambda x: (x.get("score", 0.0), x.get("confidence", 0.0)), reverse=True
+    )
     rank_map: dict[str, int] = {}
     for idx, s in enumerate(signals_sorted):
         sym = s.get("symbol")
@@ -579,16 +642,19 @@ def main():
         if auto_cur:
             current_positions = auto_cur
 
-    targets, initial_buys, ref_prices_map, quote_details, invest_cap, total_target_value = build_targets(
-        signals,
-        cfg,
-        allow_buy,
-        limit_up_syms,
-        limit_down_syms,
-        total_capital,
+    targets, initial_buys, ref_prices_map, quote_details, invest_cap, total_target_value = (
+        build_targets(
+            signals,
+            cfg,
+            allow_buy,
+            limit_up_syms,
+            limit_down_syms,
+            total_capital,
+        )
     )
 
     from utils import gm_to_instrument
+
     qlib_instruments = []
     for t in targets:
         ins = t.get("instrument")
@@ -605,16 +671,26 @@ def main():
         gm_needed.update([t["symbol"] for t in targets])
         missing = [gm for gm in gm_needed if gm not in ref_prices_map]
         if missing:
-            extra_quotes = fetch_tushare_quotes(missing, src=cfg["order"].get("tushare_src", "sina"))
+            extra_quotes = fetch_tushare_quotes(
+                missing, src=cfg["order"].get("tushare_src", "sina")
+            )
             for gm_symbol, info in extra_quotes.items():
-                price = float(info.get("price") or info.get("ask") or info.get("bid") or info.get("pre_close") or 0.0)
+                price = float(
+                    info.get("price")
+                    or info.get("ask")
+                    or info.get("bid")
+                    or info.get("pre_close")
+                    or 0.0
+                )
                 if price > 0:
                     ref_prices_map[gm_symbol] = price
                 if info:
                     quote_details.setdefault(gm_symbol, {}).update(info)
         ref_prices = ref_prices_map
     else:
-        ref_prices = read_close_prices_from_h5(cfg["paths"]["daily_pv"], list(set(qlib_instruments)))
+        ref_prices = read_close_prices_from_h5(
+            cfg["paths"]["daily_pv"], list(set(qlib_instruments))
+        )
 
     orders = dynamic_adjust_with_positions(
         targets,
@@ -652,13 +728,16 @@ def main():
     if allow_buy:
         try:
             from gm_api_wrapper import get_available_cash_amount  # type: ignore
+
             available_cash = float(get_available_cash_amount())
         except Exception:  # noqa: E722
             available_cash = 0.0
         total_buy_need = 0.0
         for od in final_buys:
             total_buy_need += float(od.get("price", 0.0)) * int(od.get("volume", 0))
-        force_raise_cash = bool(cfg.get("rebalance_trigger", {}).get("force_raise_cash_when_shortfall", True))
+        force_raise_cash = bool(
+            cfg.get("rebalance_trigger", {}).get("force_raise_cash_when_shortfall", True)
+        )
         n_drop = int(cfg["portfolio"]["n_drop"])  # reuse cap
         lot = int(cfg["portfolio"]["lot"])  # 100
         buy_offset = float(cfg["order"]["buy_limit_offset"])  # 0.02
@@ -666,12 +745,18 @@ def main():
         limit_threshold = float(cfg["order"]["limit_threshold"])  # 0.095
         tick = float(cfg["order"]["clamp_tick"])  # 0.01
         order_cfg = cfg.get("order", {})
-        min_sell_cash = float(order_cfg.get("min_sell_cash") or order_cfg.get("min_sell_notional") or 0.0)
+        min_sell_cash = float(
+            order_cfg.get("min_sell_cash") or order_cfg.get("min_sell_notional") or 0.0
+        )
         if force_raise_cash and len(sell_orders) == 0 and total_buy_need > available_cash + 1e-6:
             need = total_buy_need - available_cash
             # candidates: current held names that are in targets (remain) and not limit-down
             target_syms = {t["symbol"] for t in targets}
-            candidates = [sym for sym in current_positions if sym in target_syms and sym not in set(limit_down_syms)]
+            candidates = [
+                sym
+                for sym in current_positions
+                if sym in target_syms and sym not in set(limit_down_syms)
+            ]
             # sort by worse rank (larger idx)
             candidates.sort(key=lambda s: rank_map.get(s, 10**9), reverse=True)
             extra_sells: list[dict] = []
@@ -689,17 +774,21 @@ def main():
                 lots_need = int(math.ceil(need / max(price_ref * lot, 1e-6)))
                 lots_need = max(1, lots_need)
                 vol = min(max_lot_vol, lots_need * lot)
-                px = compute_allowed_price("SELL", price_ref, buy_offset, sell_offset, limit_threshold, tick)
+                px = compute_allowed_price(
+                    "SELL", price_ref, buy_offset, sell_offset, limit_threshold, tick
+                )
                 est_cash = float(px) * int(vol)
                 if min_sell_cash > 0 and est_cash < min_sell_cash:
                     continue
-                extra_sells.append({
-                    "symbol": sym,
-                    "side": "SELL",
-                    "volume": int(vol),
-                    "price": float(px),
-                    "type": "limit",
-                })
+                extra_sells.append(
+                    {
+                        "symbol": sym,
+                        "side": "SELL",
+                        "volume": int(vol),
+                        "price": float(px),
+                        "type": "limit",
+                    }
+                )
                 need -= vol * price_ref
             if extra_sells:
                 orders = extra_sells + orders
@@ -709,12 +798,34 @@ def main():
     orders_out = args.orders or os.path.join(logs_dir, f"orders_{date_str}.json")
 
     with open(targets_out, "w", encoding="utf-8") as f:
-        json.dump({"date": date_str, "targets": targets, "invest_capital": invest_cap, "total_capital": total_target_value, "remaining_cash": remaining_cash}, f, ensure_ascii=False, indent=2)
+        json.dump(
+            {
+                "date": date_str,
+                "targets": targets,
+                "invest_capital": invest_cap,
+                "total_capital": total_target_value,
+                "remaining_cash": remaining_cash,
+            },
+            f,
+            ensure_ascii=False,
+            indent=2,
+        )
 
     with open(orders_out, "w", encoding="utf-8") as f:
         json.dump({"date": date_str, "orders": orders}, f, ensure_ascii=False, indent=2)
 
-    print(json.dumps({"status": "ok", "targets": len(targets), "orders": len(orders), "targets_out": targets_out, "orders_out": orders_out}, ensure_ascii=False))
+    print(
+        json.dumps(
+            {
+                "status": "ok",
+                "targets": len(targets),
+                "orders": len(orders),
+                "targets_out": targets_out,
+                "orders_out": orders_out,
+            },
+            ensure_ascii=False,
+        )
+    )
 
 
 if __name__ == "__main__":

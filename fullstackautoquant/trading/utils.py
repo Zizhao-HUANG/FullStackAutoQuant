@@ -72,6 +72,7 @@ def fetch_tushare_quotes(gm_symbols: list[str], src: str = "sina") -> dict[str, 
         gm_symbol = gm_map.get(ts_code)
         if not gm_symbol:
             continue
+
         def _to_float(key: str) -> float:
             try:
                 return float(row_dict.get(key, 0.0) or 0.0)
@@ -141,7 +142,14 @@ def round_price(price: float, tick: float, mode: str) -> float:
     return round(round(price / tick) * tick, 2)
 
 
-def compute_allowed_price(side: str, ref_price: float, buy_offset: float, sell_offset: float, limit_threshold: float, tick: float) -> float:
+def compute_allowed_price(
+    side: str,
+    ref_price: float,
+    buy_offset: float,
+    sell_offset: float,
+    limit_threshold: float,
+    tick: float,
+) -> float:
     ref_price = float(ref_price)
     if side == "BUY":
         buy_offset = abs(buy_offset)
@@ -159,7 +167,15 @@ def compute_allowed_price(side: str, ref_price: float, buy_offset: float, sell_o
         return round_price(price, tick, mode="down")
 
 
-def compute_limit_price_from_rt_preclose(side: str, rt_price: float, pre_close: float, buy_offset: float, sell_offset: float, limit_threshold: float, tick: float) -> float:
+def compute_limit_price_from_rt_preclose(
+    side: str,
+    rt_price: float,
+    pre_close: float,
+    buy_offset: float,
+    sell_offset: float,
+    limit_threshold: float,
+    tick: float,
+) -> float:
     """Compute limit price using realtime price for offset and pre-close for exchange bounds/clamp."""
     rt_price = float(rt_price)
     pre_close = float(pre_close)
@@ -212,8 +228,24 @@ def compute_auction_price(
     pre_close = float(pre_close)
     if tick <= 0:
         tick = 0.01
-    limit_up = float(limit_up_override) if limit_up_override and limit_up_override > 0 else (round_price(pre_close * (1.0 + ex_ratio), tick, mode="nearest") if pre_close > 0 else 0.0)
-    limit_down = float(limit_down_override) if limit_down_override and limit_down_override > 0 else (round_price(pre_close * (1.0 - ex_ratio), tick, mode="nearest") if pre_close > 0 else 0.0)
+    limit_up = (
+        float(limit_up_override)
+        if limit_up_override and limit_up_override > 0
+        else (
+            round_price(pre_close * (1.0 + ex_ratio), tick, mode="nearest")
+            if pre_close > 0
+            else 0.0
+        )
+    )
+    limit_down = (
+        float(limit_down_override)
+        if limit_down_override and limit_down_override > 0
+        else (
+            round_price(pre_close * (1.0 - ex_ratio), tick, mode="nearest")
+            if pre_close > 0
+            else 0.0
+        )
+    )
     if side.upper() == "BUY":
         if pre_close > 0:
             target = round_price(pre_close * (1.0 + gamma), tick, mode="nearest")
@@ -229,7 +261,10 @@ def compute_auction_price(
         else:
             target = limit_down + tick if limit_down > 0 else 0.0
         lower_cap = limit_down + tick if limit_down > 0 else target
-        price = max(min(lower_cap if pre_close > 0 else target, pre_close if pre_close > 0 else lower_cap), target)
+        price = max(
+            min(lower_cap if pre_close > 0 else target, pre_close if pre_close > 0 else lower_cap),
+            target,
+        )
         return round(max(price, tick), 2)
 
 
@@ -251,8 +286,16 @@ def compute_open_mid_price(
     - Sell: mid*(1-eps), clamped to (limit_down + tick)
     """
     ex_ratio = board_limit_ratio_for_symbol(gm_symbol)
-    limit_up = float(limit_up_override) if limit_up_override and limit_up_override > 0 else round_price(pre_close * (1.0 + ex_ratio), tick, mode="nearest")
-    limit_down = float(limit_down_override) if limit_down_override and limit_down_override > 0 else round_price(pre_close * (1.0 - ex_ratio), tick, mode="nearest")
+    limit_up = (
+        float(limit_up_override)
+        if limit_up_override and limit_up_override > 0
+        else round_price(pre_close * (1.0 + ex_ratio), tick, mode="nearest")
+    )
+    limit_down = (
+        float(limit_down_override)
+        if limit_down_override and limit_down_override > 0
+        else round_price(pre_close * (1.0 - ex_ratio), tick, mode="nearest")
+    )
     mid = None
     if float(bid) > 0 and float(ask) > 0 and float(ask) >= float(bid):
         mid = 0.5 * (float(bid) + float(ask))
@@ -340,7 +383,9 @@ def load_json(path: str):
         return json.load(f)
 
 
-def compute_manual_price(side: str, ref_price: float, buy_offset: float, sell_offset: float, tick: float) -> float:
+def compute_manual_price(
+    side: str, ref_price: float, buy_offset: float, sell_offset: float, tick: float
+) -> float:
     """Compute manual trading price using supplied limit price (no extra offset).
 
     ref_price is the limit price from the strategy layer, align to tick.

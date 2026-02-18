@@ -11,11 +11,16 @@ from ..qlib_adapter import QlibInferenceAdapter
 
 
 class SignalProvider:
-    def __init__(self, adapter: QlibInferenceAdapter, confidence_floor: float, fallback_days: int) -> None:
+    def __init__(
+        self, adapter: QlibInferenceAdapter, confidence_floor: float, fallback_days: int
+    ) -> None:
         self._adapter = adapter
         self._confidence_floor = float(confidence_floor or 0.0)
         self._fallback_days = max(0, int(fallback_days))
-        cache_dir = getattr(self._adapter.cfg, "cache_dir", None) or Path(__file__).resolve().parents[2] / "cache/signals"
+        cache_dir = (
+            getattr(self._adapter.cfg, "cache_dir", None)
+            or Path(__file__).resolve().parents[2] / "cache/signals"
+        )
         self._cache_dir = Path(cache_dir)
         self._cache_dir.mkdir(parents=True, exist_ok=True)
         self._memory_cache: dict[dt.date, list[dict]] = {}
@@ -72,8 +77,8 @@ class SignalProvider:
         self._memory_cache[date] = [dict(item) for item in signals]
         payload = {"date": date.isoformat(), "signals": signals}
         try:
-            self._cache_path(date).write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+            self._cache_path(date).write_text(
+                json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8"
+            )
         except Exception:
             pass
-
-

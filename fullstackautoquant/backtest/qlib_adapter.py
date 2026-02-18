@@ -57,7 +57,9 @@ class QlibInferenceAdapter:
             from qlib.data.dataset import DataHandlerLP as DH  # type: ignore
             from qlib.data.dataset import TSDatasetH  # type: ignore
         except Exception as exc:  # noqa: BLE001
-            raise QlibInferenceError("qlib not installed, cannot run training-equivalent inference") from exc
+            raise QlibInferenceError(
+                "qlib not installed, cannot run training-equivalent inference"
+            ) from exc
 
         self._qlib = qlib
         self._DataHandlerLP = DataHandlerLP
@@ -167,7 +169,9 @@ class QlibInferenceAdapter:
                 return loaded
         return None
 
-    def _load_signals_from_csv(self, path: Path, target_date: dt.date) -> tuple[dt.date, list[dict]] | None:
+    def _load_signals_from_csv(
+        self, path: Path, target_date: dt.date
+    ) -> tuple[dt.date, list[dict]] | None:
         try:
             df = pd.read_csv(path)
         except Exception:
@@ -286,7 +290,9 @@ class QlibInferenceAdapter:
     def _build_handler(self):  # noqa: D401
         cf_df = pd.read_parquet(self.cfg.combined_factors)
         if not isinstance(cf_df.columns, pd.MultiIndex):
-            cf_df.columns = pd.MultiIndex.from_tuples([("feature", str(col)) for col in cf_df.columns])
+            cf_df.columns = pd.MultiIndex.from_tuples(
+                [("feature", str(col)) for col in cf_df.columns]
+            )
         if list(cf_df.index.names or []) != ["datetime", "instrument"]:
             cf_df = cf_df.copy()
             cf_df.index.set_names(["datetime", "instrument"], inplace=True)
@@ -435,17 +441,22 @@ class QlibInferenceAdapter:
             state_obj = torch.load(params_path, map_location=torch.device("cpu"), weights_only=True)
         except Exception:
             try:
-                state_obj = torch.load(params_path, map_location=lambda storage, loc: storage.cpu(), weights_only=False)
+                state_obj = torch.load(
+                    params_path, map_location=lambda storage, loc: storage.cpu(), weights_only=False
+                )
             except Exception:
                 state_obj = None
         if state_obj is not None:
-            state_dict = state_obj.get("state_dict", state_obj) if isinstance(state_obj, dict) else state_obj
+            state_dict = (
+                state_obj.get("state_dict", state_obj) if isinstance(state_obj, dict) else state_obj
+            )
             try:
                 model.dnn_model.load_state_dict(state_dict, strict=False)
             except Exception:
                 pass
         model.fitted = True
         return model, ideal_workers
+
 
 def build_qlib_adapter(signal_params) -> QlibInferenceAdapter:
     if signal_params.combined_factors is None or signal_params.params_path is None:

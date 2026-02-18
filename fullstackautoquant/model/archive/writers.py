@@ -20,7 +20,3 @@ class LocalArchive(ArchiveStrategy):
         target = self._root / f"ranked_scores_{used_date}.csv"
         shutil.copy2(source, target)
         return target
-
-
-
-

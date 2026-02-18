@@ -88,7 +88,9 @@ def render_apply_plan_section(
 
         positions_df = _as_dataframe(current_positions_df)
         try:
-            available_cash = float(st.session_state.get("available_cash", data_access.get_available_cash()))
+            available_cash = float(
+                st.session_state.get("available_cash", data_access.get_available_cash())
+            )
         except (TypeError, ValueError):
             available_cash = 0.0
         portfolio_cfg = config.get("portfolio") if isinstance(config, dict) else None
@@ -148,8 +150,12 @@ def render_apply_plan_section(
             f"Applied {result.processed}  orders: bought {result.buy_notional:.2f}  CNY, sold {result.sell_notional:.2f}  CNY."
         )
         if trimmed_symbols:
-            formatted = ", ".join(sorted({digits_only_symbol(code) for code in trimmed_symbols if code}))
-            st.info(f"Due to insufficient capital, the following buy orders were partially executed or skipped:{formatted}")
+            formatted = ", ".join(
+                sorted({digits_only_symbol(code) for code in trimmed_symbols if code})
+            )
+            st.info(
+                f"Due to insufficient capital, the following buy orders were partially executed or skipped:{formatted}"
+            )
         for warn in result.warnings:
             st.warning(warn)
 

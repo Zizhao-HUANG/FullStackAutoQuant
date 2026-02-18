@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import Any
 
 import pandas as pd
+
 from fullstackautoquant.trading.utils import gm_to_instrument, instrument_to_gm
 
 
@@ -116,7 +117,9 @@ class RiskEvaluatorService:
         daily_pv = self._inputs.paths_config.get("daily_pv")
         if not daily_pv:
             return [], []
-        return detect_limit_states(Path(daily_pv), self._instrument_list(), float(order_cfg.get("limit_threshold", 0.095)))
+        return detect_limit_states(
+            Path(daily_pv), self._instrument_list(), float(order_cfg.get("limit_threshold", 0.095))
+        )
 
     def _instrument_list(self) -> list[str]:
         instruments: list[str] = []
@@ -130,7 +133,9 @@ class RiskEvaluatorService:
         return instruments
 
 
-def detect_limit_states(h5_path: Path | str, instruments: Iterable[str], threshold: float) -> tuple[list[str], list[str]]:
+def detect_limit_states(
+    h5_path: Path | str, instruments: Iterable[str], threshold: float
+) -> tuple[list[str], list[str]]:
     h5_path = Path(h5_path)
     if not h5_path.exists():
         return [], []
@@ -169,4 +174,3 @@ __all__ = [
     "RiskEvaluatorService",
     "detect_limit_states",
 ]
-

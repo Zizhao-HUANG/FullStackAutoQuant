@@ -115,6 +115,9 @@ ignore = [
 "tests/test_backtest_engine.py" = ["B009"]  # getattr with constant needed for dynamic import
 "fullstackautoquant/webui/app/services/__init__.py" = ["F401", "UP035"]  # re-exports for downstream
 
+[tool.ruff.lint.isort]
+known-first-party = ["fullstackautoquant"]
+
 [tool.mypy]
 python_version = "3.10"
 warn_return_any = false

@@ -57,5 +57,3 @@ __all__ = [
     "compute_max_drawdown",
     "align_to_trading_days",
 ]
-
-

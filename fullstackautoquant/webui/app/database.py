@@ -85,7 +85,9 @@ class HistoricalPosition(Base):
     cost_price: Mapped[float] = mapped_column(Float, default=0.0)
     record_date: Mapped[dt.date] = mapped_column(Date, index=True)
     note: Mapped[str] = mapped_column(String, default="")
-    inserted_at: Mapped[dt.datetime] = mapped_column(DateTime(timezone=True), default=dt.datetime.now(dt.timezone.utc))
+    inserted_at: Mapped[dt.datetime] = mapped_column(
+        DateTime(timezone=True), default=dt.datetime.now(dt.timezone.utc)
+    )
 
 
 class Database:
@@ -105,7 +107,9 @@ class Database:
         with self.session() as sess:
             return list(sess.query(Position).order_by(Position.symbol).all())
 
-    def upsert_position(self, symbol: str, qty: float, cost_price: float, market_value: float) -> None:
+    def upsert_position(
+        self, symbol: str, qty: float, cost_price: float, market_value: float
+    ) -> None:
         now = dt.datetime.utcnow()
         with self.session() as sess:
             obj = sess.get(Position, symbol)
@@ -151,24 +155,32 @@ class Database:
                 obj.market_value = market_value
                 obj.update_time = now
                 if before_qty != qty:
-                    sess.add(EditLog(symbol=symbol, before_qty=before_qty, after_qty=qty, modify_time=now))
+                    sess.add(
+                        EditLog(
+                            symbol=symbol, before_qty=before_qty, after_qty=qty, modify_time=now
+                        )
+                    )
 
             to_remove = set(existing.keys()) - incoming_symbols
             if to_remove:
-                sess.query(Position).filter(Position.symbol.in_(to_remove)).delete(synchronize_session=False)
+                sess.query(Position).filter(Position.symbol.in_(to_remove)).delete(
+                    synchronize_session=False
+                )
                 for symbol in to_remove:
-                    sess.add(EditLog(symbol=symbol, before_qty=existing[symbol].qty, after_qty=0.0, modify_time=now))
+                    sess.add(
+                        EditLog(
+                            symbol=symbol,
+                            before_qty=existing[symbol].qty,
+                            after_qty=0.0,
+                            modify_time=now,
+                        )
+                    )
 
             sess.commit()
 
     def get_edit_logs(self, limit: int = 200) -> list[EditLog]:
         with self.session() as sess:
-            return list(
-                sess.query(EditLog)
-                .order_by(EditLog.modify_time.desc())
-                .limit(limit)
-                .all()
-            )
+            return list(sess.query(EditLog).order_by(EditLog.modify_time.desc()).limit(limit).all())
 
     # Plans
     def upsert_plans(self, rows: Sequence[dict[str, Any]], date: dt.date | None = None) -> None:
@@ -179,18 +191,20 @@ class Database:
                 symbol = row.get("symbol")
                 if not symbol:
                     continue
-                sess.add(Plan(
-                    symbol=symbol,
-                    target_qty=float(row.get("target_qty", 0.0) or 0.0),
-                    delta_qty=float(row.get("delta_qty", 0.0) or 0.0),
-                    current_qty=float(row.get("qty_current", 0.0) or 0.0),
-                    last_price=float(row.get("last_price", 0.0) or 0.0),
-                    delta_value=float(row.get("delta_value", 0.0) or 0.0),
-                    target_value=float(row.get("target_value", 0.0) or 0.0),
-                    current_value=float(row.get("current_value", 0.0) or 0.0),
-                    weight=float(row.get("weight", 0.0) or 0.0),
-                    gen_date=date,
-                ))
+                sess.add(
+                    Plan(
+                        symbol=symbol,
+                        target_qty=float(row.get("target_qty", 0.0) or 0.0),
+                        delta_qty=float(row.get("delta_qty", 0.0) or 0.0),
+                        current_qty=float(row.get("qty_current", 0.0) or 0.0),
+                        last_price=float(row.get("last_price", 0.0) or 0.0),
+                        delta_value=float(row.get("delta_value", 0.0) or 0.0),
+                        target_value=float(row.get("target_value", 0.0) or 0.0),
+                        current_value=float(row.get("current_value", 0.0) or 0.0),
+                        weight=float(row.get("weight", 0.0) or 0.0),
+                        gen_date=date,
+                    )
+                )
             sess.commit()
 
     def get_plans(self, date: dt.date | None = None) -> list[Plan]:
@@ -205,12 +219,14 @@ class Database:
         with self.session() as sess:
             date = date or dt.date.today()
             for row in rows:
-                sess.add(Snapshot(
-                    date=date,
-                    symbol=row.get("symbol"),
-                    qty=row.get("qty", 0.0),
-                    market_value=row.get("market_value", 0.0),
-                ))
+                sess.add(
+                    Snapshot(
+                        date=date,
+                        symbol=row.get("symbol"),
+                        qty=row.get("qty", 0.0),
+                        market_value=row.get("market_value", 0.0),
+                    )
+                )
             sess.commit()
 
     def get_snapshots(self, date: dt.date | None = None) -> list[Snapshot]:
@@ -240,7 +256,9 @@ class Database:
             entries = sess.query(ConfigEntry).all()
             return {entry.key: entry.value for entry in entries}
 
-    def append_historical_positions(self, rows: Sequence[dict[str, Any]], date: dt.date | None = None, note: str = "") -> None:
+    def append_historical_positions(
+        self, rows: Sequence[dict[str, Any]], date: dt.date | None = None, note: str = ""
+    ) -> None:
         with self.session() as sess:
             record_date = date or dt.date.today()
             now = dt.datetime.utcnow()
@@ -248,19 +266,23 @@ class Database:
                 symbol = row.get("symbol")
                 if not symbol:
                     continue
-                sess.add(HistoricalPosition(
-                    symbol=str(symbol),
-                    qty=float(row.get("qty", 0.0) or 0.0),
-                    cost_price=float(row.get("cost_price", 0.0) or 0.0),
-                    record_date=record_date,
-                    note=note,
-                    inserted_at=now,
-                ))
+                sess.add(
+                    HistoricalPosition(
+                        symbol=str(symbol),
+                        qty=float(row.get("qty", 0.0) or 0.0),
+                        cost_price=float(row.get("cost_price", 0.0) or 0.0),
+                        record_date=record_date,
+                        note=note,
+                        inserted_at=now,
+                    )
+                )
             sess.commit()
 
     def get_historical_positions(self, limit: int = 200) -> list[HistoricalPosition]:
         with self.session() as sess:
-            query = sess.query(HistoricalPosition).order_by(HistoricalPosition.record_date.desc(), HistoricalPosition.id.desc())
+            query = sess.query(HistoricalPosition).order_by(
+                HistoricalPosition.record_date.desc(), HistoricalPosition.id.desc()
+            )
             if limit > 0:
                 query = query.limit(limit)
             return list(query.all())
@@ -275,4 +297,3 @@ def build_database_from_config(config: dict[str, Any]) -> Database:
     db = Database(cfg)
     db.create_schema()
     return db
-
