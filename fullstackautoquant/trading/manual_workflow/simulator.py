@@ -4,7 +4,7 @@ import datetime as dt
 from dataclasses import dataclass
 from typing import Dict, List, Tuple
 
-from ..backtest.config import ManualWorkflowParams
+from ...backtest.config import ManualWorkflowParams
 
 
 @dataclass(slots=True)

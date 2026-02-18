@@ -13,7 +13,7 @@ from .components.records import BacktestIntermediate, PositionSnapshot
 from .components.risk_evaluator import RiskEvaluator
 from .components.signal_provider import SignalProvider
 from .components.strategy_runner import StrategyRunner
-from ..manual_workflow.simulator import ManualWorkflowSimulator
+from ..trading.manual_workflow.simulator import ManualWorkflowSimulator
 
 
 @dataclass
