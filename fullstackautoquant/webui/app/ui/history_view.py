@@ -26,7 +26,9 @@ class HistoryPage:
 
     def render(self) -> None:
         st.header("📚 History & Logs", divider="gray")
-        st.caption("Snapshot saves current positions to SQLite snapshots table, can be combined with external scheduling for daily execution.")
+        st.caption(
+            "Snapshot saves current positions to SQLite snapshots table, can be combined with external scheduling for daily execution."
+        )
 
         positions_df = get_positions_dataframe(self._deps.db)
         quotes_result = fetch_quotes(positions_df.get("symbol", []), self._deps.market)
@@ -37,7 +39,9 @@ class HistoryPage:
         self._render_snapshots()
         self._render_logs()
 
-    def _record_snapshot(self, positions_df: pd.DataFrame, quotes: dict[str, dict[str, Any]]) -> None:
+    def _record_snapshot(
+        self, positions_df: pd.DataFrame, quotes: dict[str, dict[str, Any]]
+    ) -> None:
         rows = []
         for row in positions_df.itertuples(index=False):
             price = quotes.get(row.symbol, {}).get("price")

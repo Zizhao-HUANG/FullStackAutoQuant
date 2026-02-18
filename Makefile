@@ -20,7 +20,7 @@ format: ## Auto-format code
 
 format-check: ## Check formatting without modifying files
 	black --check --diff --line-length=100 --target-version=py310 fullstackautoquant/ tests/
-	isort --check --diff --profile=black --line-length=100 fullstackautoquant/ tests/
+	ruff check --select I --diff fullstackautoquant/ tests/
 
 test: ## Run test suite
 	pytest tests/ -v

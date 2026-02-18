@@ -28,7 +28,9 @@ class StrategyOverrides:
     logs_root: Path
 
 
-def render_strategy_sections(strategy_cfg: dict[str, Any], defaults: StrategyDefaults) -> StrategyOverrides:
+def render_strategy_sections(
+    strategy_cfg: dict[str, Any], defaults: StrategyDefaults
+) -> StrategyOverrides:
     """Render all strategy-related tabs and return collected overrides."""
 
     working_cfg: dict[str, Any] = copy.deepcopy(strategy_cfg)
@@ -48,7 +50,16 @@ def render_strategy_sections(strategy_cfg: dict[str, Any], defaults: StrategyDef
         risk_tab,
         capital_paths_tab,
         rebalance_tab,
-    ) = st.tabs(["Portfolio", "Weights", "Trade Params", "Risk Params", "Capital & Paths", "Rebalance Trigger"])
+    ) = st.tabs(
+        [
+            "Portfolio",
+            "Weights",
+            "Trade Params",
+            "Risk Params",
+            "Capital & Paths",
+            "Rebalance Trigger",
+        ]
+    )
 
     working_cfg["portfolio"] = _render_portfolio_tab(portfolio_tab, portfolio_cfg)
     working_cfg["weights"] = _render_weights_tab(weights_tab, weights_cfg)
@@ -76,8 +87,14 @@ def render_strategy_sections(strategy_cfg: dict[str, Any], defaults: StrategyDef
 def _render_portfolio_tab(tab, portfolio: dict[str, Any]) -> dict[str, Any]:
     with tab:
         col1, col2, col3 = st.columns(3)
-        portfolio["topk"] = int(col1.number_input("TopK Count", value=int(portfolio.get("topk", 20)), step=1))
-        portfolio["n_drop"] = int(col2.number_input("Replaceable Non-Target Positions", value=int(portfolio.get("n_drop", 0)), step=1))
+        portfolio["topk"] = int(
+            col1.number_input("TopK Count", value=int(portfolio.get("topk", 20)), step=1)
+        )
+        portfolio["n_drop"] = int(
+            col2.number_input(
+                "Replaceable Non-Target Positions", value=int(portfolio.get("n_drop", 0)), step=1
+            )
+        )
         portfolio["invest_ratio"] = float(
             col3.number_input(
                 "Capital Usage Ratio",
@@ -97,7 +114,9 @@ def _render_portfolio_tab(tab, portfolio: dict[str, Any]) -> dict[str, Any]:
                 step=0.01,
             )
         )
-        portfolio["lot"] = int(col5.number_input("Minimum Lot Size", value=int(portfolio.get("lot", 100)), step=1))
+        portfolio["lot"] = int(
+            col5.number_input("Minimum Lot Size", value=int(portfolio.get("lot", 100)), step=1)
+        )
         portfolio["confidence_floor"] = float(
             col6.number_input(
                 "Confidence Threshold",

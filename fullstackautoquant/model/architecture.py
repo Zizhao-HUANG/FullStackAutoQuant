@@ -16,11 +16,13 @@ class CausalConv1d(nn.Module):
             dilation=dilation,
             padding=0,
         )
+
     def forward(self, x):
         # x: (B, C, L)
         if self.left_pad > 0:
             x = F.pad(x, (self.left_pad, 0))
         return self.conv(x)
+
 
 class ResidualTCNBlock(nn.Module):
     def __init__(self, in_channels, out_channels, k1=5, d1=1, k2=5, d2=2, dropout=0.1):
@@ -33,6 +35,7 @@ class ResidualTCNBlock(nn.Module):
         self.res_proj = None
         if in_channels != out_channels:
             self.res_proj = nn.Conv1d(in_channels, out_channels, kernel_size=1)
+
     def forward(self, x):
         # x: (B, L, C)
         B, L, C = x.shape
@@ -47,6 +50,7 @@ class ResidualTCNBlock(nn.Module):
         res = h if self.res_proj is None else self.res_proj(h)
         out = (y + res).transpose(1, 2)  # back to (B, L, C_out)
         return out
+
 
 class MultiHeadSelfAttention(nn.Module):
     def __init__(self, d_model=96, nhead=6, head_dim=16, attn_dropout=0.1):
@@ -70,12 +74,12 @@ class MultiHeadSelfAttention(nn.Module):
         k = k.view(B, T, self.nhead, self.head_dim).transpose(1, 2)
         v = v.view(B, T, self.nhead, self.head_dim).transpose(1, 2)
         # scaled dot-product
-        attn_scores = torch.matmul(q, k.transpose(-2, -1)) / (self.head_dim ** 0.5)  # (B,H,T,T)
+        attn_scores = torch.matmul(q, k.transpose(-2, -1)) / (self.head_dim**0.5)  # (B,H,T,T)
         if causal_mask:
             # mask future: allow j <= i
             i = torch.arange(T, device=x.device)
             mask = i.unsqueeze(0) >= i.unsqueeze(1)  # (T,T) lower triangular
-            attn_scores = attn_scores.masked_fill(~mask, float('-inf'))
+            attn_scores = attn_scores.masked_fill(~mask, float("-inf"))
         attn = F.softmax(attn_scores, dim=-1)
         attn = self.attn_drop(attn)
         out = torch.matmul(attn, v)  # (B,H,T,Hd)
@@ -84,13 +88,25 @@ class MultiHeadSelfAttention(nn.Module):
         out = self.proj_drop(out)
         return out
 
+
 class LocalSelfAttentionOverlap(nn.Module):
-    def __init__(self, d_model=96, window_size=16, stride=8, nhead=6, head_dim=16, attn_dropout=0.1, dropout=0.1):
+    def __init__(
+        self,
+        d_model=96,
+        window_size=16,
+        stride=8,
+        nhead=6,
+        head_dim=16,
+        attn_dropout=0.1,
+        dropout=0.1,
+    ):
         super().__init__()
         self.window_size = window_size
         self.stride = stride
         self.ln1 = nn.LayerNorm(d_model)
-        self.mha = MultiHeadSelfAttention(d_model=d_model, nhead=nhead, head_dim=head_dim, attn_dropout=attn_dropout)
+        self.mha = MultiHeadSelfAttention(
+            d_model=d_model, nhead=nhead, head_dim=head_dim, attn_dropout=attn_dropout
+        )
         self.drop1 = nn.Dropout(dropout)
         self.ln2 = nn.LayerNorm(d_model)
         self.ffn = nn.Sequential(
@@ -132,6 +148,7 @@ class LocalSelfAttentionOverlap(nn.Module):
         out = out / torch.clamp_min(cnt, 1.0)
         return out
 
+
 # 2. Define the model class, inheriting from nn.Module
 class Net(nn.Module):
     # REMINDER: Your __init__ must accept num_features and num_timesteps.
@@ -156,26 +173,26 @@ class Net(nn.Module):
 
         # Record training hyperparameters (for reference only; training loop not included)
         self.training_hyperparameters = {
-            'n_epochs': 95,
-            'lr': 2e-4,
-            'early_stop': 10,
-            'batch_size': 256,
-            'weight_decay': 1e-4,
-            'precision': 'bf16',
-            'loss_fn': '0.7*PairwiseHinge(m=0.015)+0.3*MSE + TVR(4e-4)',
-            'optimizer': 'AdamW',
-            'optimizer_kwargs': {'betas': (0.9, 0.999), 'eps': 1e-08},
-            'lr_scheduler': 'CosineAnnealingLRWithWarmup',
-            'lr_scheduler_kwargs': {'T_max': 95, 'eta_min': 1e-06, 'warmup_steps': 1000},
-            'seed': 42,
-            'step_len': 72,
-            'num_timesteps': 72,
-            'window_length': 72,
-            'window_stride': 8,
-            'gradient_clip_norm': 0.8,
-            'rank_loss_margin': 0.015,
-            'rank_mse_blend_alpha': 0.7,
-            'turnover_regularization_lambda': 4e-4,
+            "n_epochs": 95,
+            "lr": 2e-4,
+            "early_stop": 10,
+            "batch_size": 256,
+            "weight_decay": 1e-4,
+            "precision": "bf16",
+            "loss_fn": "0.7*PairwiseHinge(m=0.015)+0.3*MSE + TVR(4e-4)",
+            "optimizer": "AdamW",
+            "optimizer_kwargs": {"betas": (0.9, 0.999), "eps": 1e-08},
+            "lr_scheduler": "CosineAnnealingLRWithWarmup",
+            "lr_scheduler_kwargs": {"T_max": 95, "eta_min": 1e-06, "warmup_steps": 1000},
+            "seed": 42,
+            "step_len": 72,
+            "num_timesteps": 72,
+            "window_length": 72,
+            "window_stride": 8,
+            "gradient_clip_norm": 0.8,
+            "rank_loss_margin": 0.015,
+            "rank_mse_blend_alpha": 0.7,
+            "turnover_regularization_lambda": 4e-4,
         }
 
         # 1) Linear Embedding 6->96
@@ -184,18 +201,15 @@ class Net(nn.Module):
         # 2) TCN Stem: three residual causal blocks
         # Block1: in 96 -> out 64 with residual 1x1 conv
         self.tcn_block1 = ResidualTCNBlock(
-            in_channels=self.d_model, out_channels=64,
-            k1=5, d1=1, k2=5, d2=2, dropout=self.dropout
+            in_channels=self.d_model, out_channels=64, k1=5, d1=1, k2=5, d2=2, dropout=self.dropout
         )
         # Block2: 64 -> 64 identity residual
         self.tcn_block2 = ResidualTCNBlock(
-            in_channels=64, out_channels=64,
-            k1=5, d1=2, k2=5, d2=4, dropout=self.dropout
+            in_channels=64, out_channels=64, k1=5, d1=2, k2=5, d2=4, dropout=self.dropout
         )
         # Block3: 64 -> 64 identity residual
         self.tcn_block3 = ResidualTCNBlock(
-            in_channels=64, out_channels=64,
-            k1=5, d1=4, k2=5, d2=4, dropout=self.dropout
+            in_channels=64, out_channels=64, k1=5, d1=4, k2=5, d2=4, dropout=self.dropout
         )
         # Post-TCN Projection: 64 -> 96
         self.post_tcn_proj = nn.Linear(64, self.d_model)
@@ -254,6 +268,7 @@ class Net(nn.Module):
         # 5) Output MLP
         pred = self.head(last_hidden)  # (B, 1)
         return pred
+
 
 # 3. Set the 'model_cls' variable to your defined class
 model_cls = Net

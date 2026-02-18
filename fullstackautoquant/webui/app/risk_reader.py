@@ -29,4 +29,3 @@ def find_risk_state_file(targets_dir: Path) -> Path:
     if default.exists():
         return default
     raise RiskReaderError("No risk_state file found in directory")
-

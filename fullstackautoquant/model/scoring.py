@@ -25,4 +25,3 @@ def compute_confidence(matrix: Iterable[np.ndarray]) -> np.ndarray:
     mat = np.vstack([np.atleast_1d(arr) for arr in matrix])
     std_vec = np.std(mat, axis=0)
     return 1.0 / (1.0 + std_vec)
-

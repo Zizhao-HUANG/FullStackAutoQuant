@@ -76,4 +76,3 @@ def test_strategy_config_reflects_portfolio_overrides() -> None:
     assert strat_cfg["portfolio"]["lot"] == 200
     assert strat_cfg["portfolio"]["weight_mode"] == "ranked"
     assert strat_cfg["weights"]["mode"] == "ranked"
-

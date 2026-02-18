@@ -26,7 +26,7 @@ from qlib.data import D
 
 def _parse_fields(csv_fields: str | None) -> list[str]:
     if csv_fields is None:
-    # Default "as-is" export: OHLCV + $factor
+        # Default "as-is" export: OHLCV + $factor
         return ["$open", "$high", "$low", "$close", "$volume", "$factor"]
     return [f.strip() for f in csv_fields.split(",") if f.strip()]
 
@@ -65,7 +65,11 @@ def _assert_last_day_coverage(df: pd.DataFrame, expect_instruments: int | None) 
         return
     # Use last trading day from export itself for overwrite check(avoid external calendar read discrepancies)
     last_day = df.index.get_level_values("datetime").max()
-    last_cnt = df.xs(last_day, level="datetime", drop_level=False).groupby("datetime", group_keys=False).size()
+    last_cnt = (
+        df.xs(last_day, level="datetime", drop_level=False)
+        .groupby("datetime", group_keys=False)
+        .size()
+    )
     # last_cnt is Series[datetime]->count, take only the last item
     last_value = int(last_cnt.iloc[-1]) if len(last_cnt) else 0
     if last_value != expect_instruments:
@@ -102,12 +106,30 @@ def _maybe_copy(out_path: str, copy_to: Sequence[str] | None) -> None:
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(description="Export daily OHLCV from Qlib to daily_pv.h5 for factor calculation")
-    parser.add_argument("--instruments", default="all", help="Qlib instruments, e.g., all, csi300 (pool/time filtering is handled by downstream workflow)")
-    parser.add_argument("--fields", default=None, help="Comma separated fields, e.g., '$open,$high,$low,$close,$volume'")
-    parser.add_argument("--start", default="", help="Start date (inclusive). Empty means use all available data from the beginning")
-    parser.add_argument("--end", default="auto", help="End date (inclusive). 'auto' means use all available data")
-    parser.add_argument("--provider_uri", default="~/.qlib/qlib_data/cn_data", help="Qlib provider uri")
+    parser = argparse.ArgumentParser(
+        description="Export daily OHLCV from Qlib to daily_pv.h5 for factor calculation"
+    )
+    parser.add_argument(
+        "--instruments",
+        default="all",
+        help="Qlib instruments, e.g., all, csi300 (pool/time filtering is handled by downstream workflow)",
+    )
+    parser.add_argument(
+        "--fields",
+        default=None,
+        help="Comma separated fields, e.g., '$open,$high,$low,$close,$volume'",
+    )
+    parser.add_argument(
+        "--start",
+        default="",
+        help="Start date (inclusive). Empty means use all available data from the beginning",
+    )
+    parser.add_argument(
+        "--end", default="auto", help="End date (inclusive). 'auto' means use all available data"
+    )
+    parser.add_argument(
+        "--provider_uri", default="~/.qlib/qlib_data/cn_data", help="Qlib provider uri"
+    )
     parser.add_argument("--region", default="cn", help="Qlib region, default cn")
     parser.add_argument("--out", default="./daily_pv.h5", help="Output HDF5 path")
     parser.add_argument(
@@ -143,7 +165,9 @@ def main() -> int:
     )
 
     _assert_required_columns(df, required=["$close"])
-    _assert_last_day_coverage(df, expect_instruments=(None if args.expect_instruments == 0 else args.expect_instruments))
+    _assert_last_day_coverage(
+        df, expect_instruments=(None if args.expect_instruments == 0 else args.expect_instruments)
+    )
 
     _save_hdf(df, args.out)
     _maybe_copy(args.out, args.copy_to)
@@ -156,5 +180,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-
-

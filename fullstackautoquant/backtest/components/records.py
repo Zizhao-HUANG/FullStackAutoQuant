@@ -117,12 +117,22 @@ class BacktestIntermediate:
     manual_decisions: list[dict[str, Any]]
 
     def equity_curve_df(self) -> pd.DataFrame:
-        return pd.DataFrame([rec.to_dict() for rec in self.equities]).set_index("date") if self.equities else pd.DataFrame()
+        return (
+            pd.DataFrame([rec.to_dict() for rec in self.equities]).set_index("date")
+            if self.equities
+            else pd.DataFrame()
+        )
 
     def to_result(self, summary: BacktestSummary, metadata: dict[str, Any]) -> BacktestResult:
         equity_df = self.equity_curve_df()
-        trades_df = pd.DataFrame([rec.to_dict() for rec in self.trades]) if self.trades else pd.DataFrame()
-        positions_df = pd.DataFrame([snap.to_dict() for snap in self.snapshots]) if self.snapshots else pd.DataFrame()
+        trades_df = (
+            pd.DataFrame([rec.to_dict() for rec in self.trades]) if self.trades else pd.DataFrame()
+        )
+        positions_df = (
+            pd.DataFrame([snap.to_dict() for snap in self.snapshots])
+            if self.snapshots
+            else pd.DataFrame()
+        )
         result_metadata = {
             **metadata,
             "risk_records": self.risk_records,

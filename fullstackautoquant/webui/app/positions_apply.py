@@ -58,7 +58,9 @@ def apply_orders(
     if isinstance(current_positions, pd.DataFrame):
         positions_df = current_positions.copy()
     else:
-        positions_df = _to_dataframe(current_positions, ["symbol", "qty", "cost_price", "market_value"])
+        positions_df = _to_dataframe(
+            current_positions, ["symbol", "qty", "cost_price", "market_value"]
+        )
     if isinstance(orders, pd.DataFrame):
         orders_df = orders.copy()
     else:
@@ -66,7 +68,9 @@ def apply_orders(
 
     positions_df["symbol"] = positions_df["symbol"].apply(normalize_symbol)
     positions_df["qty"] = pd.to_numeric(positions_df["qty"], errors="coerce").fillna(0.0)
-    positions_df["cost_price"] = pd.to_numeric(positions_df["cost_price"], errors="coerce").fillna(0.0)
+    positions_df["cost_price"] = pd.to_numeric(positions_df["cost_price"], errors="coerce").fillna(
+        0.0
+    )
     positions_map: dict[str, dict[str, float]] = {}
     for row in positions_df.itertuples(index=False):
         symbol = str(row.symbol)
@@ -116,7 +120,9 @@ def apply_orders(
                 cash_delta -= price * volume
                 if new_qty > 0:
                     if existing_qty > 0:
-                        weighted = (existing_qty * pos.get("cost_price", 0.0) + price * volume) / new_qty
+                        weighted = (
+                            existing_qty * pos.get("cost_price", 0.0) + price * volume
+                        ) / new_qty
                         pos["cost_price"] = weighted
                     else:
                         pos["cost_price"] = price
@@ -126,7 +132,9 @@ def apply_orders(
         elif side == "SELL":
             pos = positions_map.get(symbol)
             if pos is None:
-                warnings.append(f"Order {symbol} SELL {volume} not found in current positions, ignored.")
+                warnings.append(
+                    f"Order {symbol} SELL {volume} not found in current positions, ignored."
+                )
                 continue
             existing_qty = float(pos.get("qty", 0.0))
             if existing_qty <= 0:
@@ -140,16 +148,20 @@ def apply_orders(
             pos["qty"] = remaining
             pos["market_value"] = pos.get("cost_price", 0.0) * remaining
             if remaining <= 0:
-                sold_records.append({
-                    "symbol": symbol,
-                    "qty": sell_qty,
-                    "cost_price": float(pos.get("cost_price", 0.0) or 0.0),
-                })
+                sold_records.append(
+                    {
+                        "symbol": symbol,
+                        "qty": sell_qty,
+                        "cost_price": float(pos.get("cost_price", 0.0) or 0.0),
+                    }
+                )
                 positions_map.pop(symbol, None)
             else:
                 positions_map[symbol] = pos
             if sell_qty < volume:
-                warnings.append(f"Order {symbol} SELL {volume} exceeds current quantity {existing_qty}, only deducting {sell_qty}.")
+                warnings.append(
+                    f"Order {symbol} SELL {volume} exceeds current quantity {existing_qty}, only deducting {sell_qty}."
+                )
         else:
             warnings.append(f"Unknown side {side}, Order {symbol} skipped.")
 
@@ -159,12 +171,14 @@ def apply_orders(
         qty = float(pos.get("qty", 0.0) or 0.0)
         cost_price = float(pos.get("cost_price", 0.0) or 0.0)
         market_value = float(qty * cost_price)
-        updated_positions.append({
-            "symbol": symbol,
-            "qty": qty,
-            "cost_price": cost_price,
-            "market_value": market_value,
-        })
+        updated_positions.append(
+            {
+                "symbol": symbol,
+                "qty": qty,
+                "cost_price": cost_price,
+                "market_value": market_value,
+            }
+        )
 
     return ApplyResult(
         positions=updated_positions,
@@ -191,7 +205,9 @@ def cap_buy_orders_by_cash(
     if isinstance(current_positions, pd.DataFrame):
         positions_df = current_positions.copy()
     else:
-        positions_df = _to_dataframe(current_positions, ["symbol", "qty", "cost_price", "market_value"])
+        positions_df = _to_dataframe(
+            current_positions, ["symbol", "qty", "cost_price", "market_value"]
+        )
     positions_df["symbol"] = positions_df["symbol"].apply(normalize_symbol)
     positions_df["qty"] = pd.to_numeric(positions_df["qty"], errors="coerce").fillna(0.0)
     qty_lookup = {

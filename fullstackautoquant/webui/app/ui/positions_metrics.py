@@ -62,7 +62,9 @@ class PositionMetricsCalculator:
 
     def _build_display(self, df: pd.DataFrame) -> pd.DataFrame:
         display_df = df.copy()
-        display_df["Name"] = display_df["symbol"].map(lambda x: self._quotes.get(x, {}).get("name", ""))
+        display_df["Name"] = display_df["symbol"].map(
+            lambda x: self._quotes.get(x, {}).get("name", "")
+        )
         display_df["Live Price"] = _to_numeric(display_df["symbol"], self._quotes, "price")
         column_mapping = {
             "symbol": "Symbol",
@@ -79,11 +81,19 @@ class PositionMetricsCalculator:
             display_df["Symbol"] = display_df["Symbol"].map(digits_only_symbol)
 
         display_df["Qty"] = pd.to_numeric(display_df["Qty"], errors="coerce").fillna(0.0)
-        display_df["Cost Price"] = pd.to_numeric(display_df["Cost Price"], errors="coerce").fillna(0.0)
-        display_df["Live Value"] = pd.to_numeric(display_df["Live Value"], errors="coerce").fillna(0.0)
+        display_df["Cost Price"] = pd.to_numeric(display_df["Cost Price"], errors="coerce").fillna(
+            0.0
+        )
+        display_df["Live Value"] = pd.to_numeric(display_df["Live Value"], errors="coerce").fillna(
+            0.0
+        )
         display_df["Live Price"] = display_df["Live Price"].round(4)
-        display_df["Floating P&L"] = display_df["Floating P&L"].map(lambda v: round(float(v), 2) if pd.notna(v) else 0.0)
-        display_df["Daily P&L"] = display_df["Daily P&L"].map(lambda v: round(float(v), 2) if pd.notna(v) else 0.0)
+        display_df["Floating P&L"] = display_df["Floating P&L"].map(
+            lambda v: round(float(v), 2) if pd.notna(v) else 0.0
+        )
+        display_df["Daily P&L"] = display_df["Daily P&L"].map(
+            lambda v: round(float(v), 2) if pd.notna(v) else 0.0
+        )
         display_df["Weight"] = display_df["Weight"].map(
             lambda v: f"{float(v):.2%}" if pd.notna(v) and v not in ("", None) else ""
         )
@@ -112,5 +122,9 @@ def _fill_numeric(df: pd.DataFrame, columns) -> pd.DataFrame:
     return converted
 
 
-def _to_numeric(symbols: pd.Series, quotes: Mapping[str, Mapping[str, object]], key: str) -> pd.Series:
-    return pd.to_numeric(symbols.map(lambda x: quotes.get(x, {}).get(key)), errors="coerce").fillna(0.0)
+def _to_numeric(
+    symbols: pd.Series, quotes: Mapping[str, Mapping[str, object]], key: str
+) -> pd.Series:
+    return pd.to_numeric(symbols.map(lambda x: quotes.get(x, {}).get(key)), errors="coerce").fillna(
+        0.0
+    )

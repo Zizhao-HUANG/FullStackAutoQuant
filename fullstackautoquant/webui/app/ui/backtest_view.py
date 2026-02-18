@@ -69,7 +69,9 @@ class BacktestPage:
                     f"{BACKTEST_IMPORT_ERROR}. Install required dependencies and retry."
                 )
             else:
-                st.info("Backtest dependencies not yet loaded, confirm trading/backtest module is available.")
+                st.info(
+                    "Backtest dependencies not yet loaded, confirm trading/backtest module is available."
+                )
             return
 
         inputs = self._collect_inputs()
@@ -89,20 +91,28 @@ class BacktestPage:
         daily_pv_default = default_daily_pv(raw_strategy_cfg, repo_root)
         logs_base = default_logs_base(raw_strategy_cfg, config_path)
 
-        st.caption("Select backtest range and params. Max 2000 trading days per run. Current version supports QLib inference only. Provide factor and weight files.")
+        st.caption(
+            "Select backtest range and params. Max 2000 trading days per run. Current version supports QLib inference only. Provide factor and weight files."
+        )
         col1, col2 = st.columns(2)
         today = pd.Timestamp.today().date()
         default_start = today - pd.Timedelta(days=365)
-        start_date = col1.date_input("Start date", value=default_start, max_value=today - pd.Timedelta(days=1))
+        start_date = col1.date_input(
+            "Start date", value=default_start, max_value=today - pd.Timedelta(days=1)
+        )
         end_date = col2.date_input("End Date", value=today, max_value=today)
 
         st.subheader("Backtest Cost Parameters")
         col_cost_1, col_cost_2 = st.columns(2)
         slippage_bps = col_cost_1.number_input("Slippage (bps)", value=5.0, min_value=0.0, step=0.5)
-        commission = col_cost_2.number_input("Commission Rate", value=0.001, min_value=0.0, step=0.0001, format="%.4f")
+        commission = col_cost_2.number_input(
+            "Commission Rate", value=0.001, min_value=0.0, step=0.0001, format="%.4f"
+        )
 
         st.subheader("Signal Source")
-        combined_factors_default = repo_root / "ModelInferenceBundle" / "combined_factors_df.parquet"
+        combined_factors_default = (
+            repo_root / "ModelInferenceBundle" / "combined_factors_df.parquet"
+        )
         combined_factors = st.text_input(
             "combined_factors_df.parquet",
             value=str(combined_factors_default.resolve()),
@@ -160,9 +170,15 @@ class BacktestPage:
                     if isinstance(inputs.strategy_config, dict)
                     else {}
                 )
-                invest_ratio = float(portfolio_cfg.get("invest_ratio", 0.95)) if isinstance(portfolio_cfg, dict) else 0.95
+                invest_ratio = (
+                    float(portfolio_cfg.get("invest_ratio", 0.95))
+                    if isinstance(portfolio_cfg, dict)
+                    else 0.95
+                )
                 confidence_floor = (
-                    float(portfolio_cfg.get("confidence_floor", 0.9)) if isinstance(portfolio_cfg, dict) else 0.9
+                    float(portfolio_cfg.get("confidence_floor", 0.9))
+                    if isinstance(portfolio_cfg, dict)
+                    else 0.9
                 )
                 portfolio_payload: dict[str, Any] = {
                     "invest_ratio": invest_ratio,
@@ -172,7 +188,9 @@ class BacktestPage:
                     if "topk" in portfolio_cfg:
                         portfolio_payload["topk"] = int(portfolio_cfg.get("topk", 20))
                     if "max_weight" in portfolio_cfg:
-                        portfolio_payload["max_weight"] = float(portfolio_cfg.get("max_weight", 0.05))
+                        portfolio_payload["max_weight"] = float(
+                            portfolio_cfg.get("max_weight", 0.05)
+                        )
                     if "lot" in portfolio_cfg:
                         portfolio_payload["lot"] = int(portfolio_cfg.get("lot", 100))
                 if isinstance(weights_cfg, dict) and weights_cfg.get("mode"):
@@ -190,7 +208,10 @@ class BacktestPage:
                         "end_date": inputs.end_date.strftime("%Y-%m-%d"),
                         "initial_capital": inputs.initial_capital,
                         "portfolio": portfolio_payload,
-                        "costs": {"commission": inputs.commission, "slippage_bps": inputs.slippage_bps},
+                        "costs": {
+                            "commission": inputs.commission,
+                            "slippage_bps": inputs.slippage_bps,
+                        },
                         "data": {"daily_pv": str(inputs.daily_pv)},
                         "signal": signal_cfg,
                         "metadata": {
@@ -216,12 +237,22 @@ class BacktestPage:
 
         metrics_col1, metrics_col2, metrics_col3 = st.columns(3)
         metrics_col1.metric("Total return", format_percent(summary.get("total_return")))
-        metrics_col2.metric("Annualized Return", format_percent(summary.get("annualized_return"), placeholder="Less than 21 trading days"))
+        metrics_col2.metric(
+            "Annualized Return",
+            format_percent(
+                summary.get("annualized_return"), placeholder="Less than 21 trading days"
+            ),
+        )
         metrics_col3.metric("Max Drawdown", format_percent(summary.get("max_drawdown")))
 
         metrics_col4, metrics_col5 = st.columns(2)
-        metrics_col4.metric("Sharpe Ratio", format_ratio(summary.get("sharpe"), placeholder="Insufficient samples"))
-        metrics_col5.metric("Return Volatility", format_percent(summary.get("volatility"), placeholder="Insufficient samples"))
+        metrics_col4.metric(
+            "Sharpe Ratio", format_ratio(summary.get("sharpe"), placeholder="Insufficient samples")
+        )
+        metrics_col5.metric(
+            "Return Volatility",
+            format_percent(summary.get("volatility"), placeholder="Insufficient samples"),
+        )
 
         st.line_chart(equity_df[["equity"]])
         st.area_chart(equity_df[["daily_return"]])
@@ -262,7 +293,9 @@ class BacktestPage:
             return
 
         for meta in runs:
-            with st.expander(f"{meta.run_id} | Total return {meta.summary.get('total_return', 0):.2%}"):
+            with st.expander(
+                f"{meta.run_id} | Total return {meta.summary.get('total_return', 0):.2%}"
+            ):
                 try:
                     (
                         equity,

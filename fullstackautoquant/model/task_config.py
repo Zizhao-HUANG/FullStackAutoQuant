@@ -50,7 +50,6 @@ def _normalize_date(value: str | Any) -> str:
     return str(value)
 
 
-
 def load_task_config(path: Path) -> TaskCfg:
     if not path.exists():
         raise TaskConfigError(f"Cannot find task_rendered.yaml: {path}")
@@ -101,7 +100,9 @@ def _filter_factor_df_by_instruments(df, instrument_spec, strict: bool = False) 
         return df
     idx = getattr(df, "index", None)
     if not isinstance(idx, pd.MultiIndex) or "instrument" not in idx.names:
-        raise TaskConfigError("combined_factors_df.parquet is missing ('datetime','instrument') MultiIndex")
+        raise TaskConfigError(
+            "combined_factors_df.parquet is missing ('datetime','instrument') MultiIndex"
+        )
     inst_level = idx.get_level_values("instrument")
     actual_set = set(inst_level.unique())
     extra = actual_set - instrument_set
@@ -117,7 +118,9 @@ def _filter_factor_df_by_instruments(df, instrument_spec, strict: bool = False) 
     mask = inst_level.isin(instrument_set)
     filtered = df[mask]
     if filtered.empty:
-        raise TaskConfigError(f"combined_factors_df.parquet has no available data in {instrument_spec}. Check the factor synthesis pipeline.")
+        raise TaskConfigError(
+            f"combined_factors_df.parquet has no available data in {instrument_spec}. Check the factor synthesis pipeline."
+        )
     return filtered
 
 
@@ -162,10 +165,15 @@ def build_handler_from_task(
     if instrument_spec:
         # If a separate StaticDataLoader config exists, filter again at handler level (in case loader config lacks instruments)
         for loader_cfg in dataloader_l:
-            if isinstance(loader_cfg, dict) and loader_cfg.get("class") in {"qlib.data.dataset.loader.StaticDataLoader", "StaticDataLoader"}:
+            if isinstance(loader_cfg, dict) and loader_cfg.get("class") in {
+                "qlib.data.dataset.loader.StaticDataLoader",
+                "StaticDataLoader",
+            }:
                 config = loader_cfg.get("kwargs", {}).get("config")
                 if config is not None:
-                    loader_cfg["kwargs"]["config"] = _filter_factor_df_by_instruments(config, instrument_spec)
+                    loader_cfg["kwargs"]["config"] = _filter_factor_df_by_instruments(
+                        config, instrument_spec
+                    )
 
     if start_time is not None:
         handler_kwargs["start_time"] = start_time

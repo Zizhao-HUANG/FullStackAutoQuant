@@ -33,9 +33,13 @@ class WorkflowPage:
 
     def render(self) -> None:
         st.header("🚀 Strategy Script Workflow", divider="gray")
-        st.caption("Runs the full pipeline: signals_from_csv.py → risk_manager.py → strategy_rebalance.py")
+        st.caption(
+            "Runs the full pipeline: signals_from_csv.py → risk_manager.py → strategy_rebalance.py"
+        )
 
-        debug_mode = st.checkbox("Debug mode: save and display script output", value=False, key="workflow_debug_mode")
+        debug_mode = st.checkbox(
+            "Debug mode: save and display script output", value=False, key="workflow_debug_mode"
+        )
         self._render_controls(debug_mode)
         data_access = self._deps.data_access
         result = data_access.get_workflow_result()
@@ -47,7 +51,7 @@ class WorkflowPage:
             )
 
         if not result:
-            st.info("Workflow not yet executed. Click \"Run Full Workflow\" for latest results.")
+            st.info('Workflow not yet executed. Click "Run Full Workflow" for latest results.')
             return
 
         self._render_targets_section(result)
@@ -62,10 +66,14 @@ class WorkflowPage:
                 db_service = self._deps.db
                 positions_payload, skipped = to_payload(db_service)
                 if skipped:
-                    st.warning(f"The following positions could not be converted to GM symbols and were skipped:{', '.join(skipped)}")
+                    st.warning(
+                        f"The following positions could not be converted to GM symbols and were skipped:{', '.join(skipped)}"
+                    )
                 try:
                     if positions_payload:
-                        result = run_full_workflow(self._deps.config, current_positions=positions_payload)
+                        result = run_full_workflow(
+                            self._deps.config, current_positions=positions_payload
+                        )
                     else:
                         result = run_full_workflow(self._deps.config)
                     data_access.set_workflow_result(result)
@@ -107,7 +115,9 @@ class WorkflowPage:
         if isinstance(signals_info, dict):
             signal_list = signals_info.get("signals", [])
             count_label = signals_info.get("count", len(signal_list))
-            st.caption(f"Signal count:{count_label}, Trading date:{signals_info.get('date', 'N/A')}.")
+            st.caption(
+                f"Signal count:{count_label}, Trading date:{signals_info.get('date', 'N/A')}."
+            )
 
         targets_data = result.get("targets")
         if isinstance(targets_data, dict):
@@ -115,7 +125,9 @@ class WorkflowPage:
         targets_df = pd.DataFrame(targets_data) if targets_data else pd.DataFrame()
 
         summary_cols = st.columns(3)
-        targets_payload = result.get("targets", {}) if isinstance(result.get("targets"), dict) else {}
+        targets_payload = (
+            result.get("targets", {}) if isinstance(result.get("targets"), dict) else {}
+        )
         invest_capital = float(targets_payload.get("invest_capital", 0.0) or 0.0)
         est_target_value = float(targets_payload.get("total_capital", 0.0) or 0.0)
         remaining_cash = float(targets_payload.get("remaining_cash", 0.0) or 0.0)
@@ -172,8 +184,12 @@ class WorkflowPage:
             orders_df["volume"] = pd.to_numeric(orders_df["volume"], errors="coerce").fillna(0.0)
             buy_mask = orders_df["side"].str.upper() == "BUY"
             sell_mask = orders_df["side"].str.upper() == "SELL"
-            buy_total = float((orders_df.loc[buy_mask, "price"] * orders_df.loc[buy_mask, "volume"]).sum())
-            sell_total = float((orders_df.loc[sell_mask, "price"] * orders_df.loc[sell_mask, "volume"]).sum())
+            buy_total = float(
+                (orders_df.loc[buy_mask, "price"] * orders_df.loc[buy_mask, "volume"]).sum()
+            )
+            sell_total = float(
+                (orders_df.loc[sell_mask, "price"] * orders_df.loc[sell_mask, "volume"]).sum()
+            )
 
         with summary_cols[1]:
             st.metric("Estimated Buy Amount", f"{buy_total:,.2f}")
@@ -185,7 +201,9 @@ class WorkflowPage:
                 st.caption(f"Estimated remaining cash from workflow:{remaining_cash:,.2f}")
             gap = buy_total - available_cash
             if gap > 0:
-                st.error(f"Buy demand exceeds available cash {gap:,.2f}, please adjust positions or add cash.")
+                st.error(
+                    f"Buy demand exceeds available cash {gap:,.2f}, please adjust positions or add cash."
+                )
 
         signal_strengths = self._extract_signal_strengths(result)
         self._render_orders_section(orders_df, signal_strengths, signal_order)
@@ -294,7 +312,9 @@ class WorkflowPage:
             return capped_df
 
         capped_df.loc[:, "price"] = pd.to_numeric(capped_df["price"], errors="coerce").fillna(0.0)
-        capped_df.loc[:, "volume"] = pd.to_numeric(capped_df.get("volume", 0.0), errors="coerce").fillna(0.0)
+        capped_df.loc[:, "volume"] = pd.to_numeric(
+            capped_df.get("volume", 0.0), errors="coerce"
+        ).fillna(0.0)
 
         buy_orders = capped_df[buy_mask]
         strength_column = self._pick_strength_column(buy_orders.columns)
@@ -354,7 +374,9 @@ class WorkflowPage:
         return None
 
     def _resolve_lot_size(self) -> int:
-        portfolio_cfg = self._deps.config.get("portfolio") if isinstance(self._deps.config, dict) else None
+        portfolio_cfg = (
+            self._deps.config.get("portfolio") if isinstance(self._deps.config, dict) else None
+        )
         if isinstance(portfolio_cfg, dict):
             lot = int(portfolio_cfg.get("lot", 1) or 1)
             return max(lot, 1)
@@ -499,7 +521,11 @@ class WorkflowPage:
         if strength_column is None or "instrument" not in df.columns:
             return {}
         mapping: dict[str, float] = {}
-        column = "instrument" if "instrument" in df.columns else "symbol" if "symbol" in df.columns else None
+        column = (
+            "instrument"
+            if "instrument" in df.columns
+            else "symbol" if "symbol" in df.columns else None
+        )
         if column is None:
             return {}
         for instrument, value in df[[column, strength_column]].itertuples(index=False):
@@ -522,7 +548,11 @@ class WorkflowPage:
         df = pd.DataFrame(signals)
         if df.empty:
             return {}
-        column = "instrument" if "instrument" in df.columns else "symbol" if "symbol" in df.columns else None
+        column = (
+            "instrument"
+            if "instrument" in df.columns
+            else "symbol" if "symbol" in df.columns else None
+        )
         if column is None:
             return {}
         order: dict[str, int] = {}
@@ -531,7 +561,9 @@ class WorkflowPage:
                 order[alias] = rank
         return order
 
-    def _lookup_signal_value(self, signal_map: dict[str, float], symbol: str, default: float) -> float:
+    def _lookup_signal_value(
+        self, signal_map: dict[str, float], symbol: str, default: float
+    ) -> float:
         if not isinstance(symbol, str):
             return default
         for alias in self._expand_symbol_aliases(symbol):

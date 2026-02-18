@@ -58,7 +58,3 @@ def _normalize_instruments(df: pd.DataFrame) -> pd.DataFrame:
     df = df[df["instrument"].str.match(r"^(SH|SZ)\d{6}$", na=False)].copy()
     df["symbol"] = df["instrument"].apply(instrument_to_gm)
     return df[df["symbol"].notna()].copy()
-
-
-
-

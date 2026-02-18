@@ -15,4 +15,3 @@ def load_combined_factors(path: Path) -> pd.DataFrame:
         df = df.copy()
         df.index.set_names(["datetime", "instrument"], inplace=True)
     return df.sort_index()
-

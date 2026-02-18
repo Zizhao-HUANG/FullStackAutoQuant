@@ -224,5 +224,3 @@ def run_full_pipeline(config: dict[str, Any]) -> list[StepResult]:
     steps.append(run_inference(config))
 
     return steps
-
-

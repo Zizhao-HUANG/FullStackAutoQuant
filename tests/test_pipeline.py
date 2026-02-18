@@ -6,6 +6,7 @@ from types import SimpleNamespace
 
 import pandas as pd
 import pytest
+
 from fullstackautoquant.backtest.components.execution import ExecutionEngine
 from fullstackautoquant.backtest.components.nav_tracker import NavTracker
 from fullstackautoquant.backtest.components.records import BacktestIntermediate
@@ -59,7 +60,9 @@ def minimal_context(tmp_path: Path) -> BacktestContext:
     execution = ExecutionEngine({})
     nav_tracker = NavTracker()
     calendar = [dt.date(2025, 10, 17)]
-    return BacktestContext(calendar, signal_provider, risk, strategy, execution, nav_tracker, tmp_path)
+    return BacktestContext(
+        calendar, signal_provider, risk, strategy, execution, nav_tracker, tmp_path
+    )
 
 
 def test_pipeline_produces_intermediate(minimal_context: BacktestContext) -> None:
@@ -85,11 +88,10 @@ def test_result_serializer_writes_files(tmp_path: Path, minimal_context: Backtes
     trades = pd.DataFrame()
     positions = pd.DataFrame()
 
-    bundle = serializer.persist(config, summary, equity, trades, positions, artifacts={"signals.json": []})
+    bundle = serializer.persist(
+        config, summary, equity, trades, positions, artifacts={"signals.json": []}
+    )
 
     assert (bundle.root / "config.json").exists()
     assert (bundle.root / "equity_curve.csv").exists()
     assert (bundle.logs_dir / "signals.json").exists()
-
-
-

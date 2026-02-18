@@ -50,7 +50,9 @@ class BacktestPipeline:
         prev_market_value: float | None = None
         manual_sim = getattr(self._ctx, "manual_simulator", None)
 
-        for trade_date, signal_date, signals in self._ctx.signal_provider.iterate(self._ctx.calendar):
+        for trade_date, signal_date, signals in self._ctx.signal_provider.iterate(
+            self._ctx.calendar
+        ):
             active_signals = signals
             manual_log: list[dict[str, Any]] = []
             queued_total = 0
@@ -70,7 +72,9 @@ class BacktestPipeline:
                 positions,
                 manual_log,
             )
-            orders, _, _ = self._ctx.strategy_runner.generate_orders(active_signals, risk_state, positions, equity_before)
+            orders, _, _ = self._ctx.strategy_runner.generate_orders(
+                active_signals, risk_state, positions, equity_before
+            )
             cash, positions, day_trades, equity_record, portfolio_value = self._ctx.execution.run(
                 trade_date,
                 orders,
@@ -83,7 +87,9 @@ class BacktestPipeline:
             equities.append(equity_record)
             snapshots.extend(snapshot_collector(trade_date, positions))
             self._ctx.nav_tracker.append(trade_date, equity_record.equity, cash, portfolio_value)
-            self._ctx.nav_tracker.ensure_previous(trade_date, prev_equity, prev_cash, prev_market_value)
+            self._ctx.nav_tracker.ensure_previous(
+                trade_date, prev_equity, prev_cash, prev_market_value
+            )
             self._risk_records.append(risk_state)
             self._signal_records.append(
                 {
@@ -111,7 +117,9 @@ class BacktestPipeline:
             self._manual_records,
         )
 
-    def flush(self, run_dir: Path, intermediate: BacktestIntermediate, meta: dict[str, Any]) -> None:
+    def flush(
+        self, run_dir: Path, intermediate: BacktestIntermediate, meta: dict[str, Any]
+    ) -> None:
         logs_dir = run_dir / "logs"
         logs_dir.mkdir(exist_ok=True)
         self._ctx.nav_tracker.write_csv(logs_dir / "nav_history.csv")

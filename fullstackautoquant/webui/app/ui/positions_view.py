@@ -81,7 +81,9 @@ class PositionsPage:
         )
         with info_col:
             if quotes_result.updated_at:
-                st.caption(f"Quotes updated at:{quotes_result.updated_at.strftime('%Y-%m-%d %H:%M:%S')}")
+                st.caption(
+                    f"Quotes updated at:{quotes_result.updated_at.strftime('%Y-%m-%d %H:%M:%S')}"
+                )
             elif self._deps.market is None:
                 st.caption("TuShare not configured, market values will use current values.")
         if refresh_trigger:
@@ -104,7 +106,9 @@ class PositionsPage:
         st.session_state.setdefault("available_cash", saved_cash)
 
     def _sync_available_cash(self) -> float:
-        default_value = float(st.session_state.get("available_cash", self._deps.data_access.get_available_cash()))
+        default_value = float(
+            st.session_state.get("available_cash", self._deps.data_access.get_available_cash())
+        )
         available_cash_input = st.number_input(
             "Available Cash",
             min_value=0.0,
@@ -138,10 +142,16 @@ class PositionsPage:
             st.metric("Today's Ref P&L", format_currency(total_daily))
         with col_metrics[3]:
             st.metric(
-                "Position Cost", format_currency(total_cost), help="Position Cost = sum of cost_price × qty"
+                "Position Cost",
+                format_currency(total_cost),
+                help="Position Cost = sum of cost_price × qty",
             )
         with col_metrics[4]:
-            st.metric("Total Assets", format_currency(total_assets), help="Total Assets = Total MV + Available Cash")
+            st.metric(
+                "Total Assets",
+                format_currency(total_assets),
+                help="Total Assets = Total MV + Available Cash",
+            )
         with col_metrics[5]:
             st.metric("Position %", f"{position_ratio:.2%}")
 
@@ -164,9 +174,15 @@ class PositionsPage:
             column_config={
                 "Qty": st.column_config.NumberColumn("Qty", format="%.0f"),
                 "Cost Price": st.column_config.NumberColumn("Cost Price", format="%.4f"),
-                "Live Value": st.column_config.NumberColumn("Live Value", format="%.2f", disabled=True),
-                "Floating P&L": st.column_config.NumberColumn("Floating P&L", format="%.2f", disabled=True),
-                "Daily P&L": st.column_config.NumberColumn("Daily P&L", format="%.2f", disabled=True),
+                "Live Value": st.column_config.NumberColumn(
+                    "Live Value", format="%.2f", disabled=True
+                ),
+                "Floating P&L": st.column_config.NumberColumn(
+                    "Floating P&L", format="%.2f", disabled=True
+                ),
+                "Daily P&L": st.column_config.NumberColumn(
+                    "Daily P&L", format="%.2f", disabled=True
+                ),
                 "Weight": st.column_config.TextColumn("Weight", disabled=True),
                 "Return %": st.column_config.TextColumn("Return %", disabled=True),
             },
@@ -189,7 +205,9 @@ class PositionsPage:
             lambda x: quotes.get(x, {}).get("price", 0.0)
         ) - export_df["symbol"].map(lambda x: quotes.get(x, {}).get("pre_close", 0.0))
         export_df["daily_pnl"] = export_df["daily_pnl"] * export_df["qty"]
-        export_df["weight"] = export_df["market_value"] / totals["market_value"] if totals["market_value"] else 0.0
+        export_df["weight"] = (
+            export_df["market_value"] / totals["market_value"] if totals["market_value"] else 0.0
+        )
         export_df["realtime_price"] = realtime_price
         export_df["name"] = export_df["symbol"].map(lambda x: quotes.get(x, {}).get("name", ""))
         export_df["symbol"] = export_df["symbol"].map(digits_only_symbol)
@@ -206,13 +224,21 @@ class PositionsPage:
                 "name": "Name",
             }
         )
-        export_df["Live Value"] = pd.to_numeric(export_df["Live Value"], errors="coerce").fillna(0.0).round(2)
-        export_df["Floating P&L"] = pd.to_numeric(export_df["Floating P&L"], errors="coerce").fillna(0.0).round(2)
-        export_df["Daily P&L"] = pd.to_numeric(export_df["Daily P&L"], errors="coerce").fillna(0.0).round(2)
+        export_df["Live Value"] = (
+            pd.to_numeric(export_df["Live Value"], errors="coerce").fillna(0.0).round(2)
+        )
+        export_df["Floating P&L"] = (
+            pd.to_numeric(export_df["Floating P&L"], errors="coerce").fillna(0.0).round(2)
+        )
+        export_df["Daily P&L"] = (
+            pd.to_numeric(export_df["Daily P&L"], errors="coerce").fillna(0.0).round(2)
+        )
         export_df["Weight"] = export_df["Weight"].map(
             lambda v: f"{float(v):.4%}" if pd.notna(v) else ""
         )
-        export_df["Live Price"] = pd.to_numeric(export_df["Live Price"], errors="coerce").fillna(0.0).round(4)
+        export_df["Live Price"] = (
+            pd.to_numeric(export_df["Live Price"], errors="coerce").fillna(0.0).round(4)
+        )
         return export_df
 
     def _render_import_export(self, export_df: pd.DataFrame) -> None:

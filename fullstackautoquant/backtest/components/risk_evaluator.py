@@ -33,7 +33,9 @@ class RiskEvaluator:
         manual_feedback = manual_feedback or []
         rejected = [item for item in manual_feedback if item.get("status") == "rejected"]
         partial = [item for item in manual_feedback if item.get("status") == "partial"]
-        executed = [item for item in manual_feedback if item.get("status") in {"executed", "partial"}]
+        executed = [
+            item for item in manual_feedback if item.get("status") in {"executed", "partial"}
+        ]
         record = {
             "trade_date": trade_date.isoformat(),
             "signal_date": signal_date.isoformat(),
@@ -94,6 +96,8 @@ class RiskEvaluator:
             if limit_path.exists():
                 payload = json.loads(limit_path.read_text(encoding="utf-8"))
             payload[record["trade_date"]] = record
-            limit_path.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+            limit_path.write_text(
+                json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8"
+            )
         except Exception:
             pass

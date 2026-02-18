@@ -141,17 +141,48 @@ def load_backtest_result(run_dir: Path):
     manual_path = run_dir / "manual_decisions.json"
     nav_logs_path = run_dir / "logs" / "nav_history.csv"
 
-    equity = pd.read_csv(equity_path, index_col=0, parse_dates=True) if equity_path.exists() and equity_path.stat().st_size > 0 else pd.DataFrame()
-    trades = pd.read_csv(trades_path) if trades_path.exists() and trades_path.stat().st_size > 0 else pd.DataFrame()
-    positions = pd.read_csv(positions_path) if positions_path.exists() and positions_path.stat().st_size > 0 else pd.DataFrame()
+    equity = (
+        pd.read_csv(equity_path, index_col=0, parse_dates=True)
+        if equity_path.exists() and equity_path.stat().st_size > 0
+        else pd.DataFrame()
+    )
+    trades = (
+        pd.read_csv(trades_path)
+        if trades_path.exists() and trades_path.stat().st_size > 0
+        else pd.DataFrame()
+    )
+    positions = (
+        pd.read_csv(positions_path)
+        if positions_path.exists() and positions_path.stat().st_size > 0
+        else pd.DataFrame()
+    )
     summary = json.loads(summary_path.read_text(encoding="utf-8")) if summary_path.exists() else {}
     config = json.loads(config_path.read_text(encoding="utf-8")) if config_path.exists() else {}
-    metadata = json.loads(metadata_path.read_text(encoding="utf-8")) if metadata_path.exists() else {}
+    metadata = (
+        json.loads(metadata_path.read_text(encoding="utf-8")) if metadata_path.exists() else {}
+    )
     signals = json.loads(signals_path.read_text(encoding="utf-8")) if signals_path.exists() else []
     risk_records = json.loads(risk_path.read_text(encoding="utf-8")) if risk_path.exists() else []
-    manual_decisions = json.loads(manual_path.read_text(encoding="utf-8")) if manual_path.exists() else []
-    nav_logs = pd.read_csv(nav_logs_path) if nav_logs_path.exists() and nav_logs_path.stat().st_size > 0 else pd.DataFrame()
-    return equity, trades, positions, summary, config, metadata, signals, risk_records, manual_decisions, nav_logs
+    manual_decisions = (
+        json.loads(manual_path.read_text(encoding="utf-8")) if manual_path.exists() else []
+    )
+    nav_logs = (
+        pd.read_csv(nav_logs_path)
+        if nav_logs_path.exists() and nav_logs_path.stat().st_size > 0
+        else pd.DataFrame()
+    )
+    return (
+        equity,
+        trades,
+        positions,
+        summary,
+        config,
+        metadata,
+        signals,
+        risk_records,
+        manual_decisions,
+        nav_logs,
+    )
 
 
 __all__ = [
@@ -160,4 +191,3 @@ __all__ = [
     "list_backtest_runs",
     "load_backtest_result",
 ]
-

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import pandas as pd
 import pytest
+
 from fullstackautoquant.trading.signals.parser import SignalRecord, parse_ranked_scores
 
 
@@ -39,7 +40,3 @@ def test_parse_ranked_scores_requires_single_date():
     df.loc[1, "datetime"] = "2025-10-20"
     with pytest.raises(ValueError):
         parse_ranked_scores(df, confidence_floor=0.0, topk=10)
-
-
-
-

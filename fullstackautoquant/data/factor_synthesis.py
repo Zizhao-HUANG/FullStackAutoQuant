@@ -24,11 +24,23 @@ from qlib.data import D
 
 def main() -> int:
     ap = argparse.ArgumentParser()
-    ap.add_argument("--workspace", required=True, help="Target workspace directory, output will be workspace/combined_factors_df.parquet")
-    ap.add_argument("--log-dir", default=None, help="log outputdirectory, defaults to workspace/logs")
-    ap.add_argument("--provider_uri", default="~/.qlib/qlib_data/cn_data", help="QLib provider uri(default ~/.qlib/qlib_data/cn_data)")
+    ap.add_argument(
+        "--workspace",
+        required=True,
+        help="Target workspace directory, output will be workspace/combined_factors_df.parquet",
+    )
+    ap.add_argument(
+        "--log-dir", default=None, help="log outputdirectory, defaults to workspace/logs"
+    )
+    ap.add_argument(
+        "--provider_uri",
+        default="~/.qlib/qlib_data/cn_data",
+        help="QLib provider uri(default ~/.qlib/qlib_data/cn_data)",
+    )
     ap.add_argument("--region", default="cn", help="QLib region (default cn)")
-    ap.add_argument("--instruments", default="csi300", help="Instrument universe to keep (default csi300)")
+    ap.add_argument(
+        "--instruments", default="csi300", help="Instrument universe to keep (default csi300)"
+    )
     args = ap.parse_args()
 
     ws = Path(args.workspace).resolve()
@@ -59,10 +71,15 @@ def main() -> int:
         import importlib
         import subprocess
         import sys
+
         importlib.import_module("polars")
     except Exception:
-        logger.info("polars not installed, installing polars==1.32.0 to support factor computation……")
-        subprocess.check_call([sys.executable, "-m", "pip", "install", "-q", "polars==1.32.0"])  # noqa: S603,S607
+        logger.info(
+            "polars not installed, installing polars==1.32.0 to support factor computation……"
+        )
+        subprocess.check_call(
+            [sys.executable, "-m", "pip", "install", "-q", "polars==1.32.0"]
+        )  # noqa: S603,S607
         importlib.invalidate_caches()
 
     # Specify factor implementation directory (containing factor.py)
@@ -80,10 +97,16 @@ def main() -> int:
     data_file = data_dir / "daily_pv.h5"
     if not data_file.exists():
         logger.error("Not found daily_pv.h5:%s", data_file)
-        raise FileNotFoundError(f"Not found daily_pv.h5:{data_file}, please run export script first export_daily_pv_from_qlib.py")
+        raise FileNotFoundError(
+            f"Not found daily_pv.h5:{data_file}, please run export script first export_daily_pv_from_qlib.py"
+        )
 
     daily_stats = _inspect_h5_last_rows(data_file)
-    logger.info("daily_pv.h5 Latest date=%s, samples=%d", daily_stats.get("max_date"), daily_stats.get("rows"))
+    logger.info(
+        "daily_pv.h5 Latest date=%s, samples=%d",
+        daily_stats.get("max_date"),
+        daily_stats.get("rows"),
+    )
 
     # Initialize Qlib (for subsequent instrument universe filtering)
     provider_uri = str(Path(args.provider_uri).expanduser())
@@ -104,7 +127,12 @@ def main() -> int:
     # For each factor directory, ensure data access: create symlink in factor directory pointing to base_dir/daily_pv.h5 (if not exists)
     existing_snapshot = _inspect_parquet(ws / "combined_factors_df.parquet")
     if existing_snapshot:
-        logger.info("Current combined_factors_df.parquet coverage: %s -> %s (#rows=%d)", existing_snapshot["min_date"], existing_snapshot["max_date"], existing_snapshot["rows"])
+        logger.info(
+            "Current combined_factors_df.parquet coverage: %s -> %s (#rows=%d)",
+            existing_snapshot["min_date"],
+            existing_snapshot["max_date"],
+            existing_snapshot["rows"],
+        )
 
     for d in factor_dirs:
         link_path = d / "daily_pv.h5"
@@ -117,7 +145,9 @@ def main() -> int:
             try:
                 link_path.symlink_to(data_file)
             except OSError as exc:
-                logger.warning("Symlink creation failed, will copy daily_pv.h5 to factor directory: %s", exc)
+                logger.warning(
+                    "Symlink creation failed, will copy daily_pv.h5 to factor directory: %s", exc
+                )
                 import shutil
 
                 shutil.copy2(data_file, link_path)
@@ -140,7 +170,9 @@ def main() -> int:
         if not rp.exists():
             raise FileNotFoundError(f"Factor did not generate result file: {rp}")
         stats = _inspect_h5_last_rows(rp)
-        logger.info("%s Latest date=%s, samples=%d", rp.name, stats.get("max_date"), stats.get("rows"))
+        logger.info(
+            "%s Latest date=%s, samples=%d", rp.name, stats.get("max_date"), stats.get("rows")
+        )
         result_paths.append(rp)
 
     # Merge two HDF5 results into unified MultiIndex('feature', name) DataFrame
@@ -168,17 +200,25 @@ def main() -> int:
     # Read and summarize
     df = pd.read_parquet(out_path)
     if not isinstance(df.columns, pd.MultiIndex):
-        raise AssertionError("combined_factors_df.parquet columns must be MultiIndex('feature', name)")
+        raise AssertionError(
+            "combined_factors_df.parquet columns must be MultiIndex('feature', name)"
+        )
     n_dates = df.index.get_level_values("datetime").nunique()
     n_insts = df.index.get_level_values("instrument").nunique()
 
     logger.info("Saved: %s", out_path)
-    logger.info("Shape: %s, #dates=%d, #insts=%d, #features=%d", df.shape, n_dates, n_insts, len(df.columns))
+    logger.info(
+        "Shape: %s, #dates=%d, #insts=%d, #features=%d", df.shape, n_dates, n_insts, len(df.columns)
+    )
 
     combined_max = df.index.get_level_values("datetime").max()
     expected_max = daily_stats.get("max_date")
     if expected_max and combined_max < expected_max:
-        logger.error("combined_factors_df.parquet Latest date(%s) is earlier than daily_pv.h5(%s)", combined_max, expected_max)
+        logger.error(
+            "combined_factors_df.parquet Latest date(%s) is earlier than daily_pv.h5(%s)",
+            combined_max,
+            expected_max,
+        )
         raise RuntimeError("Factor data does not cover latest trading day, see logs")
 
     logger.info("Done.Log: %s", log_file)
@@ -198,10 +238,17 @@ def _filter_to_universe(df: pd.DataFrame, universe: str, logger: logging.Logger)
     inst_level = df.index.get_level_values("instrument")
     extra = set(inst_level.unique()) - inst_set
     if extra:
-        logger.warning("Factor result contains %d  non- %s stocks, will be automatically removed. e.g.: %s", len(extra), target, sorted(extra)[:5])
+        logger.warning(
+            "Factor result contains %d  non- %s stocks, will be automatically removed. e.g.: %s",
+            len(extra),
+            target,
+            sorted(extra)[:5],
+        )
     filtered = df[inst_level.isin(inst_set)]
     if filtered.empty:
-        raise ValueError(f"Filter instrument universe {target} resulted in empty data, check factor output")
+        raise ValueError(
+            f"Filter instrument universe {target} resulted in empty data, check factor output"
+        )
     return filtered
 
 
@@ -223,11 +270,17 @@ def _inspect_h5_last_rows(path: Path, tail_rows: int = 5) -> dict:
             rows = len(df_full)
             tail = df_full.tail(tail_rows)
             if logger.handlers:
-                logger.warning("daily_pv.h5 is fixed format, degraded to full read then truncate. Recommend using export_daily_pv_from_qlib.py re-export (format='table') for faster data inspection.")
+                logger.warning(
+                    "daily_pv.h5 is fixed format, degraded to full read then truncate. Recommend using export_daily_pv_from_qlib.py re-export (format='table') for faster data inspection."
+                )
         else:
             start = max(0, rows - tail_rows)
             tail = store.select("data", start=start)
-    dates = tail.index.get_level_values("datetime") if isinstance(tail.index, pd.MultiIndex) else tail.index
+    dates = (
+        tail.index.get_level_values("datetime")
+        if isinstance(tail.index, pd.MultiIndex)
+        else tail.index
+    )
     return {
         "exists": True,
         "rows": rows,

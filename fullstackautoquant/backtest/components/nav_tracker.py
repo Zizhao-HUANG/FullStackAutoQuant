@@ -16,7 +16,13 @@ class NavTracker:
     def __init__(self) -> None:
         self._records: dict[dt.date, dict[str, float]] = {}
 
-    def append(self, date: dt.date, equity: float, cash: float | None = None, market_value: float | None = None) -> None:
+    def append(
+        self,
+        date: dt.date,
+        equity: float,
+        cash: float | None = None,
+        market_value: float | None = None,
+    ) -> None:
         record = self._records.setdefault(date, {"equity": 0.0, "cash": 0.0, "market_value": 0.0})
         record["equity"] = float(equity)
         if cash is not None:
@@ -69,5 +75,3 @@ class NavTracker:
             target.write_text("", encoding="utf-8")
             return
         df.to_csv(target, index=False)
-
-

@@ -112,7 +112,11 @@ def main() -> int:
     start_time = time.perf_counter()
     result = engine.run()
     duration = time.perf_counter() - start_time
-    logger.info("Backtest Done, total duration %.2f s, trading day count %d", duration, len(result.equity_curve))
+    logger.info(
+        "Backtest Done, total duration %.2f s, trading day count %d",
+        duration,
+        len(result.equity_curve),
+    )
     logger.info("Total return %.2f%%", result.summary.total_return * 100)
     if args.out:
         payload = {
@@ -131,5 +135,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
-
-

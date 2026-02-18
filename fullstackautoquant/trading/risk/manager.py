@@ -73,7 +73,9 @@ def _parse_args() -> argparse.Namespace:
     parser.add_argument("--signals", required=True, help="Signal JSON path")
     parser.add_argument("--config", help="Trading config YAML")
     parser.add_argument("--out", help="Output risk_state.json")
-    parser.add_argument("--override_buy", action="store_true", help="Force allow buying for this run")
+    parser.add_argument(
+        "--override_buy", action="store_true", help="Force allow buying for this run"
+    )
     return parser.parse_args()
 
 
@@ -106,15 +108,22 @@ def main() -> None:
             float(cfg.get("order", {}).get("limit_threshold", 0.095)),
         )
     out_path = Path(args.out) if args.out else logs_dir / "risk_state.json"
-    save_json({
-        "allow_buy": state.allow_buy,
-        "day_drawdown": state.day_drawdown,
-        "rolling5d_drawdown": state.rolling5d_drawdown,
-        "limit_up_symbols": state.limit_up_symbols,
-        "limit_down_symbols": state.limit_down_symbols,
-        "reasons": state.reasons,
-    }, str(out_path))
-    print(json.dumps({"status": "ok", "out": str(out_path), "allow_buy": state.allow_buy}, ensure_ascii=False))
+    save_json(
+        {
+            "allow_buy": state.allow_buy,
+            "day_drawdown": state.day_drawdown,
+            "rolling5d_drawdown": state.rolling5d_drawdown,
+            "limit_up_symbols": state.limit_up_symbols,
+            "limit_down_symbols": state.limit_down_symbols,
+            "reasons": state.reasons,
+        },
+        str(out_path),
+    )
+    print(
+        json.dumps(
+            {"status": "ok", "out": str(out_path), "allow_buy": state.allow_buy}, ensure_ascii=False
+        )
+    )
 
 
 if __name__ == "__main__":

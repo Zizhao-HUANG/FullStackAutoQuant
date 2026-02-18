@@ -127,7 +127,9 @@ def append_manual_decisions(
                 if isinstance(entries, list):
                     existing = list(entries)
         except Exception:
-            backup_path = manual_dir / f"manual_decisions_corrupt_{applied_at.strftime('%Y%m%d%H%M%S')}.json"
+            backup_path = (
+                manual_dir / f"manual_decisions_corrupt_{applied_at.strftime('%Y%m%d%H%M%S')}.json"
+            )
             aggregate_path.replace(backup_path)
 
     aggregate_entries = existing + decisions
@@ -138,7 +140,9 @@ def append_manual_decisions(
         "previous_version": existing_version,
         "entries": aggregate_entries,
     }
-    aggregate_path.write_text(json.dumps(aggregate_payload, ensure_ascii=False, indent=2), encoding="utf-8")
+    aggregate_path.write_text(
+        json.dumps(aggregate_payload, ensure_ascii=False, indent=2), encoding="utf-8"
+    )
 
     daily_dir = manual_dir / applied_at.strftime("%Y%m%d")
     daily_dir.mkdir(parents=True, exist_ok=True)

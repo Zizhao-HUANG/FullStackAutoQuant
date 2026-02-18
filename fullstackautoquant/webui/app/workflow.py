@@ -52,8 +52,6 @@ def _resolve_path(base: Path, value: str | None, default: str) -> Path:
     return (base / ref).resolve()
 
 
-
-
 def _filter_science_board_symbols(csv_path: Path) -> Path:
     try:
         df = pd.read_csv(csv_path)
@@ -63,7 +61,9 @@ def _filter_science_board_symbols(csv_path: Path) -> Path:
     if df.empty:
         return csv_path
 
-    candidates = [col for col in df.columns if col and str(col).lower() in {"instrument", "symbol", "code"}]
+    candidates = [
+        col for col in df.columns if col and str(col).lower() in {"instrument", "symbol", "code"}
+    ]
     if not candidates:
         return csv_path
 
@@ -112,7 +112,12 @@ def _run(cmd: list[str], cwd: Path) -> StepResult:
         ) from exc
     except Exception as exc:  # pragma: no cover
         raise WorkflowError(f"Execution error: {' '.join(cmd)} -> {exc}") from exc
-    return StepResult(name=cmd[1] if len(cmd) > 1 else cmd[0], stdout=proc.stdout, stderr=proc.stderr, output_paths={})
+    return StepResult(
+        name=cmd[1] if len(cmd) > 1 else cmd[0],
+        stdout=proc.stdout,
+        stderr=proc.stderr,
+        output_paths={},
+    )
 
 
 def run_full_workflow(
@@ -122,10 +127,24 @@ def run_full_workflow(
 ) -> dict[str, Any]:
     base_dir = Path(__file__).resolve().parents[1]
     paths_cfg = config.get("paths", {})  # type: ignore[assignment]
-    trading_dir = _resolve_path(base_dir, str(paths_cfg.get("trading_dir", "../trading")), "../trading")
-    ranked_csv = _resolve_path(base_dir, str(paths_cfg.get("ranked_csv", "../../ModelInferenceBundle/ranked_scores_AUTO_via_qlib.csv")), "../../ModelInferenceBundle/ranked_scores_AUTO_via_qlib.csv")
+    trading_dir = _resolve_path(
+        base_dir, str(paths_cfg.get("trading_dir", "../trading")), "../trading"
+    )
+    ranked_csv = _resolve_path(
+        base_dir,
+        str(
+            paths_cfg.get(
+                "ranked_csv", "../../ModelInferenceBundle/ranked_scores_AUTO_via_qlib.csv"
+            )
+        ),
+        "../../ModelInferenceBundle/ranked_scores_AUTO_via_qlib.csv",
+    )
     ranked_csv = _filter_science_board_symbols(ranked_csv)
-    config_path = _resolve_path(base_dir, str(paths_cfg.get("trading_config", "../trading/config.auto.local.yaml")), "../trading/config.auto.local.yaml")
+    config_path = _resolve_path(
+        base_dir,
+        str(paths_cfg.get("trading_config", "../trading/config.auto.local.yaml")),
+        "../trading/config.auto.local.yaml",
+    )
 
     temp_dir = Path(tempfile.mkdtemp(prefix="webui_workflow_"))
     python_exec = config.get("trading", {}).get("python", "python")  # type: ignore[assignment]
@@ -142,14 +161,32 @@ def run_full_workflow(
 
     steps: list[StepResult] = []
     step = _run(
-        [python_exec, "signals_from_csv.py", "--csv", str(ranked_csv), "--config", str(config_path), "--out", str(signals_path)],
+        [
+            python_exec,
+            "signals_from_csv.py",
+            "--csv",
+            str(ranked_csv),
+            "--config",
+            str(config_path),
+            "--out",
+            str(signals_path),
+        ],
         cwd=trading_dir,
     )
     step.output_paths["signals"] = signals_path
     steps.append(step)
 
     step = _run(
-        [python_exec, "risk_manager.py", "--signals", str(signals_path), "--config", str(config_path), "--out", str(risk_path)],
+        [
+            python_exec,
+            "risk_manager.py",
+            "--signals",
+            str(signals_path),
+            "--config",
+            str(config_path),
+            "--out",
+            str(risk_path),
+        ],
         cwd=trading_dir,
     )
     step.output_paths["risk_state"] = risk_path
@@ -208,7 +245,9 @@ def run_full_workflow(
     return result
 
 
-def _recalculate_buy_limits(orders_payload: dict, cfg_path: Path, signals_payload: dict | None) -> dict:
+def _recalculate_buy_limits(
+    orders_payload: dict, cfg_path: Path, signals_payload: dict | None
+) -> dict:
     if not isinstance(orders_payload, dict) or "orders" not in orders_payload:
         return orders_payload
     orders = orders_payload.get("orders", [])
@@ -221,7 +260,9 @@ def _recalculate_buy_limits(orders_payload: dict, cfg_path: Path, signals_payloa
     limit_threshold = float(cfg.get("order", {}).get("limit_threshold", 0.095))
     tick = float(cfg.get("order", {}).get("clamp_tick", 0.01))
 
-    signals = (signals_payload or {}).get("signals", []) if isinstance(signals_payload, dict) else []
+    signals = (
+        (signals_payload or {}).get("signals", []) if isinstance(signals_payload, dict) else []
+    )
     quote_map = {item.get("symbol"): item for item in signals if isinstance(item, dict)}
 
     adjusted = []
@@ -231,9 +272,13 @@ def _recalculate_buy_limits(orders_payload: dict, cfg_path: Path, signals_payloa
             continue
         symbol = order.get("symbol")
         quote_info = quote_map.get(symbol, {})
-        ref_price = float(order.get("ref_price") or quote_info.get("price") or order.get("price") or 0.0)
+        ref_price = float(
+            order.get("ref_price") or quote_info.get("price") or order.get("price") or 0.0
+        )
         quote_info = quote_map.get(symbol, {})
-        rt_price = float(quote_info.get("price") or quote_info.get("ask") or quote_info.get("bid") or ref_price)
+        rt_price = float(
+            quote_info.get("price") or quote_info.get("ask") or quote_info.get("bid") or ref_price
+        )
         pre_close = float(quote_info.get("pre_close") or ref_price)
         if ref_price <= 0 and rt_price <= 0:
             adjusted.append(order)
@@ -262,10 +307,24 @@ def run_single_step(
 ) -> StepResult:
     base_dir = Path(__file__).resolve().parents[1]
     paths_cfg = config.get("paths", {})  # type: ignore[assignment]
-    trading_dir = _resolve_path(base_dir, str(paths_cfg.get("trading_dir", "../trading")), "../trading")
-    ranked_csv = _resolve_path(base_dir, str(paths_cfg.get("ranked_csv", "../../ModelInferenceBundle/ranked_scores_AUTO_via_qlib.csv")), "../../ModelInferenceBundle/ranked_scores_AUTO_via_qlib.csv")
+    trading_dir = _resolve_path(
+        base_dir, str(paths_cfg.get("trading_dir", "../trading")), "../trading"
+    )
+    ranked_csv = _resolve_path(
+        base_dir,
+        str(
+            paths_cfg.get(
+                "ranked_csv", "../../ModelInferenceBundle/ranked_scores_AUTO_via_qlib.csv"
+            )
+        ),
+        "../../ModelInferenceBundle/ranked_scores_AUTO_via_qlib.csv",
+    )
     ranked_csv = _filter_science_board_symbols(ranked_csv)
-    config_path = _resolve_path(base_dir, str(paths_cfg.get("trading_config", "../trading/config.auto.local.yaml")), "../trading/config.auto.local.yaml")
+    config_path = _resolve_path(
+        base_dir,
+        str(paths_cfg.get("trading_config", "../trading/config.auto.local.yaml")),
+        "../trading/config.auto.local.yaml",
+    )
 
     temp_dir = Path(tempfile.mkdtemp(prefix="webui_single_"))
     python_exec = config.get("trading", {}).get("python", "python")  # type: ignore[assignment]
@@ -273,7 +332,16 @@ def run_single_step(
     if step == "signals":
         out_path = temp_dir / "signals.json"
         res = _run(
-            [python_exec, "signals_from_csv.py", "--csv", str(ranked_csv), "--config", str(config_path), "--out", str(out_path)],
+            [
+                python_exec,
+                "signals_from_csv.py",
+                "--csv",
+                str(ranked_csv),
+                "--config",
+                str(config_path),
+                "--out",
+                str(out_path),
+            ],
             cwd=trading_dir,
         )
         res.output_paths["signals"] = out_path
@@ -282,12 +350,30 @@ def run_single_step(
     if step == "risk":
         signals_path = temp_dir / "signals.json"
         _run(
-            [python_exec, "signals_from_csv.py", "--csv", str(ranked_csv), "--config", str(config_path), "--out", str(signals_path)],
+            [
+                python_exec,
+                "signals_from_csv.py",
+                "--csv",
+                str(ranked_csv),
+                "--config",
+                str(config_path),
+                "--out",
+                str(signals_path),
+            ],
             cwd=trading_dir,
         )
         risk_path = temp_dir / "risk_state.json"
         res = _run(
-            [python_exec, "risk_manager.py", "--signals", str(signals_path), "--config", str(config_path), "--out", str(risk_path)],
+            [
+                python_exec,
+                "risk_manager.py",
+                "--signals",
+                str(signals_path),
+                "--config",
+                str(config_path),
+                "--out",
+                str(risk_path),
+            ],
             cwd=trading_dir,
         )
         res.output_paths.update({"signals": signals_path, "risk_state": risk_path})
@@ -297,11 +383,29 @@ def run_single_step(
         signals_path = temp_dir / "signals.json"
         risk_path = temp_dir / "risk_state.json"
         _run(
-            [python_exec, "signals_from_csv.py", "--csv", str(ranked_csv), "--config", str(config_path), "--out", str(signals_path)],
+            [
+                python_exec,
+                "signals_from_csv.py",
+                "--csv",
+                str(ranked_csv),
+                "--config",
+                str(config_path),
+                "--out",
+                str(signals_path),
+            ],
             cwd=trading_dir,
         )
         _run(
-            [python_exec, "risk_manager.py", "--signals", str(signals_path), "--config", str(config_path), "--out", str(risk_path)],
+            [
+                python_exec,
+                "risk_manager.py",
+                "--signals",
+                str(signals_path),
+                "--config",
+                str(config_path),
+                "--out",
+                str(risk_path),
+            ],
             cwd=trading_dir,
         )
         targets_path = temp_dir / "targets.json"
@@ -310,7 +414,9 @@ def run_single_step(
         if current_positions is not None:
             current_positions_path = temp_dir / "current_positions.json"
             payload = {"positions": list(current_positions)}
-            current_positions_path.write_text(json.dumps(payload, ensure_ascii=False), encoding="utf-8")
+            current_positions_path.write_text(
+                json.dumps(payload, ensure_ascii=False), encoding="utf-8"
+            )
 
         cmd = [
             python_exec,
@@ -329,12 +435,14 @@ def run_single_step(
         if current_positions_path is not None:
             cmd += ["--current_positions", str(current_positions_path)]
         res = _run(cmd, cwd=trading_dir)
-        res.output_paths.update({
-            "signals": signals_path,
-            "risk_state": risk_path,
-            "targets": targets_path,
-            "orders": orders_path,
-        })
+        res.output_paths.update(
+            {
+                "signals": signals_path,
+                "risk_state": risk_path,
+                "targets": targets_path,
+                "orders": orders_path,
+            }
+        )
         return res
 
     raise WorkflowError(f"Unknown step: {step}")

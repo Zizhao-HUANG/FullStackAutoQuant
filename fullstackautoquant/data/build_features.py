@@ -61,7 +61,9 @@ def _prepare_feature_df_for_day(handler: object, target_date: str) -> pd.DataFra
     try:
         return handler.fetch(selector=t, level="datetime", col_set="feature", data_key=DH.DK_I)
     except Exception:
-        full = handler.fetch(selector=slice(None, None), level="datetime", col_set="feature", data_key=DH.DK_I)
+        full = handler.fetch(
+            selector=slice(None, None), level="datetime", col_set="feature", data_key=DH.DK_I
+        )
         if full.empty:
             raise KeyError("Processed features empty")
         all_dates = full.index.get_level_values("datetime").unique().sort_values()
@@ -77,7 +79,9 @@ def _assert_value_and_missing(df_feat: pd.DataFrame) -> None:
         raise AssertionError("Features have missing values, fill before inference.")
     vmin, vmax = float(np.nanmin(df_feat.values)), float(np.nanmax(df_feat.values))
     if not (vmin >= -3 - 1e-8 and vmax <= 3 + 1e-8):
-        raise AssertionError(f"Feature values exceed normalization range [-3, 3], actual [{vmin:.6f}, {vmax:.6f}]")
+        raise AssertionError(
+            f"Feature values exceed normalization range [-3, 3], actual [{vmin:.6f}, {vmax:.6f}]"
+        )
 
 
 def _reorder_columns(df_feat: pd.DataFrame, expected_order: list[str]) -> pd.DataFrame:
@@ -87,7 +91,9 @@ def _reorder_columns(df_feat: pd.DataFrame, expected_order: list[str]) -> pd.Dat
     multi_cols = list(df_feat.columns)
     actual_names = [c[1] for c in multi_cols if c[0] == "feature"]
     if len(actual_names) != len(expected_order):
-        raise AssertionError(f"Feature count mismatch: expected {len(expected_order)}, actual {len(actual_names)}")
+        raise AssertionError(
+            f"Feature count mismatch: expected {len(expected_order)}, actual {len(actual_names)}"
+        )
 
     missing = [name for name in expected_order if name not in actual_names]
     if missing:
@@ -99,7 +105,11 @@ def _reorder_columns(df_feat: pd.DataFrame, expected_order: list[str]) -> pd.Dat
 
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--date", default=None, help="Target trading day YYYY-MM-DD;defaults to Qlib Latest trading day")
+    parser.add_argument(
+        "--date",
+        default=None,
+        help="Target trading day YYYY-MM-DD;defaults to Qlib Latest trading day",
+    )
     parser.add_argument(
         "--out",
         default=None,
@@ -115,17 +125,27 @@ def main() -> int:
         default=str(TASK_DEFAULT_PATH),
         help="Path to training task snapshot task_rendered.yaml",
     )
-    parser.add_argument("--provider_uri", default="~/.qlib/qlib_data/cn_data", help="Qlib provider_uri")
+    parser.add_argument(
+        "--provider_uri", default="~/.qlib/qlib_data/cn_data", help="Qlib provider_uri"
+    )
     parser.add_argument("--region", default="cn", help="Qlib region")
-    parser.add_argument("--start", default=None, help="Data start date(defaults to training config)")
-    parser.add_argument("--instruments", default="csi300", help="Instrument universe (default csi300)")
+    parser.add_argument(
+        "--start", default=None, help="Data start date(defaults to training config)"
+    )
+    parser.add_argument(
+        "--instruments", default="csi300", help="Instrument universe (default csi300)"
+    )
     args = parser.parse_args()
 
     import qlib
 
     qlib.init(provider_uri=args.provider_uri, region=args.region)
 
-    target_date = _auto_last_trading_day() if (args.date is None or str(args.date).lower() == "auto") else args.date
+    target_date = (
+        _auto_last_trading_day()
+        if (args.date is None or str(args.date).lower() == "auto")
+        else args.date
+    )
 
     task_cfg_path = Path(args.task_config)
     try:
@@ -164,7 +184,9 @@ def main() -> int:
     used_dates = df_feat.index.get_level_values("datetime").unique()
     used_date = str(pd.Timestamp(used_dates[0]).date()) if len(used_dates) else handler_end
 
-    out_path = args.out or str(Path(__file__).resolve().parent / f"features_ready_infer_{used_date}.parquet")
+    out_path = args.out or str(
+        Path(__file__).resolve().parent / f"features_ready_infer_{used_date}.parquet"
+    )
     Path(out_path).parent.mkdir(parents=True, exist_ok=True)
     df_feat.to_parquet(out_path, engine="pyarrow", compression="snappy")
 

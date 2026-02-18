@@ -20,7 +20,7 @@ def _resolve_schema_path() -> Path:
         if candidate.exists():
             return candidate
     raise FileNotFoundError(
-                "Cannot locate trading.schema.json. Ensure configs/schema/trading.schema.json exists in the repository."
+        "Cannot locate trading.schema.json. Ensure configs/schema/trading.schema.json exists in the repository."
     )
 
 
@@ -39,4 +39,3 @@ def validate_config(payload: dict[str, Any]) -> dict[str, Any]:
 
 
 __all__ = ["validate_config"]
-
