@@ -108,7 +108,7 @@ class MarketDataService:
                 if not code:
                     continue
                 price_val = row_dict.get("price")
-                price = float(price_val) if price_val not in (None, "") else None
+                price = float(price_val) if price_val is not None and price_val != "" else None
                 name = str(row_dict.get("name") or row_dict.get("security_name") or "").strip()
                 trade_time = str(row_dict.get("time") or row_dict.get("trade_time") or "")
                 pre_close_val = (
@@ -116,7 +116,7 @@ class MarketDataService:
                     or row_dict.get("preclose")
                     or row_dict.get("prev_close")
                 )
-                pre_close = float(pre_close_val) if pre_close_val not in (None, "") else None
+                pre_close = float(pre_close_val) if pre_close_val is not None and pre_close_val != "" else None
                 payload = {
                     "price": price,
                     "name": name,
@@ -128,7 +128,7 @@ class MarketDataService:
 
         final_result: dict[str, dict[str, Any]] = {}
         for ts_code, original in alias_map.items():
-            payload = result_by_ts.get(ts_code)
+            payload: dict[str, Any] | None = result_by_ts.get(ts_code)
             if payload:
                 final_result[original] = payload
                 continue
@@ -139,7 +139,7 @@ class MarketDataService:
 
 
 def build_market_service(config: dict[str, Any]) -> MarketDataService:
-    tushare_cfg = config.get("tushare", {})  # type: ignore[assignment]
+    tushare_cfg: Any = config.get("tushare", {})
     token = ""
     if isinstance(tushare_cfg, dict):
         token = str(tushare_cfg.get("token", ""))

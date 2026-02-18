@@ -244,7 +244,7 @@ def fetch_realtime_with_fallback(
                     fb = dc_q.get(code, {})
                     for k in ["price", "pre_close", "bid", "ask", "limit_up", "limit_down"]:
                         if float(rec.get(k, 0.0)) <= 0 and float(fb.get(k, 0.0)) > 0:
-                            rec[k] = float(fb.get(k))
+                            rec[k] = float(fb.get(k) or 0.0)
         except Exception:
             continue
     return quotes, used_fallback

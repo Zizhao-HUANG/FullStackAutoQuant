@@ -172,7 +172,7 @@ def _ensure_cuda_stub() -> None:
     torch_cuda.empty_cache = lambda: None
 
     sys.modules["torch.cuda"] = torch_cuda  # type: ignore[assignment]
-    torch.cuda = torch_cuda  # type: ignore[attr-defined]
+    torch.cuda = torch_cuda  # type: ignore[assignment]
 
     def _normalize_device(dev):
         try:
@@ -192,7 +192,7 @@ def _ensure_cuda_stub() -> None:
 
     if not getattr(torch, "_untype_storage_cpu_patched", False):
 
-        class _CpuUntypedStorage(original_untyped):  # type: ignore[misc]
+        class _CpuUntypedStorage(original_untyped):  # type: ignore[valid-type, misc]
             def __new__(cls, *args, device=None, **kwargs):
                 device = _normalize_device(device)
                 if device is None and "device" in kwargs:
@@ -201,8 +201,8 @@ def _ensure_cuda_stub() -> None:
 
         _CpuUntypedStorage.__name__ = original_untyped.__name__
         _CpuUntypedStorage.__qualname__ = original_untyped.__qualname__
-        torch.UntypedStorage = _CpuUntypedStorage  # type: ignore[assignment]
-        torch.storage.UntypedStorage = _CpuUntypedStorage  # type: ignore[assignment]
+        torch.UntypedStorage = _CpuUntypedStorage  # type: ignore[assignment, misc]
+        torch.storage.UntypedStorage = _CpuUntypedStorage  # type: ignore[assignment, misc]
         torch._untype_storage_cpu_patched = True  # type: ignore[attr-defined]
         torch_cuda.UntypedStorage = _CpuUntypedStorage
 

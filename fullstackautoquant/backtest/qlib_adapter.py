@@ -94,11 +94,12 @@ class QlibInferenceAdapter:
             if used_date != target_date:
                 self._prediction_cache[used_date] = result
             return result
-        used_date = self._resolve_date(target_date)
-        if used_date is None:
+        resolved_date = self._resolve_date(target_date)
+        if resolved_date is None:
             result: tuple[dt.date, list[dict]] = (target_date, [])
             self._prediction_cache[target_date] = result
             return result
+        used_date = resolved_date
 
         dataset = self._TSDatasetH(
             handler=self.handler,

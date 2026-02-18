@@ -246,7 +246,7 @@ class BacktestConfig:
     data: DataParams = field(default_factory=DataParams)
     portfolio: PortfolioParams = field(default_factory=PortfolioParams)
     costs: CostParams = field(default_factory=CostParams)
-    signal: SignalParams = field(default_factory=SignalParams)
+    signal: SignalParams | None = field(default=None)
     manual: ManualWorkflowParams = field(default_factory=ManualWorkflowParams)
     metadata: dict[str, Any] = field(default_factory=dict)
 
@@ -280,7 +280,7 @@ class BacktestConfig:
             "data": self.data.to_dict(),
             "portfolio": self.portfolio.to_dict(),
             "costs": self.costs.to_dict(),
-            "signal": self.signal.to_dict(),
+            "signal": self.signal.to_dict() if self.signal is not None else {},
             "manual": self.manual.to_dict(),
             "metadata": dict(self.metadata),
         }

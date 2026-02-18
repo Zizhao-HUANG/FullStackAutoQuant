@@ -32,8 +32,8 @@ def normalize_symbol(symbol: object) -> str:
 
 @dataclass
 class ApplyResult:
-    positions: list[dict[str, float]]
-    sold: list[dict[str, float]]
+    positions: list[dict[str, Any]]
+    sold: list[dict[str, Any]]
     cash_delta: float
     buy_notional: float
     sell_notional: float
@@ -71,7 +71,7 @@ def apply_orders(
     positions_df["cost_price"] = pd.to_numeric(positions_df["cost_price"], errors="coerce").fillna(
         0.0
     )
-    positions_map: dict[str, dict[str, float]] = {}
+    positions_map: dict[str, dict[str, Any]] = {}
     for row in positions_df.itertuples(index=False):
         symbol = str(row.symbol)
         if not symbol:
@@ -94,7 +94,7 @@ def apply_orders(
     orders_df["volume"] = pd.to_numeric(orders_df["volume"], errors="coerce").fillna(0.0)
     orders_df["price"] = pd.to_numeric(orders_df["price"], errors="coerce").fillna(0.0)
 
-    sold_records: list[dict[str, float]] = []
+    sold_records: list[dict[str, Any]] = []
     warnings: list[str] = []
     cash_delta = 0.0
     buy_notional = 0.0
@@ -165,7 +165,7 @@ def apply_orders(
         else:
             warnings.append(f"Unknown side {side}, Order {symbol} skipped.")
 
-    updated_positions: list[dict[str, float]] = []
+    updated_positions: list[dict[str, Any]] = []
     for symbol in sorted(positions_map):
         pos = positions_map[symbol]
         qty = float(pos.get("qty", 0.0) or 0.0)

@@ -22,7 +22,7 @@ class ExecutionEngine:
         cash: float,
         prev_equity: float,
         market_value_func,
-    ) -> tuple[float, dict[str, float], list[TradeRecord], DailyEquity]:
+    ) -> tuple[float, dict[str, float], list[TradeRecord], DailyEquity, float]:
         trades: list[TradeRecord] = []
         cash_after = cash
         sell_orders = [

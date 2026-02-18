@@ -562,8 +562,8 @@ class WorkflowPage:
         return order
 
     def _lookup_signal_value(
-        self, signal_map: dict[str, float], symbol: str, default: float
-    ) -> float:
+        self, signal_map: dict[str, float] | dict[str, int], symbol: str, default: float | int
+    ) -> float | int:
         if not isinstance(symbol, str):
             return default
         for alias in self._expand_symbol_aliases(symbol):

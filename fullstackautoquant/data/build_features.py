@@ -12,6 +12,7 @@ from __future__ import annotations
 import argparse
 import sys
 from pathlib import Path
+from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -54,7 +55,7 @@ def _extract_alpha_feature_names(task_cfg: dict) -> list[str]:
     raise TaskConfigError("task_rendered.yaml is missing Alpha158 feature name definitions")
 
 
-def _prepare_feature_df_for_day(handler: object, target_date: str) -> pd.DataFrame:
+def _prepare_feature_df_for_day(handler: Any, target_date: str) -> pd.DataFrame:
     from qlib.data.dataset import DataHandlerLP as DH
 
     t = pd.Timestamp(target_date)

@@ -37,7 +37,7 @@ def _signal_lookup(signals_payload: object | None) -> tuple[str | None, dict[str
     return signal_date, lookup
 
 
-def _coerce_float(value: object) -> float | None:
+def _coerce_float(value: Any) -> float | None:
     if value is None:
         return None
     try:

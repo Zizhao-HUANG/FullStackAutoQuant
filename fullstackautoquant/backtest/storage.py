@@ -18,7 +18,7 @@ class BacktestRunMeta:
     run_id: str
     created_at: datetime
     path: Path
-    summary: dict[str, float]
+    summary: dict[str, float | None]
     config_path: Path
 
 
@@ -35,7 +35,7 @@ class ResultSerializer:
     def persist(
         self,
         config: dict[str, Any],
-        summary: dict[str, float],
+        summary: dict[str, float | None],
         equity: pd.DataFrame,
         trades: pd.DataFrame,
         positions: pd.DataFrame,
@@ -85,7 +85,7 @@ def _timestamp_dir(root: Path) -> Path:
 def persist_backtest_result(
     root: Path,
     config: dict[str, Any],
-    summary: dict[str, float],
+    summary: dict[str, float | None],
     equity: pd.DataFrame,
     trades: pd.DataFrame,
     positions: pd.DataFrame,
