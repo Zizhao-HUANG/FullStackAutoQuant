@@ -79,7 +79,7 @@ def load_orders(path: str) -> dict:
         return json.load(f)
 
 
-def gm_login(cfg: dict, alias: str = "", account_id_override: str = None):
+def gm_login(cfg: dict, alias: str = "", account_id_override: str | None = None):
     # Load .env from multiple likely locations to reduce mis-config risk
     load_dotenv()  # current working directory
     here = Path(__file__).resolve().parent

@@ -199,8 +199,8 @@ def compute_auction_price(
     tick: float,
     gamma_10pct: float = 0.097,
     gamma_20pct: float = 0.197,
-    limit_up_override: float = None,
-    limit_down_override: float = None,
+    limit_up_override: float | None = None,
+    limit_down_override: float | None = None,
 ) -> float:
     """Market-like limit price for opening auction (09:15–09:25).
     - For 10% boards use gamma=0.097; for 20% boards use gamma=0.197
@@ -242,8 +242,8 @@ def compute_open_mid_price(
     pre_close: float,
     eps: float,
     tick: float,
-    limit_up_override: float = None,
-    limit_down_override: float = None,
+    limit_up_override: float | None = None,
+    limit_down_override: float | None = None,
 ) -> float:
     """Continuous auction (09:30+) one-shot pricing using midpoint with small tilt eps.
     - mid = (bid+ask)/2 if both>0 else rt_price if>0 else pre_close

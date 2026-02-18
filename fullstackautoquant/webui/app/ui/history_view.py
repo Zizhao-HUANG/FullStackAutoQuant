@@ -37,7 +37,7 @@ class HistoryPage:
         self._render_snapshots()
         self._render_logs()
 
-    def _record_snapshot(self, positions_df: pd.DataFrame, quotes: dict[str, dict[str, object]]) -> None:
+    def _record_snapshot(self, positions_df: pd.DataFrame, quotes: dict[str, dict[str, Any]]) -> None:
         rows = []
         for row in positions_df.itertuples(index=False):
             price = quotes.get(row.symbol, {}).get("price")

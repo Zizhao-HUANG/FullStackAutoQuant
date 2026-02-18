@@ -4,13 +4,14 @@ import datetime as dt
 import json
 from collections.abc import Iterable
 from pathlib import Path
+from typing import Any
 
 import pandas as pd
 
 MANUAL_DECISIONS_VERSION = 1
 
 
-def _resolve_manual_dir(config: dict[str, object]) -> Path:
+def _resolve_manual_dir(config: dict[str, Any]) -> Path:
     base_dir = Path(__file__).resolve().parents[1]
     paths_cfg = config.get("paths", {}) if isinstance(config.get("paths"), dict) else {}
     manual_dir_ref = paths_cfg.get("manual_logs_dir", "../trading/logs/manual")
@@ -19,12 +20,12 @@ def _resolve_manual_dir(config: dict[str, object]) -> Path:
     return manual_dir
 
 
-def _signal_lookup(signals_payload: object | None) -> tuple[str | None, dict[str, dict[str, object]]]:
+def _signal_lookup(signals_payload: object | None) -> tuple[str | None, dict[str, dict[str, Any]]]:
     if not isinstance(signals_payload, dict):
         return None, {}
     signal_date = str(signals_payload.get("date")) if signals_payload.get("date") else None
     entries = signals_payload.get("signals", [])
-    lookup: dict[str, dict[str, object]] = {}
+    lookup: dict[str, dict[str, Any]] = {}
     if isinstance(entries, Iterable):
         for item in entries:
             if not isinstance(item, dict):
@@ -52,7 +53,7 @@ def build_manual_decisions(
     applied_at: dt.datetime | None = None,
     note: str | None = None,
     approved_by: str | None = None,
-) -> tuple[list[dict[str, object]], dt.datetime]:
+) -> tuple[list[dict[str, Any]], dt.datetime]:
     if orders.empty:
         return [], applied_at or dt.datetime.now(dt.timezone.utc)
 
@@ -60,7 +61,7 @@ def build_manual_decisions(
     signal_date, signal_lookup = _signal_lookup(signals_payload)
     executed_date = applied_ts.date().isoformat()
 
-    decisions: list[dict[str, object]] = []
+    decisions: list[dict[str, Any]] = []
     base_prefix = applied_ts.strftime("%Y%m%d%H%M%S")
 
     for idx, row in orders.iterrows():
@@ -105,15 +106,15 @@ def build_manual_decisions(
 
 
 def append_manual_decisions(
-    config: dict[str, object],
-    decisions: list[dict[str, object]],
+    config: dict[str, Any],
+    decisions: list[dict[str, Any]],
     *,
     applied_at: dt.datetime,
 ) -> Path:
     manual_dir = _resolve_manual_dir(config)
     aggregate_path = manual_dir / "manual_decisions.json"
 
-    existing: list[dict[str, object]] = []
+    existing: list[dict[str, Any]] = []
     existing_version: int | None = None
     if aggregate_path.exists():
         try:
@@ -153,13 +154,13 @@ def append_manual_decisions(
 
 
 def log_manual_decisions(
-    config: dict[str, object],
+    config: dict[str, Any],
     orders: pd.DataFrame,
     signals_payload: object | None = None,
     *,
     note: str | None = None,
     approved_by: str | None = None,
-) -> tuple[Path | None, list[dict[str, object]]]:
+) -> tuple[Path | None, list[dict[str, Any]]]:
     decisions, applied_at = build_manual_decisions(
         orders,
         signals_payload,

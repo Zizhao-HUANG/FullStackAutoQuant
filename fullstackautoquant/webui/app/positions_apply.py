@@ -3,6 +3,7 @@ from __future__ import annotations
 import math
 from collections.abc import Sequence
 from dataclasses import dataclass
+from typing import Any
 
 import pandas as pd
 
@@ -40,7 +41,7 @@ class ApplyResult:
     warnings: list[str]
 
 
-def _to_dataframe(rows: Sequence[dict[str, object]], columns: Sequence[str]) -> pd.DataFrame:
+def _to_dataframe(rows: Sequence[dict[str, Any]], columns: Sequence[str]) -> pd.DataFrame:
     if not rows:
         return pd.DataFrame(columns=columns)
     df = pd.DataFrame(rows)
@@ -51,8 +52,8 @@ def _to_dataframe(rows: Sequence[dict[str, object]], columns: Sequence[str]) -> 
 
 
 def apply_orders(
-    current_positions: Sequence[dict[str, object]] | pd.DataFrame,
-    orders: Sequence[dict[str, object]] | pd.DataFrame,
+    current_positions: Sequence[dict[str, Any]] | pd.DataFrame,
+    orders: Sequence[dict[str, Any]] | pd.DataFrame,
 ) -> ApplyResult:
     if isinstance(current_positions, pd.DataFrame):
         positions_df = current_positions.copy()
@@ -177,8 +178,8 @@ def apply_orders(
 
 
 def cap_buy_orders_by_cash(
-    current_positions: Sequence[dict[str, object]] | pd.DataFrame,
-    orders: Sequence[dict[str, object]] | pd.DataFrame,
+    current_positions: Sequence[dict[str, Any]] | pd.DataFrame,
+    orders: Sequence[dict[str, Any]] | pd.DataFrame,
     available_cash: float,
     lot_size: int = 1,
 ) -> tuple[pd.DataFrame, list[str]]:

@@ -57,7 +57,7 @@ def load_json(path: str):
         return json.load(f)
 
 
-def fetch_current_positions_from_gm(cfg: dict, account_id_override: str = None) -> dict[str, int]:
+def fetch_current_positions_from_gm(cfg: dict, account_id_override: str | None = None) -> dict[str, int]:
     """Fetch current positions from gmtrade; return {GM symbol: shares}. Empty on failure."""
     try:
         from gm_api_wrapper import gm_login  # type: ignore

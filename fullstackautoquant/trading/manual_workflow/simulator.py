@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import datetime as dt
 from dataclasses import dataclass
+from typing import Any
 
 from ...backtest.config import ManualWorkflowParams
 
@@ -12,7 +13,7 @@ class ManualDecision:
     queued_at: dt.date
     signal_date: dt.date
     execute_date: dt.date
-    signal: dict[str, object]
+    signal: dict[str, Any]
     strategy: str | None = None
     fill_ratio: float = 1.0
 
@@ -43,8 +44,8 @@ class ManualWorkflowSimulator:
         self,
         trade_date: dt.date,
         signal_date: dt.date,
-        raw_signals: list[dict[str, object]],
-    ) -> tuple[list[dict[str, object]], list[dict[str, object]], int]:
+        raw_signals: list[dict[str, Any]],
+    ) -> tuple[list[dict[str, Any]], list[dict[str, Any]], int]:
         """Process the current trading day:
 
         Returns:
@@ -70,10 +71,10 @@ class ManualWorkflowSimulator:
         queued_total = sum(len(items) for items in self._pending.values())
         return active_signals, manual_log, queued_total
 
-    def flush_pending(self) -> list[dict[str, object]]:
+    def flush_pending(self) -> list[dict[str, Any]]:
         """Mark remaining unexecuted decisions as expired."""
 
-        leftovers: list[dict[str, object]] = []
+        leftovers: list[dict[str, Any]] = []
         for items in list(self._pending.values()):
             for decision in items:
                 leftovers.append(self._decision_record(decision, "expired"))
@@ -94,8 +95,8 @@ class ManualWorkflowSimulator:
         self,
         trade_date: dt.date,
         signal_date: dt.date,
-        raw_signals: list[dict[str, object]],
-    ) -> list[dict[str, object]]:
+        raw_signals: list[dict[str, Any]],
+    ) -> list[dict[str, Any]]:
         """Queue based on signals and parameters, return rejection records."""
 
         if not raw_signals:
@@ -103,7 +104,7 @@ class ManualWorkflowSimulator:
 
         accepted, rejected = self._filter_signals(raw_signals)
         execute_date = self._resolve_execute_date(trade_date)
-        log: list[dict[str, object]] = []
+        log: list[dict[str, Any]] = []
 
         if execute_date is None:
             if self._record_rejected:
@@ -133,11 +134,11 @@ class ManualWorkflowSimulator:
 
     def _filter_signals(
         self,
-        raw_signals: list[dict[str, object]],
-    ) -> tuple[list[dict[str, object]], list[tuple[dict[str, object], str]]]:
+        raw_signals: list[dict[str, Any]],
+    ) -> tuple[list[dict[str, Any]], list[tuple[dict[str, Any], str]]]:
         filtered = sorted(raw_signals, key=lambda s: float(s.get("confidence", 0.0) or 0.0), reverse=True)
-        accepted: list[dict[str, object]] = []
-        rejected: list[tuple[dict[str, object], str]] = []
+        accepted: list[dict[str, Any]] = []
+        rejected: list[tuple[dict[str, Any], str]] = []
         min_conf = self._params.min_confidence
         for signal in filtered:
             confidence = float(signal.get("confidence", 0.0) or 0.0)
@@ -150,15 +151,15 @@ class ManualWorkflowSimulator:
     def _apply_limits(
         self,
         execute_date: dt.date,
-        signals: list[dict[str, object]],
-    ) -> tuple[list[dict[str, object]], list[tuple[dict[str, object], str]]]:
+        signals: list[dict[str, Any]],
+    ) -> tuple[list[dict[str, Any]], list[tuple[dict[str, Any], str]]]:
         if not signals:
             return [], []
         total_limit = self._params.max_signals_per_day
         total_count = self._queued_per_date_total.get(execute_date, 0)
         strategy_counts = dict(self._queued_per_date_strategy.get(execute_date, {}))
-        limited: list[dict[str, object]] = []
-        rejected: list[tuple[dict[str, object], str]] = []
+        limited: list[dict[str, Any]] = []
+        rejected: list[tuple[dict[str, Any], str]] = []
         for signal in signals:
             strategy = self._extract_strategy(signal)
             strategy_limit = self._strategy_limits.get(strategy)
@@ -185,7 +186,7 @@ class ManualWorkflowSimulator:
             return None
         return self._calendar[target_idx]
 
-    def _decorate_signal(self, decision: ManualDecision, approved_date: dt.date) -> dict[str, object]:
+    def _decorate_signal(self, decision: ManualDecision, approved_date: dt.date) -> dict[str, Any]:
         signal = dict(decision.signal)
         signal.setdefault("approved_at", approved_date.isoformat())
         signal.setdefault("signal_date", decision.signal_date.isoformat())
@@ -198,7 +199,7 @@ class ManualWorkflowSimulator:
             signal.setdefault("fill_ratio", ratio)
         return signal
 
-    def _decision_record(self, decision: ManualDecision, status: str) -> dict[str, object]:
+    def _decision_record(self, decision: ManualDecision, status: str) -> dict[str, Any]:
         ratio = decision.fill_ratio
         exec_status = status
         if status == "executed" and ratio is not None and ratio < 1.0:
@@ -220,7 +221,7 @@ class ManualWorkflowSimulator:
             payload["fill_ratio"] = ratio
         return payload
 
-    def _rejection_record(self, signal: dict[str, object], signal_date: dt.date, reason: str) -> dict[str, object]:
+    def _rejection_record(self, signal: dict[str, Any], signal_date: dt.date, reason: str) -> dict[str, Any]:
         payload = {
             "decision_id": None,
             "signal_date": signal_date.isoformat(),
@@ -237,12 +238,12 @@ class ManualWorkflowSimulator:
             payload["strategy"] = strategy
         return payload
 
-    def _next_id(self, signal: dict[str, object]) -> str:
+    def _next_id(self, signal: dict[str, Any]) -> str:
         self._counter += 1
         symbol = signal.get("instrument") or signal.get("symbol") or "UNKNOWN"
         return f"MW-{self._counter:06d}-{symbol}"
 
-    def _extract_strategy(self, signal: dict[str, object]) -> str:
+    def _extract_strategy(self, signal: dict[str, Any]) -> str:
         key = self._strategy_field
         if key:
             value = signal.get(key)

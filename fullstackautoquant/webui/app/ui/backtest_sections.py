@@ -22,13 +22,13 @@ class StrategyDefaults:
 
 @dataclass(frozen=True)
 class StrategyOverrides:
-    config: dict[str, object]
+    config: dict[str, Any]
     daily_pv: Path
     initial_capital: float
     logs_root: Path
 
 
-def render_strategy_sections(strategy_cfg: dict[str, object], defaults: StrategyDefaults) -> StrategyOverrides:
+def render_strategy_sections(strategy_cfg: dict[str, Any], defaults: StrategyDefaults) -> StrategyOverrides:
     """Render all strategy-related tabs and return collected overrides."""
 
     working_cfg: dict[str, Any] = copy.deepcopy(strategy_cfg)

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import contextlib
 import datetime as dt
-from collections.abc import Iterable, Sequence
+from collections.abc import Iterator, Sequence
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -96,7 +96,7 @@ class Database:
         Base.metadata.create_all(self.engine)
 
     @contextlib.contextmanager
-    def session(self) -> Iterable[Session]:
+    def session(self) -> Iterator[Session]:
         with Session(self.engine) as session:
             yield session
 

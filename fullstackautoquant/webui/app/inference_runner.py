@@ -13,6 +13,7 @@ import subprocess
 import time
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Any
 
 
 class InferenceError(RuntimeError):
@@ -70,7 +71,7 @@ def _resolve(base: Path, rel_or_abs: str) -> Path:
     return (base / p).resolve()
 
 
-def run_update_qlib(config: dict[str, object]) -> StepResult:
+def run_update_qlib(config: dict[str, Any]) -> StepResult:
     base_dir = Path(__file__).resolve().parents[2]
     paths = config.get("paths", {})  # type: ignore[assignment]
     infer_dir = _resolve(base_dir, str(paths.get("model_infer_dir", "../../ModelInferenceBundle")))
@@ -89,7 +90,7 @@ def run_update_qlib(config: dict[str, object]) -> StepResult:
     return _run_cmd(cmd, cwd=infer_dir)
 
 
-def run_export_daily_pv(config: dict[str, object]) -> StepResult:
+def run_export_daily_pv(config: dict[str, Any]) -> StepResult:
     base_dir = Path(__file__).resolve().parents[2]
     paths = config.get("paths", {})  # type: ignore[assignment]
     infer_dir = _resolve(base_dir, str(paths.get("model_infer_dir", "../../ModelInferenceBundle")))
@@ -120,7 +121,7 @@ def run_export_daily_pv(config: dict[str, object]) -> StepResult:
     return _run_cmd(cmd, cwd=infer_dir)
 
 
-def run_verify_parquet(config: dict[str, object]) -> StepResult:
+def run_verify_parquet(config: dict[str, Any]) -> StepResult:
     base_dir = Path(__file__).resolve().parents[2]
     paths = config.get("paths", {})  # type: ignore[assignment]
     infer_dir = _resolve(base_dir, str(paths.get("model_infer_dir", "../../ModelInferenceBundle")))
@@ -144,7 +145,7 @@ def run_verify_parquet(config: dict[str, object]) -> StepResult:
     return _run_cmd(cmd, cwd=infer_dir)
 
 
-def run_build_factors(config: dict[str, object]) -> StepResult:
+def run_build_factors(config: dict[str, Any]) -> StepResult:
     base_dir = Path(__file__).resolve().parents[2]
     paths = config.get("paths", {})  # type: ignore[assignment]
     infer_dir = _resolve(base_dir, str(paths.get("model_infer_dir", "../../ModelInferenceBundle")))
@@ -166,7 +167,7 @@ def run_build_factors(config: dict[str, object]) -> StepResult:
     return _run_cmd(cmd, cwd=infer_dir)
 
 
-def run_inference(config: dict[str, object]) -> StepResult:
+def run_inference(config: dict[str, Any]) -> StepResult:
     base_dir = Path(__file__).resolve().parents[2]
     paths = config.get("paths", {})  # type: ignore[assignment]
     infer_dir = _resolve(base_dir, str(paths.get("model_infer_dir", "../../ModelInferenceBundle")))
@@ -194,7 +195,7 @@ def run_inference(config: dict[str, object]) -> StepResult:
     return _run_cmd(cmd, cwd=infer_dir)
 
 
-def run_full_pipeline(config: dict[str, object]) -> list[StepResult]:
+def run_full_pipeline(config: dict[str, Any]) -> list[StepResult]:
     steps: list[StepResult] = []
     # Phase 1: Update Qlib data (optional, user may skip)
     try:

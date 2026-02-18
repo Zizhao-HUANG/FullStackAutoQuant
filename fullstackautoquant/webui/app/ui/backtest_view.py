@@ -5,6 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import date
 from pathlib import Path
+from typing import Any
 
 import pandas as pd
 import streamlit as st
@@ -35,7 +36,7 @@ except ModuleNotFoundError:
         BacktestEngine = None  # type: ignore
         list_backtest_runs = None  # type: ignore
         load_backtest_result = None  # type: ignore
-        BACKTEST_IMPORT_ERROR = exc
+        BACKTEST_IMPORT_ERROR: Exception | None = exc
     else:
         BACKTEST_IMPORT_ERROR = None
 except Exception as exc:  # pragma: no cover
@@ -50,7 +51,7 @@ else:
 
 @dataclass(frozen=True)
 class BacktestDependencies:
-    config: dict[str, object]
+    config: dict[str, Any]
 
 
 class BacktestPage:
@@ -163,7 +164,7 @@ class BacktestPage:
                 confidence_floor = (
                     float(portfolio_cfg.get("confidence_floor", 0.9)) if isinstance(portfolio_cfg, dict) else 0.9
                 )
-                portfolio_payload: dict[str, object] = {
+                portfolio_payload: dict[str, Any] = {
                     "invest_ratio": invest_ratio,
                     "confidence_floor": confidence_floor,
                 }
@@ -177,7 +178,7 @@ class BacktestPage:
                 if isinstance(weights_cfg, dict) and weights_cfg.get("mode"):
                     portfolio_payload["weight_mode"] = str(weights_cfg.get("mode"))
 
-                signal_cfg: dict[str, object] = {
+                signal_cfg: dict[str, Any] = {
                     "combined_factors": inputs.combined_factors,
                     "params_path": inputs.params_path,
                     "provider_uri": inputs.provider_uri,
@@ -320,5 +321,5 @@ class BacktestInputs:
     provider_uri: str
     run_button: bool
     strategy_config_path: Path
-    strategy_config: dict[str, object]
+    strategy_config: dict[str, Any]
     backtest_logs_root: Path

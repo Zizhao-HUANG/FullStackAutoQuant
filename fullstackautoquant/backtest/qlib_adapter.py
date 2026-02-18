@@ -8,6 +8,7 @@ import importlib.util
 import os
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Any
 
 import pandas as pd
 import torch
@@ -257,7 +258,7 @@ class QlibInferenceAdapter:
             pass
 
     def _signals_to_dataframe(self, used_date: dt.date, signals: list[dict]) -> pd.DataFrame:
-        rows: list[dict[str, object]] = []
+        rows: list[dict[str, Any]] = []
         for item in signals:
             instrument = item.get("instrument")
             score = item.get("score")

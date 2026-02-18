@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 import pandas as pd
 from app.config_loader import ConfigLoader, ensure_default_config
@@ -17,7 +17,7 @@ from .data_access import DataAccess
 
 @dataclass
 class Services:
-    config: dict[str, object]
+    config: dict[str, Any]
     db: Database
     market: MarketDataService | None
     data_access: DataAccess
@@ -39,7 +39,7 @@ def bootstrap_services(base_dir: Path | None = None) -> Services:
     return Services(config=config, db=db, market=market, data_access=data_access)
 
 
-def load_latest_targets_dataframe(config: dict[str, object]) -> pd.DataFrame:
+def load_latest_targets_dataframe(config: dict[str, Any]) -> pd.DataFrame:
     targets_dir = config.get("paths", {}).get("targets_dir", "../../trading/logs")  # type: ignore[assignment]
     base_dir = Path(__file__).resolve().parents[1]
     path = base_dir / targets_dir

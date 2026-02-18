@@ -29,7 +29,7 @@ class PositionPageDependencies:
     db: Database
     market: Any | None
     data_access: DataAccess
-    config: dict[str, object]
+    config: dict[str, Any]
 
 
 class PositionsPage:
@@ -177,7 +177,7 @@ class PositionsPage:
         self,
         raw_df: pd.DataFrame,
         totals: dict[str, float],
-        quotes: dict[str, dict[str, object]],
+        quotes: dict[str, dict[str, Any]],
         realtime_price: pd.Series,
     ) -> pd.DataFrame:
         export_df = raw_df.copy()

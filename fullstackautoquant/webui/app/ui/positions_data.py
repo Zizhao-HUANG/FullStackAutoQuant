@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 from collections.abc import Iterable
 from dataclasses import dataclass
+from typing import Any
 
 import pandas as pd
 from app.database import Database
@@ -127,7 +128,7 @@ def fill_missing_numeric(df: pd.DataFrame, columns: Iterable[str]) -> pd.DataFra
     return converted
 
 
-def to_payload(db: Database | None) -> tuple[list[dict[str, object]], list[str]]:
+def to_payload(db: Database | None) -> tuple[list[dict[str, Any]], list[str]]:
     """Generate GM symbol payload for workflow."""
     if db is None:
         return [], []

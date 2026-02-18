@@ -19,7 +19,7 @@ from app.workflow import WorkflowError, run_full_workflow, run_single_step
 
 @dataclass(frozen=True)
 class WorkflowDependencies:
-    config: dict[str, object]
+    config: dict[str, Any]
     data_access: DataAccess
     db: Database | None = None
     market: MarketDataService | None = None
@@ -100,7 +100,7 @@ class WorkflowPage:
                             if outputs:
                                 st.write(outputs)
 
-    def _render_targets_section(self, result: dict[str, object]) -> None:
+    def _render_targets_section(self, result: dict[str, Any]) -> None:
         st.subheader("Plan Results", divider="blue")
 
         signals_info = result.get("signals", {})
@@ -153,7 +153,7 @@ class WorkflowPage:
 
     def _render_summary_and_orders(
         self,
-        result: dict[str, object],
+        result: dict[str, Any],
         summary_cols,
         remaining_cash: float,
         available_cash: float,
@@ -413,7 +413,7 @@ class WorkflowPage:
             mime="text/csv",
         )
 
-    def _render_risk_section(self, result: dict[str, object], debug_mode: bool) -> None:
+    def _render_risk_section(self, result: dict[str, Any], debug_mode: bool) -> None:
         risk_state = result.get("risk_state")
         if isinstance(risk_state, dict):
             allow_buy = bool(risk_state.get("allow_buy", True))
@@ -482,7 +482,7 @@ class WorkflowPage:
             "recorded_at": dt.datetime.utcnow().isoformat(),
         }
 
-    def _extract_signal_strengths(self, result: dict[str, object]) -> dict[str, float]:
+    def _extract_signal_strengths(self, result: dict[str, Any]) -> dict[str, float]:
         signals_info = result.get("signals")
         if isinstance(signals_info, dict):
             signals = signals_info.get("signals")
@@ -511,7 +511,7 @@ class WorkflowPage:
                 mapping[alias] = val
         return mapping
 
-    def _extract_signal_order(self, result: dict[str, object]) -> dict[str, int]:
+    def _extract_signal_order(self, result: dict[str, Any]) -> dict[str, int]:
         signals_info = result.get("signals")
         if isinstance(signals_info, dict):
             signals = signals_info.get("signals")

@@ -50,14 +50,6 @@ def _normalize_date(value: str | Any) -> str:
     return str(value)
 
 
-def _normalize_date(value: str | Any) -> str:
-    if hasattr(value, "isoformat"):
-        try:
-            return value.isoformat()
-        except Exception:
-            pass
-    return str(value)
-
 
 def load_task_config(path: Path) -> TaskCfg:
     if not path.exists():

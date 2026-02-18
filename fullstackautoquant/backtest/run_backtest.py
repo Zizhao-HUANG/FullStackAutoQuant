@@ -8,6 +8,7 @@ import logging
 import sys
 import time
 from pathlib import Path
+from typing import Any
 
 BACKTEST_ROOT = Path(__file__).resolve().parent
 TRADING_DIR = BACKTEST_ROOT.parent
@@ -58,7 +59,7 @@ def _parse_value(raw: str) -> object:
 
 
 def _apply_overrides(cfg: BacktestConfig, overrides: list[str]) -> BacktestConfig:
-    parsed: dict[str, object] = {}
+    parsed: dict[str, Any] = {}
     for item in overrides or []:
         if "=" not in item:
             raise ValueError(f"Invalid override format: {item}")

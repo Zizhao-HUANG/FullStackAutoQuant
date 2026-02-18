@@ -5,6 +5,7 @@ from __future__ import annotations
 import datetime as dt
 from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
+from typing import Any
 
 import pandas as pd
 import streamlit as st
@@ -18,7 +19,7 @@ _QUOTE_UPDATED_AT_KEY = "positions_quotes_updated_at"
 class QuoteFetchResult:
     """Return quote dict and update time."""
 
-    quotes: dict[str, dict[str, object]]
+    quotes: dict[str, dict[str, Any]]
     updated_at: dt.datetime | None
 
 
@@ -60,7 +61,7 @@ def fetch_quotes(
         if symbol not in cached or price_missing or (recompute_missing and name_missing):
             need_refresh.append(symbol)
 
-    quotes: dict[str, dict[str, object]] = {}
+    quotes: dict[str, dict[str, Any]] = {}
     if need_refresh or force:
         try:
             target_symbols = normalized if force else need_refresh
