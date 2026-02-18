@@ -111,8 +111,8 @@ def _run_once(
     auction_mode: bool,
     open_eps: float,
     max_slices_open: int,
-    config_path: str = None,
-    account_id: str = None,
+    config_path: str | None = None,
+    account_id: str | None = None,
 ) -> None:
     cmd = [
         sys.executable,

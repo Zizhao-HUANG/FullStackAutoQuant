@@ -83,7 +83,7 @@ class RiskEvaluator:
         if not h5_path:
             return [], []
         limit_threshold = float(self._config.get("order", {}).get("limit_threshold", 0.095))
-        instruments = [sig.get("instrument") for sig in signals if sig.get("instrument")]
+        instruments = [str(sig["instrument"]) for sig in signals if sig.get("instrument") is not None]
         if not instruments:
             return [], []
         limit_up, limit_down = detect_limit_states(h5_path, instruments, limit_threshold)

@@ -6,6 +6,7 @@ import datetime as dt
 import json
 from copy import deepcopy
 from pathlib import Path
+from typing import Any
 
 import pandas as pd
 
@@ -38,6 +39,8 @@ class BacktestEngine:
         self._daily_data = self._load_daily_data()
         self._calendar = self._build_calendar()
         self._strategy_config = self._load_strategy_config()
+        if config.signal is None:
+            raise ValueError("BacktestConfig.signal must be set for BacktestEngine")
         signal_provider = SignalProvider(
             build_qlib_adapter(config.signal),
             config.portfolio.confidence_floor,
@@ -76,7 +79,7 @@ class BacktestEngine:
         )
         equity_df = enrich_equity_curve(intermediate.equity_curve_df())
         summary = compute_summary(equity_df)
-        metadata = {"config": self._config.to_dict()}
+        metadata: dict[str, Any] = {"config": self._config.to_dict()}
         result = intermediate.to_result(summary=summary, metadata=metadata)
 
         run_dir = persist_backtest_result(
@@ -138,7 +141,10 @@ class BacktestEngine:
         cfg = self._apply_runtime_params(cfg)
 
         cfg_paths = cfg.setdefault("paths", {})
-        daily_pv_path = Path(self._config.data.daily_pv).resolve()
+        if self._config.data.daily_pv is not None:
+            daily_pv_path = Path(self._config.data.daily_pv).resolve()
+        else:
+            daily_pv_path = Path("").resolve()
         cfg_paths["daily_pv"] = str(daily_pv_path)
 
         default_logs_root = Path(__file__).resolve().parents[2] / "logs/backtest"

@@ -69,7 +69,7 @@ def fetch_tushare_quotes(gm_symbols: list[str], src: str = "sina") -> dict[str, 
     for _, row in df.iterrows():
         row_dict = {str(col).lower(): row[col] for col in df.columns}
         ts_code = str(row_dict.get("ts_code") or row_dict.get("symbol") or "").upper()
-        gm_symbol = gm_map.get(ts_code)
+        gm_symbol: str | None = gm_map.get(ts_code)
         if not gm_symbol:
             continue
 

@@ -104,7 +104,7 @@ def main() -> None:
     if not state.limit_up_symbols:
         _, state_limit_down = detect_limit_states(
             Path(cfg.get("paths", {}).get("daily_pv", "")),
-            [gm_to_instrument(sig.get("symbol", "")) for sig in signals if sig.get("symbol")],
+            [inst for sig in signals if sig.get("symbol") for inst in [gm_to_instrument(sig.get("symbol", ""))] if inst is not None],
             float(cfg.get("order", {}).get("limit_threshold", 0.095)),
         )
     out_path = Path(args.out) if args.out else logs_dir / "risk_state.json"
