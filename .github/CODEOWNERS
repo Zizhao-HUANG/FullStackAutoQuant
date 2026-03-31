@@ -1,0 +1,15 @@
+# CODEOWNERS
+# All changes require review from @Zizhao-HUANG
+# https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Default: everything requires owner approval
+*                       @Zizhao-HUANG
+
+# Core model, owner only
+fullstackautoquant/model/         @Zizhao-HUANG
+fullstackautoquant/trading/       @Zizhao-HUANG
+fullstackautoquant/backtest/      @Zizhao-HUANG
+
+# Configs and weights, owner only
+configs/                @Zizhao-HUANG
+weights/                @Zizhao-HUANG
