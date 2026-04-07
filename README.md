@@ -28,7 +28,7 @@
 
 | Module | What it does |
 |--------|-------------|
-| **Data Pipeline** | Automated Qlib data updates, custom factor synthesis (Alpha158 + 2 proprietary factors), and feature matrix construction |
+| **Data Pipeline** | Automated data updates via Tushare (lightweight) or Docker/Dolt (full history), custom factor synthesis (Alpha158 + 2 proprietary factors), and feature matrix construction |
 | **Deep Learning Model** | Proprietary TCN Attention GRU architecture with strict temporal causality for cross sectional stock ranking |
 | **Uncertainty Estimation** | MC Dropout (16 pass) produces per stock confidence scores; low confidence signals are filtered before trading |
 | **Risk Management** | Multilayer controls: max drawdown limits, limit state filtering, position caps, and confidence thresholds |
@@ -61,12 +61,12 @@ A hybrid deep learning architecture (~180K parameters) designed for **cross sect
 
 > **Disclaimer:** Past performance does not guarantee future results. This system is provided for research and educational purposes only.
 
-Evaluated on **CSI300 universe** using Qlib's `TopkDropoutStrategy` (Top-K long only, daily rebalance):
+Evaluated on **CSI300 universe** using Qlib's `TopkDropoutStrategy` (TopK long only, daily rebalance):
 
 | Metric | With Cost | Without Cost |
 |--------|-----------|--------------|
 | **Annualized Excess Return** | **16.72%** | 21.38% |
-| **Max Drawdown** | **−4.60%** | −4.41% |
+| **Max Drawdown** | **-4.60%** | -4.41% |
 | **Information Ratio** | **1.96** | 2.51 |
 
 <details>
@@ -110,31 +110,45 @@ pip install -e ".[all]"
 
 ```bash
 cp .env.example .env
-# Edit .env with your Tushare token and (optionally) GM Trade credentials
+# Edit .env with your Tushare token (required) and optionally GM Trade credentials
 ```
 
-### 3. Initialize Data
+### 3. Run Inference (Lite Pipeline, Recommended)
+
+The Lite Pipeline uses Tushare to fetch recent market data, then runs factor synthesis and model inference in a single command. No Docker required.
 
 ```bash
-# Update Qlib data (requires Docker)
-bash fullstackautoquant/data/qlib_update.sh
+export TUSHARE=<your_tushare_token>
+python scripts/run_daily_lite.py --date auto
 ```
 
-### 4. Run Inference
+Output: `output/ranked_scores.csv`. Requires a [Tushare Pro](https://tushare.pro/register) account (2000+ points) and pretrained weights in `weights/`.
 
-```bash
-python -m fullstackautoquant.model.inference \
-  --date auto \
-  --combined_factors ./data/combined_factors_df.parquet \
-  --params ./weights/params.pkl \
-  --out ./output/ranked_scores.csv
-```
-
-### 5. Launch Dashboard (Optional)
+### 4. Launch Dashboard (Optional)
 
 ```bash
 make webui
 ```
+
+<details>
+<summary><b>Legacy: Full History Pipeline (Docker/Dolt)</b></summary>
+
+For building full historical data (2005 to present) using the Docker/Dolt pipeline:
+
+```bash
+# Requires Docker installed and running
+export TUSHARE=<your_tushare_token>
+bash fullstackautoquant/data/qlib_update.sh
+```
+
+This clones the full A-share dataset (~5 GB) and produces Qlib binary data. First run takes 30 to 60 minutes.
+
+After building full history, extract normalizer cache:
+```bash
+python scripts/extract_norm_cache.py
+```
+
+</details>
 
 ## Project Structure
 
@@ -144,15 +158,17 @@ FullStackAutoQuant/
 │   ├── model/             # Neural network architecture & inference
 │   │   ├── architecture.py    # TCN Attention GRU model definition
 │   │   ├── inference.py       # Production inference pipeline
+│   │   ├── norm_cache.py      # Normalizer parameter caching
 │   │   ├── scoring.py         # Signal ranking & confidence scoring
 │   │   ├── task_config.py     # Training config loader
 │   │   ├── factors/           # Custom alpha factor definitions
 │   │   └── io/                # Data loading utilities
 │   ├── data/              # Data pipeline
-│   │   ├── qlib_update.sh     # Automated Qlib data update (Docker)
-│   │   ├── factor_synthesis.py # Custom factor computation
-│   │   ├── build_features.py  # Feature matrix construction
-│   │   └── verify/            # Data verification scripts
+│   │   ├── tushare_provider.py    # Tushare -> Qlib binary (Lite Pipeline)
+│   │   ├── qlib_update.sh        # Full history update (Docker/Dolt)
+│   │   ├── factor_synthesis.py    # Custom factor computation
+│   │   ├── build_features.py     # Feature matrix construction
+│   │   └── verify/               # Data verification scripts
 │   ├── trading/           # Trading execution
 │   │   ├── strategy.py        # TopK rebalancing with water-fill weights
 │   │   ├── execution.py       # JoinQuant/GM Trade API wrapper
@@ -166,10 +182,13 @@ FullStackAutoQuant/
 │   │   └── components/        # Pluggable components (NAV, risk, execution)
 │   └── webui/             # Streamlit dashboard
 ├── configs/               # Configuration files & schemas
-├── weights/               # Model weights (pre-trained)
-├── tests/                 # Test suite
-├── docs/                  # Documentation
-└── scripts/               # Utility scripts
+├── weights/               # Model weights (pretrained)
+├── tests/                 # Test suite (300+ tests)
+├── scripts/               # Utility scripts
+│   ├── run_daily_lite.py      # Single command daily inference
+│   ├── extract_norm_cache.py  # One time normalizer extraction
+│   └── build_full_history.py  # Full history builder
+└── docs/                  # Documentation
 ```
 
 ## Documentation
@@ -180,6 +199,7 @@ FullStackAutoQuant/
 | [Data Pipeline](docs/data_pipeline.md) | Data ingestion, factor synthesis, and verification |
 | [Trading System](docs/trading_system.md) | Execution engine and risk management |
 | [Deployment Guide](docs/deployment.md) | Production deployment and daily operations |
+| [Normalizer Caching](docs/normalizer_caching.md) | Cached normalization parameters for inference |
 
 ## Technology Stack
 
@@ -187,7 +207,7 @@ FullStackAutoQuant/
 |----------|-------------|
 | **Deep Learning** | PyTorch 2.0+, custom TCN / Attention / GRU layers |
 | **Quant Framework** | Microsoft Qlib (data handling, dataset management) |
-| **Market Data** | Tushare API, East Money fallback |
+| **Market Data** | Tushare API (primary), Docker/Dolt pipeline (full history) |
 | **Trading API** | JoinQuant GM Trade (A share market) |
 | **Backtesting** | Custom engine with pluggable component architecture |
 | **Dashboard** | Streamlit |
@@ -215,5 +235,5 @@ You are free to share and adapt this work for **noncommercial purposes** with pr
 ---
 
 <p align="center">
-  <sub>Built with ❤️ by <a href="https://github.com/Zizhao-HUANG">Zizhao Huang</a></sub>
+  <sub>Built with <3 by <a href="https://github.com/Zizhao-HUANG">Zizhao Huang</a></sub>
 </p>
