@@ -152,6 +152,7 @@ def build_handler_from_task(
     combined_factors_path: Path,
     start_time: str | None = None,
     end_time: str | None = None,
+    norm_cache_path: Path | None = None,
 ) -> Any:
     handler_cfg = deepcopy(_locate_handler_cfg(task_cfg))
     handler_kwargs = handler_cfg.setdefault("kwargs", {})
@@ -180,7 +181,15 @@ def build_handler_from_task(
     if end_time is not None:
         handler_kwargs["end_time"] = end_time
 
-    return init_instance_by_config(handler_cfg)
+    handler = init_instance_by_config(handler_cfg)
+
+    # Inject cached normalizer params (enables minimal-data mode)
+    if norm_cache_path is not None:
+        from fullstackautoquant.model.norm_cache import inject_norm_params, load_norm_cache
+
+        inject_norm_params(handler, load_norm_cache(norm_cache_path))
+
+    return handler
 
 
 def get_dataset_step_len(task_cfg: TaskCfg) -> int | None:

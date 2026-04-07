@@ -30,7 +30,7 @@ import shutil
 import sys
 from dataclasses import dataclass
 from pathlib import Path
-from types import SimpleNamespace
+
 from typing import Any
 
 
@@ -40,6 +40,14 @@ def _ensure_conda_env() -> None:
         return
     conda_exe = shutil.which("conda")
     if not conda_exe:
+        return
+    # Only attempt switch if target env actually exists
+    import subprocess
+
+    result = subprocess.run(
+        [conda_exe, "env", "list"], capture_output=True, text=True
+    )
+    if target_env not in result.stdout:
         return
     script = str(Path(__file__).resolve())
     cmd = [conda_exe, "run", "-n", target_env, "python", script, *sys.argv[1:]]
@@ -119,101 +127,33 @@ class InferenceConfig:
 
 
 def _ensure_cuda_stub() -> None:
+    """Patch torch.load to force map_location='cpu' on CPU-only machines.
+
+    The previous approach (replacing torch.cuda with a SimpleNamespace) causes
+    libc++abi SIGABRT crashes in PyTorch >= 2.9 because PyTorch validates CUDA
+    at the C++ layer.  Instead, we simply intercept torch.load to inject
+    map_location='cpu', which is the only safe way to load CUDA-pickled models
+    on CPU-only machines.
+    """
     import torch
 
     if torch.cuda.is_available():
         return
 
-    class _CudaModule(SimpleNamespace):
-        pass
+    if getattr(torch, "_cpu_load_patched", False):
+        return
 
-    torch_cuda = _CudaModule()
+    _original_torch_load = torch.load
 
-    class _CudaDeviceCtx:
-        def __init__(self, idx=None):
-            if idx is None:
-                self.idx = 0
-            elif isinstance(idx, str):
-                self.idx = int(idx.split(":")[-1]) if ":" in idx else int(idx)
-            elif hasattr(idx, "index"):
-                self.idx = idx.index if idx.index is not None else 0
-            else:
-                self.idx = int(idx)
+    def _cpu_torch_load(*args, **kwargs):
+        if "map_location" not in kwargs:
+            kwargs["map_location"] = "cpu"
+        if "weights_only" not in kwargs:
+            kwargs["weights_only"] = False
+        return _original_torch_load(*args, **kwargs)
 
-        def __enter__(self):
-            return self.idx
-
-        def __exit__(self, exc_type, exc_val, exc_tb):
-            return False
-
-    class _CudaUtils:
-        @staticmethod
-        def _get_device_index(device, optional):
-            if device is None:
-                return 0
-            if isinstance(device, str):
-                return int(device.split(":")[-1]) if ":" in device else int(device)
-            if hasattr(device, "index") and device.index is not None:
-                return device.index
-            return 0
-
-    torch_cuda.is_available = lambda: True
-    torch_cuda.device_count = lambda: 1
-    torch_cuda._utils = _CudaUtils()
-    torch_cuda.device = lambda idx=None: _CudaDeviceCtx(idx)
-    torch_cuda._exchange_device = lambda idx: 0
-    torch_cuda._is_in_bad_fork = lambda: False
-    torch_cuda.init = lambda: None
-    torch_cuda._lazy_init = lambda: None
-    torch_cuda.current_device = lambda: 0
-    torch_cuda.set_device = lambda idx: None
-    torch_cuda.memory_allocated = lambda *a, **k: 0
-    torch_cuda.memory_reserved = lambda *a, **k: 0
-    torch_cuda.empty_cache = lambda: None
-
-    sys.modules["torch.cuda"] = torch_cuda  # type: ignore[assignment]
-    torch.cuda = torch_cuda  # type: ignore[assignment]
-
-    def _normalize_device(dev):
-        try:
-            if dev is None:
-                return None
-            if isinstance(dev, str):
-                if dev.startswith("cuda"):
-                    return "cpu"
-                return dev
-            if isinstance(dev, torch.device) and dev.type == "cuda":
-                return torch.device("cpu")
-        except Exception:
-            return None
-        return dev
-
-    original_untyped = torch.UntypedStorage
-
-    if not getattr(torch, "_untype_storage_cpu_patched", False):
-
-        class _CpuUntypedStorage(original_untyped):  # type: ignore[valid-type, misc]
-            def __new__(cls, *args, device=None, **kwargs):
-                device = _normalize_device(device)
-                if device is None and "device" in kwargs:
-                    kwargs["device"] = _normalize_device(kwargs["device"])
-                return super().__new__(cls, *args, device=device, **kwargs)
-
-        _CpuUntypedStorage.__name__ = original_untyped.__name__
-        _CpuUntypedStorage.__qualname__ = original_untyped.__qualname__
-        torch.UntypedStorage = _CpuUntypedStorage  # type: ignore[assignment, misc]
-        torch.storage.UntypedStorage = _CpuUntypedStorage  # type: ignore[assignment, misc]
-        torch._untype_storage_cpu_patched = True  # type: ignore[attr-defined]
-        torch_cuda.UntypedStorage = _CpuUntypedStorage
-
-    storage_classes = getattr(torch, "_storage_classes", None)
-    if isinstance(storage_classes, dict):
-        storage_classes["cuda"] = torch.UntypedStorage  # type: ignore[attr-defined]
-    elif hasattr(torch.storage, "_register_storage_class"):
-        try:
-            torch.storage._register_storage_class(torch.UntypedStorage, "cuda")  # type: ignore[attr-defined]
-        except Exception:
-            pass
+    torch.load = _cpu_torch_load  # type: ignore[assignment]
+    torch._cpu_load_patched = True  # type: ignore[attr-defined]
 
 
 class ConfigError(Exception):
@@ -322,6 +262,7 @@ def _parse_args() -> argparse.Namespace:
     ap.add_argument("--region", help="Qlib region")
     ap.add_argument("--start", help="Factor start date, default 2005-01-04")
     ap.add_argument("--instruments", help="Instrument universe, default csi300")
+    ap.add_argument("--norm-cache", help="Path to cached normalizer params (weights/norm_params.pkl)")
     return ap.parse_args()
 
 
@@ -407,6 +348,7 @@ def main() -> int:
         combined_factors_path=paths.combined_factors,
         start_time=start_date,
         end_time=handler_end,
+        norm_cache_path=Path(args.norm_cache) if args.norm_cache else None,
     )
     # Determine the trading day for inference: prefer the nearest date <= target (no strict N=300 requirement)
     from qlib.data.dataset import DataHandlerLP as DH
@@ -434,29 +376,33 @@ def main() -> int:
         step_len=dataset_step_len,
     )
 
-    # 3) Load GeneralPTNN (prefer direct Qlib object deserialization, fallback to state_dict)
+    # 3) Load model weights (prefer state_dict, fallback to pickle)
     params_path = paths.params
     if not params_path.exists():
         raise FileNotFoundError(f"Model weights not found: {params_path}")
 
     _ensure_cuda_stub()
 
+    from fullstackautoquant.model.model import load_model
+
     try:
-        model = pd.read_pickle(params_path)
+        model, load_strategy = load_model(params_path, device="cpu")
     except Exception as exc:
         raise RuntimeError(f"Failed to load trained model: {params_path}") from exc
 
-    dnn_model = getattr(model, "dnn_model", None)
-    if dnn_model is not None:
-        dnn_model.eval()
-        dnn_model.to(torch.device("cpu"))
-    if hasattr(model, "device"):
-        model.device = torch.device("cpu")
-    if hasattr(model, "GPU"):
-        try:
-            model.GPU = None
-        except Exception:
-            model.GPU = -1
+    # For state_dict loading, wrap in Qlib's GeneralPTNN for predict() compat
+    if load_strategy == "state_dict":
+        from qlib.contrib.model.pytorch_general_nn import GeneralPTNN
+
+        wrapper = object.__new__(GeneralPTNN)  # skip __init__
+        wrapper.dnn_model = model
+        wrapper.device = torch.device("cpu")
+        wrapper.fitted = True
+        wrapper.batch_size = 8096
+        wrapper.n_jobs = 0
+        wrapper.logger = __import__("logging").getLogger(__name__)
+        model = wrapper
+
     if hasattr(model, "n_jobs"):
         model.n_jobs = ideal_workers
     if not getattr(model, "fitted", True):
