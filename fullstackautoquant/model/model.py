@@ -145,7 +145,6 @@ def _load_state_dict(
 
 def _load_raw(path: Path, device: str):
     """Load a file that could be torch.save or raw pickle format."""
-    import pickle
 
     # Detect format by reading magic bytes
     with open(path, "rb") as f:

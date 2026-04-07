@@ -30,7 +30,6 @@ import shutil
 import sys
 from dataclasses import dataclass
 from pathlib import Path
-
 from typing import Any
 
 
@@ -44,9 +43,7 @@ def _ensure_conda_env() -> None:
     # Only attempt switch if target env actually exists
     import subprocess
 
-    result = subprocess.run(
-        [conda_exe, "env", "list"], capture_output=True, text=True
-    )
+    result = subprocess.run([conda_exe, "env", "list"], capture_output=True, text=True)
     if target_env not in result.stdout:
         return
     script = str(Path(__file__).resolve())
@@ -262,7 +259,9 @@ def _parse_args() -> argparse.Namespace:
     ap.add_argument("--region", help="Qlib region")
     ap.add_argument("--start", help="Factor start date, default 2005-01-04")
     ap.add_argument("--instruments", help="Instrument universe, default csi300")
-    ap.add_argument("--norm-cache", help="Path to cached normalizer params (weights/norm_params.pkl)")
+    ap.add_argument(
+        "--norm-cache", help="Path to cached normalizer params (weights/norm_params.pkl)"
+    )
     return ap.parse_args()
 
 

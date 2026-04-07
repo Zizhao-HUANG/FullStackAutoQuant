@@ -12,15 +12,13 @@ This test is CI-runnable (no network, no credentials required).
 from __future__ import annotations
 
 import struct
+import sys
 from pathlib import Path
-from types import SimpleNamespace
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 import numpy as np
 import pandas as pd
 import pytest
-
-import sys
 
 REPO = Path(__file__).resolve().parents[1]
 if str(REPO) not in sys.path:
@@ -34,10 +32,10 @@ from fullstackautoquant.data.tushare_provider import (
 )
 from fullstackautoquant.resilience import RateLimiter
 
-
 # ---------------------------------------------------------------------------
 # Mock data generators
 # ---------------------------------------------------------------------------
+
 
 def _generate_mock_constituents(n: int = 10) -> list[str]:
     """Generate N mock CSI300 constituent codes."""
@@ -56,20 +54,22 @@ def _generate_mock_daily(ts_codes: list[str], start: str, end: str) -> pd.DataFr
     for code in ts_codes:
         np.random.seed(hash(code) % 2**31)
         base_price = np.random.uniform(10, 100)
-        for i, d in enumerate(dates):
+        for _i, d in enumerate(dates):
             # Random walk for realistic-ish prices
             price = base_price + np.random.randn() * 2
             base_price = max(1.0, price)
-            rows.append({
-                "ts_code": code,
-                "trade_date": d.strftime("%Y%m%d"),
-                "open": round(base_price * 0.99, 2),
-                "high": round(base_price * 1.02, 2),
-                "low": round(base_price * 0.97, 2),
-                "close": round(base_price, 2),
-                "vol": round(np.random.uniform(10000, 500000), 0),
-                "amount": round(np.random.uniform(1e6, 1e8), 0),
-            })
+            rows.append(
+                {
+                    "ts_code": code,
+                    "trade_date": d.strftime("%Y%m%d"),
+                    "open": round(base_price * 0.99, 2),
+                    "high": round(base_price * 1.02, 2),
+                    "low": round(base_price * 0.97, 2),
+                    "close": round(base_price, 2),
+                    "vol": round(np.random.uniform(10000, 500000), 0),
+                    "amount": round(np.random.uniform(1e6, 1e8), 0),
+                }
+            )
     return pd.DataFrame(rows)
 
 
@@ -84,17 +84,20 @@ def _generate_mock_adj_factor(ts_codes: list[str], start: str, end: str) -> pd.D
             factor = 1.0
             if has_event and i > len(dates) // 2:
                 factor = 1.1  # Simulate dividend
-            rows.append({
-                "ts_code": code,
-                "trade_date": d.strftime("%Y%m%d"),
-                "adj_factor": factor,
-            })
+            rows.append(
+                {
+                    "ts_code": code,
+                    "trade_date": d.strftime("%Y%m%d"),
+                    "adj_factor": factor,
+                }
+            )
     return pd.DataFrame(rows)
 
 
 # ---------------------------------------------------------------------------
 # Fixtures
 # ---------------------------------------------------------------------------
+
 
 @pytest.fixture
 def mock_pro():
@@ -106,6 +109,7 @@ def mock_pro():
     # Mock index_weight
     def mock_index_weight(**kwargs):
         return pd.DataFrame({"con_code": mock_codes})
+
     pro.index_weight = MagicMock(side_effect=mock_index_weight)
 
     # Mock daily
@@ -115,6 +119,7 @@ def mock_pro():
         end = kwargs.get("end_date", "20250301")
         codes = [c.strip() for c in ts_code.split(",") if c.strip()]
         return _generate_mock_daily(codes, start, end)
+
     pro.daily = MagicMock(side_effect=mock_daily)
 
     # Mock adj_factor (by ts_code)
@@ -130,6 +135,7 @@ def mock_pro():
         elif ts_code:
             return _generate_mock_adj_factor([ts_code], start, end)
         return pd.DataFrame()
+
     pro.adj_factor = MagicMock(side_effect=mock_adj_factor)
 
     return pro
@@ -145,6 +151,7 @@ def fast_limiter():
 # #14: Integration Tests
 # ---------------------------------------------------------------------------
 
+
 class TestEndToEndPipeline:
     """Full pipeline integration test with mock Tushare API."""
 
@@ -155,9 +162,7 @@ class TestEndToEndPipeline:
         assert len(constituents) == 10
 
         # Step 2: Fetch OHLCV with backward adjustment
-        ohlcv = fetch_daily_ohlcv(
-            mock_pro, constituents, "20250101", "20250301", fast_limiter
-        )
+        ohlcv = fetch_daily_ohlcv(mock_pro, constituents, "20250101", "20250301", fast_limiter)
         assert not ohlcv.empty
         assert ohlcv.index.names == ["datetime", "instrument"]
 
@@ -188,9 +193,7 @@ class TestEndToEndPipeline:
     def test_binary_format_integrity(self, mock_pro, fast_limiter, tmp_path):
         """Verify each written binary file has valid Qlib format."""
         constituents = fetch_csi300_constituents(mock_pro, "20250301", cache_ttl=0)
-        ohlcv = fetch_daily_ohlcv(
-            mock_pro, constituents, "20250101", "20250301", fast_limiter
-        )
+        ohlcv = fetch_daily_ohlcv(mock_pro, constituents, "20250101", "20250301", fast_limiter)
 
         qlib_dir = tmp_path / "qlib_data"
         dump_qlib_binary_native(ohlcv, qlib_dir)
@@ -233,9 +236,7 @@ class TestEndToEndPipeline:
     def test_non_degenerate_ohlcv(self, mock_pro, fast_limiter, tmp_path):
         """Verify fetched data is non-degenerate: varied prices, reasonable volumes."""
         constituents = fetch_csi300_constituents(mock_pro, "20250301", cache_ttl=0)
-        ohlcv = fetch_daily_ohlcv(
-            mock_pro, constituents, "20250101", "20250301", fast_limiter
-        )
+        ohlcv = fetch_daily_ohlcv(mock_pro, constituents, "20250101", "20250301", fast_limiter)
 
         # Check non-degeneracy
         for col in ["open", "high", "low", "close"]:
@@ -253,9 +254,7 @@ class TestEndToEndPipeline:
         constituents = fetch_csi300_constituents(mock_pro, "20250301", cache_ttl=0)
 
         # First fetch: Jan-Feb
-        ohlcv1 = fetch_daily_ohlcv(
-            mock_pro, constituents, "20250101", "20250228", fast_limiter
-        )
+        ohlcv1 = fetch_daily_ohlcv(mock_pro, constituents, "20250101", "20250228", fast_limiter)
         qlib_dir = tmp_path / "qlib_data"
         dump_qlib_binary_native(ohlcv1, qlib_dir)
 
@@ -263,9 +262,7 @@ class TestEndToEndPipeline:
         n_dates_1 = len(cal1)
 
         # Second fetch: Feb-Mar (overlapping Feb dates)
-        ohlcv2 = fetch_daily_ohlcv(
-            mock_pro, constituents, "20250220", "20250315", fast_limiter
-        )
+        ohlcv2 = fetch_daily_ohlcv(mock_pro, constituents, "20250220", "20250315", fast_limiter)
 
         # Import merge function
         from fullstackautoquant.data.tushare_provider import (
@@ -292,16 +289,14 @@ class TestCalendarConsistency:
     def test_calendar_dates_match_binary_data(self, mock_pro, fast_limiter, tmp_path):
         """Every date in the binary data must appear in the calendar."""
         constituents = fetch_csi300_constituents(mock_pro, "20250301", cache_ttl=0)
-        ohlcv = fetch_daily_ohlcv(
-            mock_pro, constituents, "20250101", "20250301", fast_limiter
-        )
+        ohlcv = fetch_daily_ohlcv(mock_pro, constituents, "20250101", "20250301", fast_limiter)
 
         qlib_dir = tmp_path / "qlib_data"
         dump_qlib_binary_native(ohlcv, qlib_dir)
 
         # Parse calendar dates
         cal_lines = (qlib_dir / "calendars" / "day.txt").read_text().strip().split("\n")
-        cal_dates = set(pd.Timestamp(l.strip()) for l in cal_lines)
+        cal_dates = set(pd.Timestamp(line.strip()) for line in cal_lines)
 
         # All dates in original data should be in calendar
         data_dates = set(ohlcv.index.get_level_values("datetime").unique())
@@ -311,9 +306,7 @@ class TestCalendarConsistency:
     def test_instrument_count_consistent(self, mock_pro, fast_limiter, tmp_path):
         """Number of instruments in csi300.txt matches feature directories."""
         constituents = fetch_csi300_constituents(mock_pro, "20250301", cache_ttl=0)
-        ohlcv = fetch_daily_ohlcv(
-            mock_pro, constituents, "20250101", "20250301", fast_limiter
-        )
+        ohlcv = fetch_daily_ohlcv(mock_pro, constituents, "20250101", "20250301", fast_limiter)
 
         qlib_dir = tmp_path / "qlib_data"
         dump_qlib_binary_native(ohlcv, qlib_dir)
@@ -326,8 +319,9 @@ class TestCalendarConsistency:
         feat_dirs = [d for d in (qlib_dir / "features").iterdir() if d.is_dir()]
         n_from_dirs = len(feat_dirs)
 
-        assert n_from_file == n_from_dirs, \
-            f"Instrument count mismatch: file={n_from_file}, dirs={n_from_dirs}"
+        assert (
+            n_from_file == n_from_dirs
+        ), f"Instrument count mismatch: file={n_from_file}, dirs={n_from_dirs}"
 
 
 # ---------------------------------------------------------------------------

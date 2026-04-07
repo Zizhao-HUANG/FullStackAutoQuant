@@ -15,6 +15,11 @@ from __future__ import annotations
 
 import json
 import struct
+
+# ---------------------------------------------------------------------------
+# Imports under test
+# ---------------------------------------------------------------------------
+import sys
 import time
 from pathlib import Path
 
@@ -22,19 +27,12 @@ import numpy as np
 import pandas as pd
 import pytest
 
-
-# ---------------------------------------------------------------------------
-# Imports under test
-# ---------------------------------------------------------------------------
-import sys
-
 REPO = Path(__file__).resolve().parents[1]
 if str(REPO) not in sys.path:
     sys.path.insert(0, str(REPO))
 
 from fullstackautoquant.data.tushare_provider import (
     _approx_trading_days,
-    _build_calendar_index,
     _detect_existing_data,
     _load_existing_binary,
     _merge_incremental_data,
@@ -44,10 +42,10 @@ from fullstackautoquant.data.tushare_provider import (
     dump_qlib_binary_native,
 )
 
-
 # ---------------------------------------------------------------------------
 # #12a: _ts_code_to_qlib
 # ---------------------------------------------------------------------------
+
 
 class TestTsCodeToQlib:
     def test_sz_code(self):
@@ -67,6 +65,7 @@ class TestTsCodeToQlib:
 # #12b: _approx_trading_days
 # ---------------------------------------------------------------------------
 
+
 class TestApproxTradingDays:
     def test_one_year(self):
         # ~365 calendar days / 1.4 ~ 260
@@ -85,6 +84,7 @@ class TestApproxTradingDays:
 # ---------------------------------------------------------------------------
 # #12c: Backward price adjustment math
 # ---------------------------------------------------------------------------
+
 
 class TestBackwardAdjustment:
     """Verify: adjusted = raw * adj_factor[date] / adj_factor[latest_date]"""
@@ -135,6 +135,7 @@ class TestBackwardAdjustment:
 # #12d: Qlib binary format
 # ---------------------------------------------------------------------------
 
+
 class TestQlibBinaryFormat:
     def test_basic_write_read(self, tmp_path):
         """Write binary data and verify format: float32 header + float32 values."""
@@ -166,9 +167,7 @@ class TestQlibBinaryFormat:
         data = np.fromfile(str(bin_path), dtype="<f")
         assert len(data) == 6  # 1 header + 5 values
         assert data[0] == 0.0  # start_index
-        np.testing.assert_array_almost_equal(
-            data[1:], [10.2, 11.2, 12.2, 13.2, 14.2], decimal=1
-        )
+        np.testing.assert_array_almost_equal(data[1:], [10.2, 11.2, 12.2, 13.2, 14.2], decimal=1)
 
     def test_multi_instrument(self, tmp_path):
         """Verify multiple instruments produce separate directories."""
@@ -203,6 +202,7 @@ class TestQlibBinaryFormat:
 # ---------------------------------------------------------------------------
 # #4: Binary Writer Verification (bitwise format correctness)
 # ---------------------------------------------------------------------------
+
 
 class TestQlibBinaryVerification:
     """Verify our native binary writer produces Qlib-compatible output."""
@@ -274,8 +274,12 @@ class TestQlibBinaryVerification:
         dates = pd.date_range("2025-06-01", periods=5, freq="B")
         df = pd.DataFrame(
             {
-                "open": [1.0] * 5, "high": [1.0] * 5, "low": [1.0] * 5,
-                "close": [1.0] * 5, "volume": [100] * 5, "factor": [1.0] * 5,
+                "open": [1.0] * 5,
+                "high": [1.0] * 5,
+                "low": [1.0] * 5,
+                "close": [1.0] * 5,
+                "volume": [100] * 5,
+                "factor": [1.0] * 5,
             },
             index=pd.MultiIndex.from_arrays(
                 [dates, ["SH600000"] * 5], names=["datetime", "instrument"]
@@ -286,7 +290,7 @@ class TestQlibBinaryVerification:
         dump_qlib_binary_native(df, out_dir)
 
         cal_text = (out_dir / "calendars" / "day.txt").read_text()
-        lines = [l for l in cal_text.strip().split("\n") if l.strip()]
+        lines = [line for line in cal_text.strip().split("\n") if line.strip()]
         assert len(lines) == 5, f"Expected 5 calendar lines, got {len(lines)}"
 
         # Each line must be valid YYYY-MM-DD format
@@ -299,12 +303,19 @@ class TestQlibBinaryVerification:
         dates = pd.date_range("2025-01-01", periods=5, freq="B")
         rows = []
         for inst in ["SH600000", "SZ000001", "SZ000002"]:
-            for i, d in enumerate(dates):
-                rows.append({
-                    "datetime": d, "instrument": inst,
-                    "open": 10.0, "high": 11.0, "low": 9.0,
-                    "close": 10.5, "volume": 1000, "factor": 1.0,
-                })
+            for _i, d in enumerate(dates):
+                rows.append(
+                    {
+                        "datetime": d,
+                        "instrument": inst,
+                        "open": 10.0,
+                        "high": 11.0,
+                        "low": 9.0,
+                        "close": 10.5,
+                        "volume": 1000,
+                        "factor": 1.0,
+                    }
+                )
         df = pd.DataFrame(rows).set_index(["datetime", "instrument"])
 
         out_dir = tmp_path / "qlib_inst"
@@ -312,7 +323,7 @@ class TestQlibBinaryVerification:
 
         for fname in ["csi300.txt", "all.txt"]:
             inst_text = (out_dir / "instruments" / fname).read_text()
-            lines = [l for l in inst_text.strip().split("\n") if l.strip()]
+            lines = [line for line in inst_text.strip().split("\n") if line.strip()]
             assert len(lines) == 3, f"{fname}: expected 3 instruments, got {len(lines)}"
             for line in lines:
                 parts = line.split("\t")
@@ -363,6 +374,7 @@ class TestQlibBinaryVerification:
 # #12e: Boundary probe logic
 # ---------------------------------------------------------------------------
 
+
 class TestBoundaryProbeLogic:
     """Test the adj_factor optimization: detect constant vs changed factors."""
 
@@ -406,6 +418,7 @@ class TestBoundaryProbeLogic:
 # ---------------------------------------------------------------------------
 # #11: Incremental data detection and merging
 # ---------------------------------------------------------------------------
+
 
 class TestIncrementalDataDetection:
     """Test incremental data fetch logic."""
@@ -462,18 +475,28 @@ class TestIncrementalDataDetection:
         dates_new = pd.date_range("2025-01-08", periods=5, freq="B")
 
         old_df = pd.DataFrame(
-            {"close": [10.0, 11.0, 12.0, 13.0, 14.0],
-             "open": [10.0] * 5, "high": [11.0] * 5, "low": [9.0] * 5,
-             "volume": [1000] * 5, "factor": [1.0] * 5},
+            {
+                "close": [10.0, 11.0, 12.0, 13.0, 14.0],
+                "open": [10.0] * 5,
+                "high": [11.0] * 5,
+                "low": [9.0] * 5,
+                "volume": [1000] * 5,
+                "factor": [1.0] * 5,
+            },
             index=pd.MultiIndex.from_arrays(
                 [dates_old, ["SH600000"] * 5], names=["datetime", "instrument"]
             ),
         )
 
         new_df = pd.DataFrame(
-            {"close": [15.0, 16.0, 17.0, 18.0, 19.0],
-             "open": [15.0] * 5, "high": [16.0] * 5, "low": [14.0] * 5,
-             "volume": [2000] * 5, "factor": [1.0] * 5},
+            {
+                "close": [15.0, 16.0, 17.0, 18.0, 19.0],
+                "open": [15.0] * 5,
+                "high": [16.0] * 5,
+                "low": [14.0] * 5,
+                "volume": [2000] * 5,
+                "factor": [1.0] * 5,
+            },
             index=pd.MultiIndex.from_arrays(
                 [dates_new, ["SH600000"] * 5], names=["datetime", "instrument"]
             ),
@@ -489,9 +512,14 @@ class TestIncrementalDataDetection:
         dates = pd.date_range("2025-01-01", periods=5, freq="B")
 
         old_df = pd.DataFrame(
-            {"close": [10.0, 11.0, 12.0, 13.0, 14.0],
-             "open": [10.0] * 5, "high": [11.0] * 5, "low": [9.0] * 5,
-             "volume": [1000] * 5, "factor": [1.0] * 5},
+            {
+                "close": [10.0, 11.0, 12.0, 13.0, 14.0],
+                "open": [10.0] * 5,
+                "high": [11.0] * 5,
+                "low": [9.0] * 5,
+                "volume": [1000] * 5,
+                "factor": [1.0] * 5,
+            },
             index=pd.MultiIndex.from_arrays(
                 [dates, ["SH600000"] * 5], names=["datetime", "instrument"]
             ),
@@ -500,9 +528,14 @@ class TestIncrementalDataDetection:
         # New data overlaps last 2 dates
         new_dates = dates[3:]  # Last 2 dates
         new_df = pd.DataFrame(
-            {"close": [99.0, 99.0],
-             "open": [99.0] * 2, "high": [99.0] * 2, "low": [99.0] * 2,
-             "volume": [9999] * 2, "factor": [1.0] * 2},
+            {
+                "close": [99.0, 99.0],
+                "open": [99.0] * 2,
+                "high": [99.0] * 2,
+                "low": [99.0] * 2,
+                "volume": [9999] * 2,
+                "factor": [1.0] * 2,
+            },
             index=pd.MultiIndex.from_arrays(
                 [new_dates, ["SH600000"] * 2], names=["datetime", "instrument"]
             ),
@@ -519,27 +552,25 @@ class TestIncrementalDataDetection:
 # #9: Disk cache tests
 # ---------------------------------------------------------------------------
 
+
 class TestDiskCache:
     """Test TTL-based disk cache for API responses."""
 
     def test_write_and_read(self, tmp_path, monkeypatch):
         """Write to cache and read back."""
-        monkeypatch.setattr(
-            "fullstackautoquant.data.tushare_provider._CACHE_DIR", tmp_path
-        )
+        monkeypatch.setattr("fullstackautoquant.data.tushare_provider._CACHE_DIR", tmp_path)
         _write_cache("test_ns", "key1", ["a", "b", "c"])
         result = _read_cache("test_ns", "key1", ttl_seconds=3600)
         assert result == ["a", "b", "c"]
 
     def test_expired_cache(self, tmp_path, monkeypatch):
         """Expired cache returns None."""
-        monkeypatch.setattr(
-            "fullstackautoquant.data.tushare_provider._CACHE_DIR", tmp_path
-        )
+        monkeypatch.setattr("fullstackautoquant.data.tushare_provider._CACHE_DIR", tmp_path)
         _write_cache("test_ns", "key2", ["x"])
 
         # Manually set cached_at to the past
         from fullstackautoquant.data.tushare_provider import _cache_path
+
         path = _cache_path("test_ns", "key2")
         data = json.loads(path.read_text())
         data["cached_at"] = time.time() - 7200  # 2 hours ago
@@ -550,9 +581,7 @@ class TestDiskCache:
 
     def test_missing_cache(self, tmp_path, monkeypatch):
         """Missing cache returns None."""
-        monkeypatch.setattr(
-            "fullstackautoquant.data.tushare_provider._CACHE_DIR", tmp_path
-        )
+        monkeypatch.setattr("fullstackautoquant.data.tushare_provider._CACHE_DIR", tmp_path)
         result = _read_cache("test_ns", "nonexistent", ttl_seconds=3600)
         assert result is None
 

@@ -17,7 +17,6 @@ import time
 from pathlib import Path
 
 import numpy as np
-import pandas as pd
 
 REPO = Path(__file__).resolve().parents[1]
 if str(REPO) not in sys.path:
@@ -70,9 +69,7 @@ def main() -> int:
         # pro_bar returns hfq data directly
         time.sleep(0.2)
         try:
-            df_hfq = ts.pro_bar(
-                ts_code=ts_code, start_date=start, end_date=end, adj="hfq"
-            )
+            df_hfq = ts.pro_bar(ts_code=ts_code, start_date=start, end_date=end, adj="hfq")
         except Exception as e:
             print(f"  [WARN] pro_bar(adj='hfq') failed: {e}")
             # Fallback: compute ratio check using factor consistency

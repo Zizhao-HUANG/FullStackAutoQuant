@@ -25,7 +25,6 @@ if str(REPO) not in sys.path:
 
 from fullstackautoquant.model.architecture import Net
 
-
 # ---------------------------------------------------------------------------
 # Reference snapshot: deterministic model output on fixed seed input
 # ---------------------------------------------------------------------------
@@ -76,8 +75,7 @@ class TestModelDeterminism:
 
         assert out1.shape == out2.shape
         assert torch.equal(out1, out2), (
-            f"Non-deterministic output!\n"
-            f"Max diff: {(out1 - out2).abs().max().item()}"
+            f"Non-deterministic output!\n" f"Max diff: {(out1 - out2).abs().max().item()}"
         )
 
     def test_output_shape(self):
@@ -196,7 +194,7 @@ class TestStateDict:
 
 @pytest.mark.skipif(
     not torch.cuda.is_available(),
-    reason="Production weights are CUDA-pickled; CPU-only machines cannot safely unpickle them"
+    reason="Production weights are CUDA-pickled; CPU-only machines cannot safely unpickle them",
 )
 class TestProductionWeights:
     """Test against the actual production weights file if available.
@@ -267,7 +265,7 @@ class TestProductionWeights:
         assert std > 1e-4, f"Output std {std:.6f} too low"
         assert out.shape == (4, 1), f"Unexpected shape: {out.shape}"
 
-        print(f"\n[SNAPSHOT] Production model output (batch=4, seed=42):")
+        print("\n[SNAPSHOT] Production model output (batch=4, seed=42):")
         print(f"  mean={mean:.8f}, std={std:.8f}")
         print(f"  values={out.squeeze().tolist()}")
 
@@ -275,6 +273,7 @@ class TestProductionWeights:
 # ---------------------------------------------------------------------------
 # Parallel and by-date strategy tests (#8, #10)
 # ---------------------------------------------------------------------------
+
 
 class TestParallelFetch:
     """Test parallel adj_factor fetch and by-date strategy."""
@@ -293,22 +292,21 @@ class TestParallelFetch:
         # Mock adj_factor response
         def mock_adj(**kwargs):
             code = kwargs.get("ts_code", "")
-            return __import__("pandas").DataFrame({
-                "ts_code": [code, code],
-                "trade_date": ["20250101", "20250201"],
-                "adj_factor": [1.0, 1.0],
-            })
+            return __import__("pandas").DataFrame(
+                {
+                    "ts_code": [code, code],
+                    "trade_date": ["20250101", "20250201"],
+                    "adj_factor": [1.0, 1.0],
+                }
+            )
+
         pro.adj_factor = MagicMock(side_effect=mock_adj)
 
         # Sequential
-        result_seq = _fetch_adj_parallel(
-            pro, codes, "20250101", "20250301", limiter, max_workers=1
-        )
+        result_seq = _fetch_adj_parallel(pro, codes, "20250101", "20250301", limiter, max_workers=1)
 
         # Parallel
-        result_par = _fetch_adj_parallel(
-            pro, codes, "20250101", "20250301", limiter, max_workers=3
-        )
+        result_par = _fetch_adj_parallel(pro, codes, "20250101", "20250301", limiter, max_workers=3)
 
         assert set(result_seq.keys()) == set(result_par.keys())
         for code in codes:
@@ -328,11 +326,14 @@ class TestParallelFetch:
         # Mock: each date returns 3 stocks
         def mock_adj_by_date(**kwargs):
             td = kwargs.get("trade_date", "")
-            return __import__("pandas").DataFrame({
-                "ts_code": ["000001.SZ", "000002.SZ", "600000.SH"],
-                "trade_date": [td, td, td],
-                "adj_factor": [1.0, 1.1, 0.95],
-            })
+            return __import__("pandas").DataFrame(
+                {
+                    "ts_code": ["000001.SZ", "000002.SZ", "600000.SH"],
+                    "trade_date": [td, td, td],
+                    "adj_factor": [1.0, 1.1, 0.95],
+                }
+            )
+
         pro.adj_factor = MagicMock(side_effect=mock_adj_by_date)
 
         result = _fetch_adj_by_date_all(pro, dates, limiter, max_workers=1)
@@ -353,6 +354,7 @@ class TestParallelFetch:
         limiter = RateLimiter(calls_per_second=100.0)  # Fast for testing
         call_times: list[float] = []
         import threading
+
         lock = threading.Lock()
 
         def timed_call():

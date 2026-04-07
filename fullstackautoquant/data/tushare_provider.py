@@ -37,9 +37,8 @@ from __future__ import annotations
 import hashlib
 import json
 import os
-import struct
-from concurrent.futures import ThreadPoolExecutor, as_completed
 import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
 import numpy as np
@@ -110,9 +109,7 @@ def _get_pro(token: str):
 
 
 @retry_on_exception(max_retries=3, base_delay=2.0, description="tushare:index_weight")
-def fetch_csi300_constituents(
-    pro, date: str, *, cache_ttl: int = 86400
-) -> list[str]:
+def fetch_csi300_constituents(pro, date: str, *, cache_ttl: int = 86400) -> list[str]:
     """Get current CSI300 constituent stock codes from Tushare.
 
     Results are cached to disk with a configurable TTL (default: 1 day).
@@ -236,8 +233,16 @@ def fetch_daily_ohlcv(
         df_adj_last = _fetch_adj_by_date(pro, last_td)
 
         # Build lookup: ts_code -> (first_factor, last_factor)
-        adj_first = dict(zip(df_adj_first["ts_code"], df_adj_first["adj_factor"])) if not df_adj_first.empty else {}
-        adj_last_map = dict(zip(df_adj_last["ts_code"], df_adj_last["adj_factor"])) if not df_adj_last.empty else {}
+        adj_first = (
+            dict(zip(df_adj_first["ts_code"], df_adj_first["adj_factor"], strict=False))
+            if not df_adj_first.empty
+            else {}
+        )
+        adj_last_map = (
+            dict(zip(df_adj_last["ts_code"], df_adj_last["adj_factor"], strict=False))
+            if not df_adj_last.empty
+            else {}
+        )
 
         # Identify stocks needing full adj_factor history (factor changed = corporate action)
         needs_full = []
@@ -248,8 +253,7 @@ def fetch_daily_ohlcv(
                 needs_full.append(code)
 
         logger.info(
-            "adj_factor boundary probe: %d/%d stocks have constant factor, "
-            "%d need full history",
+            "adj_factor boundary probe: %d/%d stocks have constant factor, " "%d need full history",
             len(fetched_codes) - len(needs_full),
             len(fetched_codes),
             len(needs_full),
@@ -453,7 +457,9 @@ def _fetch_adj_by_date_all(
     # Pivot: group by ts_code
     result: dict[str, pd.DataFrame] = {}
     for code, group in combined.groupby("ts_code"):
-        result[code] = group[["trade_date", "adj_factor"]].sort_values("trade_date").reset_index(drop=True)
+        result[code] = (
+            group[["trade_date", "adj_factor"]].sort_values("trade_date").reset_index(drop=True)
+        )
 
     logger.info(
         "adj_factor by-date complete: %d dates -> %d stocks",
@@ -614,7 +620,9 @@ def _load_existing_binary(qlib_dir: Path) -> pd.DataFrame | None:
 
         # Read instruments
         inst_dir = qlib_dir / "instruments"
-        inst_file = inst_dir / "csi300.txt" if (inst_dir / "csi300.txt").exists() else inst_dir / "all.txt"
+        inst_file = (
+            inst_dir / "csi300.txt" if (inst_dir / "csi300.txt").exists() else inst_dir / "all.txt"
+        )
         if not inst_file.exists():
             return None
 
@@ -674,18 +682,14 @@ def _load_existing_binary(qlib_dir: Path) -> pd.DataFrame | None:
         return None
 
 
-def _merge_incremental_data(
-    existing: pd.DataFrame, new_data: pd.DataFrame
-) -> pd.DataFrame:
+def _merge_incremental_data(existing: pd.DataFrame, new_data: pd.DataFrame) -> pd.DataFrame:
     """Merge existing binary data with newly fetched incremental data.
 
     New data takes precedence for overlapping dates (handles re-adjustments).
     """
     # Remove overlapping dates from existing data (new data has correct adj)
     new_dates = new_data.index.get_level_values("datetime").unique()
-    existing_filtered = existing[
-        ~existing.index.get_level_values("datetime").isin(new_dates)
-    ]
+    existing_filtered = existing[~existing.index.get_level_values("datetime").isin(new_dates)]
 
     merged = pd.concat([existing_filtered, new_data]).sort_index()
 
@@ -861,7 +865,10 @@ def _cli_main() -> int:
 
     token = args.token or os.getenv("TUSHARE") or os.getenv("TS_TOKEN")
     if not token:
-        print("[ERROR] Tushare token required. Pass --token or set TUSHARE env var.", file=__import__("sys").stderr)
+        print(
+            "[ERROR] Tushare token required. Pass --token or set TUSHARE env var.",
+            file=__import__("sys").stderr,
+        )
         return 1
 
     build_minimal_qlib_data(

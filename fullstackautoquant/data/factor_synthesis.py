@@ -96,7 +96,9 @@ def main() -> int:
         resolved = next((d for d in candidates if d.exists() and (d / "factor.py").exists()), None)
         if resolved is None:
             searched = " / ".join(str(d) for d in candidates)
-            raise FileNotFoundError(f"Missing factor implementation {fid}/factor.py (searched: {searched})")
+            raise FileNotFoundError(
+                f"Missing factor implementation {fid}/factor.py (searched: {searched})"
+            )
         factor_dirs.append(resolved)
 
     # Ensure data directory contains daily_pv.h5(for factor implementations to read)

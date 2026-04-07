@@ -151,7 +151,7 @@ class TestRateLimiter:
 
 class TestValidateCredentials:
     def test_missing_tushare_raises(self) -> None:
-        with patch.dict(os.environ, {}, clear=True):
+        with patch.dict(os.environ, {}, clear=True), patch("dotenv.load_dotenv"):
             # Remove all credential env vars
             for key in ("TUSHARE", "TS_TOKEN", "GM_ENDPOINT", "GM_TOKEN", "GM_ACCOUNT_ID"):
                 os.environ.pop(key, None)

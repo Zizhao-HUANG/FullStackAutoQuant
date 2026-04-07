@@ -9,7 +9,7 @@ Covers:
 
 from __future__ import annotations
 
-import pickle
+import sys
 from pathlib import Path
 from types import SimpleNamespace
 
@@ -17,18 +17,16 @@ import numpy as np
 import pandas as pd
 import pytest
 
-import sys
-
 REPO = Path(__file__).resolve().parents[1]
 if str(REPO) not in sys.path:
     sys.path.insert(0, str(REPO))
 
-from fullstackautoquant.model.norm_cache import save_norm_cache, load_norm_cache
-
+from fullstackautoquant.model.norm_cache import load_norm_cache, save_norm_cache
 
 # ---------------------------------------------------------------------------
 # #13a: save/load roundtrip
 # ---------------------------------------------------------------------------
+
 
 class TestNormCacheRoundtrip:
     def test_save_load(self, tmp_path):
@@ -69,6 +67,7 @@ class TestNormCacheRoundtrip:
 # #13b: Parameter structure validation
 # ---------------------------------------------------------------------------
 
+
 class TestParamStructure:
     def test_required_keys(self, tmp_path):
         """Loaded params must have all required keys."""
@@ -103,6 +102,7 @@ class TestParamStructure:
 # ---------------------------------------------------------------------------
 # #13c: Injection logic (mock processor)
 # ---------------------------------------------------------------------------
+
 
 class TestInjectionLogic:
     """Test that inject_norm_cache correctly overwrites processor attributes."""
@@ -141,6 +141,7 @@ class TestInjectionLogic:
 # ---------------------------------------------------------------------------
 # #5: Norm Cache Injection Timing Audit
 # ---------------------------------------------------------------------------
+
 
 class TestNormCacheInjectionAudit:
     """Verify edge cases in normalizer cache injection.
@@ -181,16 +182,17 @@ class TestNormCacheInjectionAudit:
     def test_nan_columns_do_not_shift_ordering(self):
         """If combined_factors_df.parquet has NaN columns, the normalization
         should still apply correctly to non-NaN columns."""
-        n_features = 5
         medians = np.array([1.0, 2.0, 3.0, 4.0, 5.0])
         stds = np.array([0.5, 1.0, 1.5, 2.0, 2.5])
 
         # Data with some NaN columns
-        raw_data = np.array([
-            [10.0, np.nan, 30.0, np.nan, 50.0],
-            [11.0, 22.0, np.nan, 44.0, 55.0],
-            [np.nan, 20.0, 33.0, 40.0, np.nan],
-        ])
+        raw_data = np.array(
+            [
+                [10.0, np.nan, 30.0, np.nan, 50.0],
+                [11.0, 22.0, np.nan, 44.0, 55.0],
+                [np.nan, 20.0, 33.0, 40.0, np.nan],
+            ]
+        )
 
         # Normalize (NaN propagates naturally)
         normalized = (raw_data - medians) / stds
@@ -200,8 +202,9 @@ class TestNormCacheInjectionAudit:
         for i in range(raw_data.shape[0]):
             for j in range(raw_data.shape[1]):
                 if np.isnan(raw_data[i, j]):
-                    assert np.isnan(clipped[i, j]), \
-                        f"Expected NaN at [{i},{j}] but got {clipped[i,j]}"
+                    assert np.isnan(
+                        clipped[i, j]
+                    ), f"Expected NaN at [{i},{j}] but got {clipped[i,j]}"
 
         # Verify non-NaN values are correctly normalized
         # raw_data[0,0] = 10, median=1, std=0.5 -> (10-1)/0.5 = 18 -> clipped to 3.0
