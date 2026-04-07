@@ -89,7 +89,7 @@ def retry_on_exception(
 
 
 class RateLimiter:
-    """Simple token-bucket rate limiter for API calls.
+    """Simple token-bucket rate limiter for API calls (thread-safe).
 
     Usage:
         limiter = RateLimiter(calls_per_second=2)
@@ -99,15 +99,19 @@ class RateLimiter:
     """
 
     def __init__(self, calls_per_second: float = 2.0) -> None:
+        import threading
+
         self._min_interval = 1.0 / max(calls_per_second, 0.01)
         self._last_call: float = 0.0
+        self._lock = threading.Lock()
 
     def wait(self) -> None:
-        now = time.monotonic()
-        elapsed = now - self._last_call
-        if elapsed < self._min_interval:
-            time.sleep(self._min_interval - elapsed)
-        self._last_call = time.monotonic()
+        with self._lock:
+            now = time.monotonic()
+            elapsed = now - self._last_call
+            if elapsed < self._min_interval:
+                time.sleep(self._min_interval - elapsed)
+            self._last_call = time.monotonic()
 
 
 # ---------------------------------------------------------------------------
