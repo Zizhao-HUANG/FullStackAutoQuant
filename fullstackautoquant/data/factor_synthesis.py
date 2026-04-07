@@ -83,14 +83,21 @@ def main() -> int:
         importlib.invalidate_caches()
 
     # Specify factor implementation directory (containing factor.py)
+    # Search both data/ (legacy) and model/factors/ (current) locations
     base_dir = Path(__file__).resolve().parent
-    factor_dirs = [
-        base_dir / "8fef89cc9aca41c0bc843a1c14229259",
-        base_dir / "1df46d60d6134d1a9801dfca16491986",
+    model_factors_dir = base_dir.parent / "model" / "factors"
+    factor_ids = [
+        "8fef89cc9aca41c0bc843a1c14229259",
+        "1df46d60d6134d1a9801dfca16491986",
     ]
-    for d in factor_dirs:
-        if not (d.exists() and (d / "factor.py").exists()):
-            raise FileNotFoundError(f"Missing factor implementation:{d}/factor.py")
+    factor_dirs = []
+    for fid in factor_ids:
+        candidates = [base_dir / fid, model_factors_dir / fid]
+        resolved = next((d for d in candidates if d.exists() and (d / "factor.py").exists()), None)
+        if resolved is None:
+            searched = " / ".join(str(d) for d in candidates)
+            raise FileNotFoundError(f"Missing factor implementation {fid}/factor.py (searched: {searched})")
+        factor_dirs.append(resolved)
 
     # Ensure data directory contains daily_pv.h5(for factor implementations to read)
     data_dir = Path(__file__).resolve().parent  # defaults to this directory, requires daily_pv.h5

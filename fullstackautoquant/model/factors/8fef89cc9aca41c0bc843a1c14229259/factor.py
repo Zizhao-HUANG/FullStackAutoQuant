@@ -165,7 +165,7 @@ def calculate_PhaseLeadLagHilbert_20_60d():
     pl_r = pl_r.with_columns(
         [
             pl.col("r")
-            .rolling_mean(window_size=W_x, min_periods=W_x)
+            .rolling_mean(window_size=W_x, min_samples=W_x)
             .over("instrument")
             .alias("r_mean20")
         ]
@@ -175,7 +175,7 @@ def calculate_PhaseLeadLagHilbert_20_60d():
     # y: unique per date m_t, then 60-day trailing mean over dates
     m_daily = pl_r.select(["datetime", "m"]).unique(subset=["datetime"]).sort("datetime")
     m_daily = m_daily.with_columns(
-        [pl.col("m").rolling_mean(window_size=W_y, min_periods=W_y).alias("m_mean60")]
+        [pl.col("m").rolling_mean(window_size=W_y, min_samples=W_y).alias("m_mean60")]
     )
     m_daily = m_daily.with_columns([(pl.col("m") - pl.col("m_mean60")).alias("y60_raw")]).select(
         ["datetime", "y60_raw"]
@@ -268,7 +268,7 @@ def calculate_PhaseLeadLagHilbert_20_60d():
     pl_s = pl.from_pandas(pdf[["datetime", "instrument", "S"]]).sort(["instrument", "datetime"])
     pl_s = pl_s.with_columns(
         pl.col("S")
-        .rolling_mean(window_size=SMA_W, min_periods=SMA_W)
+        .rolling_mean(window_size=SMA_W, min_samples=SMA_W)
         .over("instrument")
         .alias("factor_value")
     )

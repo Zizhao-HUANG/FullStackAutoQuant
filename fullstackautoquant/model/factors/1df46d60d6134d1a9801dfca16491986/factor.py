@@ -88,7 +88,7 @@ def calculate_SpinAlignmentConsensus_21d():
     df_pl = df_pl.with_columns(
         pl.col("a")
         .cast(pl.Float64)
-        .rolling_mean(window_size=window, min_periods=window)
+        .rolling_mean(window_size=window, min_samples=window)
         .over("instrument")
         .alias("factor_value")
     )
