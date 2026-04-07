@@ -54,6 +54,11 @@ weights/*.pth
 !weights/.gitkeep
 !weights/README.md
 
+# ----- Output & Local -----
+output/
+.agent/
+.gemini/
+
 # ----- Misc -----
 *.tar.gz
 *.zip
