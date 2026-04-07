@@ -74,6 +74,17 @@ export MKL_NUM_THREADS=1
 export NUMEXPR_MAX_THREADS=2
 mkdir -p /dolt /output /work
 
+# 0) Upgrade Dolt to latest (image ships 1.30.4, too old for current remote format)
+echo "[container] Current dolt version: $(dolt version 2>/dev/null | head -1)"
+echo "[container] Upgrading dolt to latest..."
+curl -sL https://github.com/dolthub/dolt/releases/latest/download/install.sh | bash 2>/dev/null \
+  || (echo "[container] install.sh failed, trying manual download..." && \
+      curl -sL "https://github.com/dolthub/dolt/releases/latest/download/dolt-linux-amd64.tar.gz" -o /tmp/dolt.tar.gz && \
+      tar -xzf /tmp/dolt.tar.gz -C /tmp && \
+      cp /tmp/dolt-linux-amd64/bin/dolt /usr/local/bin/dolt && \
+      rm -rf /tmp/dolt.tar.gz /tmp/dolt-linux-amd64)
+echo "[container] Upgraded dolt version: $(dolt version 2>/dev/null | head -1)"
+
 # 1) Dolt repo preparation(One-time initialization)
 if [[ ! -d /dolt/investment_data/.dolt ]]; then
   echo "[container] Initializing dolt repo at /dolt/investment_data ..."
@@ -173,39 +184,33 @@ IN_CONTAINER
 
 chmod +x "$CONTAINER_SCRIPT"
 
-if [[ "$ARCH" == "aarch64" || "$ARCH" == "arm64" ]]; then
-  docker run --platform linux/amd64 --rm \
-    -e TUSHARE="$TUSHARE" \
-    -v "$DOLT_DIR":/dolt \
-    -v "$OUTPUT_DIR":/output \
-    -v "$SELFHOST_BASE":/host \
-    "$IMAGE_NAME" \
-    bash -lc 'set -euo pipefail; sed -i "s/\r$//" /host/container_update_export.sh 2>/dev/null || true; bash /host/container_update_export.sh' || true
-else
-  docker run --rm \
+DOCKER_CMD=(docker run --rm \
   -e TUSHARE="$TUSHARE" \
   -v "$DOLT_DIR":/dolt \
   -v "$OUTPUT_DIR":/output \
-  -v "$SELFHOST_BASE":/host \
-  "$IMAGE_NAME" \
-  bash -lc 'set -euo pipefail; sed -i "s/\r$//" /host/container_update_export.sh 2>/dev/null || true; bash /host/container_update_export.sh' || true
+  -v "$SELFHOST_BASE":/host)
+
+if [[ "$ARCH" == "aarch64" || "$ARCH" == "arm64" ]]; then
+  DOCKER_CMD=(docker run --platform linux/amd64 --rm \
+    -e TUSHARE="$TUSHARE" \
+    -v "$DOLT_DIR":/dolt \
+    -v "$OUTPUT_DIR":/output \
+    -v "$SELFHOST_BASE":/host)
 fi
 
-# If container export failed, fallback: repackage existing local Qlib data as qlib_bin.tar.gz
+log "Running Docker container (this may take 30-60 min on first run)..."
+"${DOCKER_CMD[@]}" "$IMAGE_NAME" \
+  bash -lc 'set -euo pipefail; sed -i "s/\r$//" /host/container_update_export.sh 2>/dev/null || true; bash /host/container_update_export.sh'
+DOCKER_EXIT=$?
+if [[ $DOCKER_EXIT -ne 0 ]]; then
+  log "ERROR: Docker container exited with code $DOCKER_EXIT" >&2
+  exit 1
+fi
+
+# Verify container produced the export (no silent fallback to local data)
 if [[ ! -s "$OUTPUT_DIR/qlib_bin.tar.gz" ]]; then
-  if [[ -d "$DEST_DIR" ]]; then
-    log "WARNING: Container export failed, using existing local Qlib data to continue"
-    tmp_pack_dir="$(mktemp -d)"
-    mkdir -p "$tmp_pack_dir/qlib_bin"
-    # Prefer rsync; fallback to cp -a
-    if command -v rsync >/dev/null 2>&1; then
-      rsync -a "$DEST_DIR"/ "$tmp_pack_dir/qlib_bin"/
-    else
-      cp -a "$DEST_DIR"/. "$tmp_pack_dir/qlib_bin"/
-    fi
-    tar -czf "$OUTPUT_DIR/qlib_bin.tar.gz" -C "$tmp_pack_dir" qlib_bin || true
-    rm -rf "$tmp_pack_dir"
-  fi
+  log "ERROR: Container did not produce qlib_bin.tar.gz. Check Docker logs above." >&2
+  exit 1
 fi
 
 if [[ ! -s "$OUTPUT_DIR/qlib_bin.tar.gz" ]]; then
