@@ -21,14 +21,8 @@ step(){
   log "  └─ ${elapsed}s${note}"
 }
 
-# Activate Python environment
-# Priority: project .venv > conda cloudspace > system python
-SCRIPT_DIR_EARLY="$(cd "$(dirname "$0")" && pwd)"
-PROJECT_ROOT_EARLY="$(cd "$SCRIPT_DIR_EARLY/.." && pwd)"
-
-if [[ -f "$PROJECT_ROOT_EARLY/.venv/bin/activate" ]]; then
-  source "$PROJECT_ROOT_EARLY/.venv/bin/activate"
-elif command -v conda >/dev/null 2>&1; then
+# Activate conda (gmtrade requires Python <=3.10; .venv may have incompatible Python)
+if command -v conda >/dev/null 2>&1; then
   set +u
   eval "$(conda shell.bash hook)" >/dev/null 2>&1 || true
   conda activate cloudspace >/dev/null 2>&1 || true

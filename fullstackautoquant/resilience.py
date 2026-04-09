@@ -154,16 +154,23 @@ def validate_trading_credentials(*, require_gm: bool = True) -> dict[str, str]:
         missing.append("TUSHARE (or TS_TOKEN)")
 
     if require_gm:
-        gm_fields = {
-            "GM_ENDPOINT": os.getenv("GM_ENDPOINT"),
+        # GM_TOKEN and GM_ACCOUNT_ID are always required for live trading.
+        # GM_ENDPOINT is only needed by gmtrade (terminal SDK), not gm (PyPI SDK).
+        gm_required = {
             "GM_TOKEN": os.getenv("GM_TOKEN"),
             "GM_ACCOUNT_ID": os.getenv("GM_ACCOUNT_ID"),
         }
-        for key, val in gm_fields.items():
+        gm_optional = {
+            "GM_ENDPOINT": os.getenv("GM_ENDPOINT"),
+        }
+        for key, val in gm_required.items():
             if val:
                 results[key] = f"***{val[-4:]}" if len(val) > 4 else "***"
             else:
                 missing.append(key)
+        for key, val in gm_optional.items():
+            if val:
+                results[key] = f"***{val[-4:]}" if len(val) > 4 else "***"
 
     if missing:
         msg = (

@@ -35,7 +35,8 @@ logger = get_logger(__name__)
 # Rate limiter for Tushare API (2 calls/second to stay within limits)
 _tushare_limiter = RateLimiter(calls_per_second=2.0)
 
-# trade api
+# trade api — try gmtrade (supports set_endpoint for cloud trading) first, then gm as fallback
+_gm_backend = None
 try:
     from gmtrade.api import (
         OrderSide_Buy,
@@ -50,18 +51,33 @@ try:
         set_endpoint,
         set_token,
     )
-except ImportError:  # pragma: no cover
-    set_token = None
-    set_endpoint = None
-    account = None
-    login = None
-    order_volume = None
-    OrderSide_Buy = None
-    OrderSide_Sell = None
-    OrderType_Limit = None
-    PositionEffect_Open = None
-    PositionEffect_Close = None
-    get_cash = None
+
+    _gm_backend = "gmtrade"
+except Exception as _gmt_err:  # pragma: no cover
+    logger.warning("gmtrade import failed, trying gm: %s: %s", type(_gmt_err).__name__, _gmt_err)
+    try:
+        from gm.api import (
+            OrderSide_Buy,
+            OrderSide_Sell,
+            OrderType_Limit,
+            PositionEffect_Close,
+            PositionEffect_Open,
+            get_cash,
+            order_volume,
+            set_account_id,
+            set_token,
+        )
+
+        _gm_backend = "gm"
+    except Exception:  # pragma: no cover
+        set_token = None
+        order_volume = None
+        OrderSide_Buy = None
+        OrderSide_Sell = None
+        OrderType_Limit = None
+        PositionEffect_Open = None
+        PositionEffect_Close = None
+        get_cash = None
 
 # tushare realtime
 try:
@@ -119,19 +135,32 @@ def gm_login(cfg: dict, alias: str = "", account_id_override: str | None = None)
     for p in [here / ".env", here.parent / ".env", here.parent.parent / ".env"]:
         if p.exists():
             load_dotenv(p.as_posix(), override=True)
-    endpoint = os.getenv("GM_ENDPOINT") or cfg.get("gm", {}).get("endpoint")
     token = os.getenv("GM_TOKEN") or cfg.get("gm", {}).get("token")
     acc_id = (
         account_id_override or os.getenv("GM_ACCOUNT_ID") or cfg.get("gm", {}).get("account_id")
     )
-    if not all([endpoint, token, acc_id]):
-        raise RuntimeError("Missing GM credentials: endpoint/token/account_id")
-    if set_endpoint is None:
-        raise RuntimeError("gmtrade is not installed; pip install gmtrade")
-    set_endpoint(endpoint)
+    if not all([token, acc_id]):
+        raise RuntimeError("Missing GM credentials: token/account_id")
+    if _gm_backend is None:
+        raise RuntimeError(
+            f"No GM SDK available (_gm_backend={_gm_backend}). "
+            "Install via: pip install gm -U -i https://mirrors.aliyun.com/pypi/simple/"
+        )
+    if set_token is None:
+        raise RuntimeError("GM SDK imported but set_token is None")
     set_token(token)
-    a1 = account(account_id=acc_id, account_alias=alias)
-    login(a1)
+    if _gm_backend == "gm":
+        # gm (official PyPI SDK): use set_account_id
+        set_account_id(acc_id)
+        logger.info("GM login via gm SDK: account=%s", acc_id)
+    else:
+        # gmtrade (terminal SDK): use endpoint + account + login
+        endpoint = os.getenv("GM_ENDPOINT") or cfg.get("gm", {}).get("endpoint")
+        if not endpoint:
+            raise RuntimeError("Missing GM_ENDPOINT for gmtrade backend")
+        set_endpoint(endpoint)  # type: ignore[possibly-undefined]
+        a1 = account(account_id=acc_id, account_alias=alias)  # type: ignore[possibly-undefined]
+        login(a1)  # type: ignore[possibly-undefined]
     return acc_id
 
 
@@ -315,13 +344,17 @@ def place_orders(
     sells = [od for od in orders if str(od.get("side", "")).upper() == "SELL"]
     buys = [od for od in orders if str(od.get("side", "")).upper() == "BUY"]
 
+    logger.info("place_orders: %d sells + %d buys, do_place=%s, src=%s", len(sells), len(buys), do_place, src)
+
     gm_symbols = [od["symbol"] for od in orders]
     ts_codes = [tc for s in gm_symbols if (tc := gm_to_ts_code(s)) is not None]
+    logger.info("Fetching realtime quotes for %d symbols (src=%s)…", len(ts_codes), src)
     if src == "dc":
         quotes = fetch_realtime_quotes_tushare(ts_codes, src="dc") if ts_codes else {}
         used_fallback: set[str] = set()
     else:
         quotes, used_fallback = fetch_realtime_with_fallback(ts_codes) if ts_codes else ({}, set())
+    logger.info("Quotes fetched: %d/%d symbols got data", len(quotes), len(ts_codes))
 
     buy_offset = float(cfg["order"]["buy_limit_offset"])
     sell_offset = float(cfg["order"]["sell_limit_offset"])
@@ -464,9 +497,11 @@ def place_orders(
         return parts
 
     # 1) place SELL first
-    for od in sells:
+    logger.info("== SELL phase: %d orders ==", len(sells))
+    for i_sell, od in enumerate(sells, 1):
         sym = od["symbol"]
         side = "SELL"
+        logger.info("  SELL [%d/%d] %s vol=%s", i_sell, len(sells), sym, od["volume"])
         vol = int(od["volume"]) if str(od["volume"]).isdigit() else int(float(od["volume"]))
         # auction uses single shot; open session can slice
         now_sh = _now_in_beijing()
@@ -592,9 +627,11 @@ def place_orders(
         available_cash = 1e18
 
     # 2) BUY within both per-name cap and available cash
-    for od in buys:
+    logger.info("== BUY phase: %d orders (cash=%.0f, valid=%s) ==", len(buys), available_cash, cash_check_valid)
+    for i_buy, od in enumerate(buys, 1):
         sym = od["symbol"]
         side = "BUY"
+        logger.info("  BUY  [%d/%d] %s vol=%s", i_buy, len(buys), sym, od["volume"])
         vol = int(od["volume"]) if str(od["volume"]).isdigit() else int(float(od["volume"]))
         fb = gm_to_ts_code(sym) in used_fallback
         now_sh = _now_in_beijing()
@@ -790,6 +827,11 @@ def place_orders(
                     }
                 )
 
+    # Summary
+    submitted = sum(1 for r in receipts if r.get("status") == "SUBMITTED")
+    skipped = sum(1 for r in receipts if "SKIP" in r.get("status", ""))
+    dry = sum(1 for r in receipts if r.get("status") == "DRY_RUN")
+    logger.info("place_orders done: %d total (%d submitted, %d skipped, %d dry-run)", len(receipts), submitted, skipped, dry)
     return receipts
 
 
@@ -807,9 +849,12 @@ def main():
     # Validate credentials before attempting live trading
     if args.place and len(orders) > 0:
         validate_trading_credentials(require_gm=True)
+        logger.info("GM login starting (account=%s)", args.account_id or "(env)")
         acc_id = gm_login(cfg, alias=args.alias, account_id_override=(args.account_id or None))
+        logger.info("GM login OK → %s", acc_id)
         placed = True
 
+    logger.info("place_orders starting (n=%d, placed=%s, src=%s)", len(orders), placed, args.src)
     receipts = place_orders(
         orders,
         do_place=placed,

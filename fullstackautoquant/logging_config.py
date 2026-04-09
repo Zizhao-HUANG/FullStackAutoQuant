@@ -55,6 +55,7 @@ def configure_logging(
     *,
     level: str | None = None,
     json_output: bool | None = None,
+    log_dir: str | None = None,
 ) -> None:
     """Configure the root logger for the fullstackautoquant package.
 
@@ -63,6 +64,8 @@ def configure_logging(
                env var FSAQ_LOG_LEVEL or "INFO".
         json_output: If True, output structured JSON lines. Defaults to
                      env var FSAQ_LOG_JSON == "1", or auto-detect non-TTY.
+        log_dir: Directory for daily log files. Defaults to env var
+                 FSAQ_LOG_DIR or "logs". Set to "" to disable file logging.
     """
     global _CONFIGURED  # noqa: PLW0603
     if _CONFIGURED:
@@ -77,19 +80,29 @@ def configure_logging(
         else:
             # Auto: use JSON when stdout is not a TTY (e.g. Docker, cron, CI)
             json_output = not sys.stdout.isatty()
+    if log_dir is None:
+        log_dir = os.getenv("FSAQ_LOG_DIR", "logs")
 
     root_logger = logging.getLogger("fullstackautoquant")
     root_logger.setLevel(getattr(logging, level, logging.INFO))
 
     if not root_logger.handlers:
-        handler = logging.StreamHandler(sys.stdout)
-        formatter: logging.Formatter
+        # 1) Console handler
+        console = logging.StreamHandler(sys.stdout)
         if json_output:
-            formatter = _JSONFormatter()
+            console.setFormatter(_JSONFormatter())
         else:
-            formatter = _ReadableFormatter()
-        handler.setFormatter(formatter)
-        root_logger.addHandler(handler)
+            console.setFormatter(_ReadableFormatter())
+        root_logger.addHandler(console)
+
+        # 2) Daily log file handler (always human-readable for easy debugging)
+        if log_dir:
+            os.makedirs(log_dir, exist_ok=True)
+            today = datetime.now().strftime("%Y-%m-%d")
+            log_path = os.path.join(log_dir, f"{today}.log")
+            file_handler = logging.FileHandler(log_path, encoding="utf-8")
+            file_handler.setFormatter(_ReadableFormatter())
+            root_logger.addHandler(file_handler)
 
     # Prevent propagation to root logger to avoid duplicate output
     root_logger.propagate = False
