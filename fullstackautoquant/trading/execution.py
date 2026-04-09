@@ -878,3 +878,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+    # gmtrade SDK spawns background threads (RPC, subscription) that prevent
+    # normal interpreter exit.  Force-exit so run_trading.sh can proceed to
+    # the next account without hanging indefinitely.
+    os._exit(0)

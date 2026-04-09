@@ -42,6 +42,9 @@ CFG_ARGS=""; [[ -n "$CONFIG" ]] && CFG_ARGS="--config $CONFIG"
 export PYTHONPATH="${PROJECT_ROOT}:${PYTHONPATH:-}"
 # Force unbuffered Python output so logs appear in real-time
 export PYTHONUNBUFFERED=1
+# gmtrade 3.0.6 ships old-style protobuf descriptors incompatible with protobuf ≥4.x;
+# pure-Python implementation still supports them (slightly slower, but functional)
+export PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION=python
 
 # Activate conda (gmtrade requires Python <=3.10; .venv may have incompatible Python)
 if command -v conda >/dev/null 2>&1; then
