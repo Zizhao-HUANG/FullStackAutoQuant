@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generated_at": "2026-04-10T02:01:30Z",
+    "generated_at": "2026-04-10T02:05:00Z",
     "generator": "scripts/export_dashboard_data.py",
     "version": "1.0.0",
     "description": "FullStackAutoQuant Dashboard — comprehensive dataset for live visualization"
@@ -11,7 +11,7 @@
     "first_inference_date": "2026-04-03",
     "last_inference_date": "2026-04-09",
     "last_updated_iso": "2026-04-09T00:00:00",
-    "hours_since_last_run": 26.0,
+    "hours_since_last_run": 26.1,
     "pipeline_components": [
       "Tushare Data Fetch (CSI300, ~200 trading days)",
       "Qlib Export → daily_pv.h5",
@@ -2540,398 +2540,293 @@
       ]
     },
     "latest_targets": {
-      "date": "2026-04-08",
+      "date": "2026-04-09",
       "target_count": 30,
       "targets": [
         {
+          "instrument": "SH600845",
+          "weight": 0.033431,
+          "target_shares": 4100,
+          "ref_price": 22.74
+        },
+        {
           "instrument": "SH688012",
-          "weight": 0.033367,
+          "weight": 0.033371,
           "target_shares": 200,
-          "ref_price": 317.69
+          "ref_price": 321.3
         },
         {
           "instrument": "SH601998",
-          "weight": 0.033256,
-          "target_shares": 11100,
-          "ref_price": 8.31
-        },
-        {
-          "instrument": "SH600845",
-          "weight": 0.033191,
-          "target_shares": 4000,
-          "ref_price": 22.97
-        },
-        {
-          "instrument": "SH600233",
-          "weight": 0.033445,
-          "target_shares": 4600,
-          "ref_price": 19.91
-        },
-        {
-          "instrument": "SH600426",
-          "weight": 0.033239,
-          "target_shares": 2400,
-          "ref_price": 38.4
-        },
-        {
-          "instrument": "SZ002179",
-          "weight": 0.033319,
-          "target_shares": 2600,
-          "ref_price": 35.7
+          "weight": 0.033312,
+          "target_shares": 11200,
+          "ref_price": 8.24
         },
         {
           "instrument": "SH603799",
-          "weight": 0.033308,
+          "weight": 0.033374,
           "target_shares": 1500,
-          "ref_price": 61.09
+          "ref_price": 59.5
+        },
+        {
+          "instrument": "SZ002475",
+          "weight": 0.033392,
+          "target_shares": 1600,
+          "ref_price": 55.09
         },
         {
           "instrument": "SZ002371",
-          "weight": 0.033288,
-          "target_shares": 200,
-          "ref_price": 463.98
+          "weight": 0.033168,
+          "target_shares": 100,
+          "ref_price": 472.84
         },
         {
-          "instrument": "SH600111",
-          "weight": 0.033228,
-          "target_shares": 1700,
-          "ref_price": 51.7
-        },
-        {
-          "instrument": "SH601698",
-          "weight": 0.033198,
-          "target_shares": 2800,
-          "ref_price": 32.99
+          "instrument": "SH600196",
+          "weight": 0.033436,
+          "target_shares": 3500,
+          "ref_price": 26.56
         },
         {
           "instrument": "SH603288",
-          "weight": 0.033449,
+          "weight": 0.03334,
           "target_shares": 2200,
           "ref_price": 41.15
         },
         {
-          "instrument": "SH603392",
-          "weight": 0.03339,
-          "target_shares": 2300,
-          "ref_price": 40.07
-        },
-        {
-          "instrument": "SZ300251",
-          "weight": 0.033443,
-          "target_shares": 5900,
-          "ref_price": 15.6
-        },
-        {
-          "instrument": "SH601899",
-          "weight": 0.033443,
-          "target_shares": 2600,
-          "ref_price": 34.62
-        },
-        {
-          "instrument": "SZ300418",
-          "weight": 0.033376,
-          "target_shares": 1700,
-          "ref_price": 52.4
-        },
-        {
-          "instrument": "SH600061",
-          "weight": 0.033432,
-          "target_shares": 13400,
-          "ref_price": 6.94
-        },
-        {
-          "instrument": "SH601689",
-          "weight": 0.033311,
-          "target_shares": 1500,
-          "ref_price": 59.59
-        },
-        {
-          "instrument": "SH688271",
-          "weight": 0.033357,
-          "target_shares": 800,
-          "ref_price": 115.38
-        },
-        {
-          "instrument": "SZ003816",
-          "weight": 0.033394,
-          "target_shares": 20500,
-          "ref_price": 4.54
-        },
-        {
-          "instrument": "SZ000895",
-          "weight": 0.033331,
-          "target_shares": 3300,
-          "ref_price": 27.77
-        },
-        {
-          "instrument": "SZ002475",
-          "weight": 0.03333,
-          "target_shares": 1700,
-          "ref_price": 52.27
-        },
-        {
-          "instrument": "SH600515",
-          "weight": 0.033324,
-          "target_shares": 24900,
-          "ref_price": 3.72
-        },
-        {
-          "instrument": "SZ300124",
-          "weight": 0.033395,
-          "target_shares": 1300,
-          "ref_price": 67.45
-        },
-        {
-          "instrument": "SZ002027",
-          "weight": 0.033356,
-          "target_shares": 14300,
-          "ref_price": 6.48
-        },
-        {
-          "instrument": "SH600346",
-          "weight": 0.033287,
-          "target_shares": 4000,
-          "ref_price": 23.24
-        },
-        {
-          "instrument": "SZ002938",
-          "weight": 0.033131,
-          "target_shares": 1600,
-          "ref_price": 54.67
-        },
-        {
-          "instrument": "SH601117",
-          "weight": 0.03332,
-          "target_shares": 10200,
-          "ref_price": 9.11
-        },
-        {
-          "instrument": "SH600104",
-          "weight": 0.033483,
-          "target_shares": 6500,
-          "ref_price": 14.23
+          "instrument": "SH600015",
+          "weight": 0.033335,
+          "target_shares": 12700,
+          "ref_price": 7.32
         },
         {
           "instrument": "SZ002028",
-          "weight": 0.033275,
+          "weight": 0.033368,
           "target_shares": 400,
-          "ref_price": 206.74
+          "ref_price": 202.68
         },
         {
-          "instrument": "SZ002601",
-          "weight": 0.033332,
-          "target_shares": 5100,
-          "ref_price": 17.98
+          "instrument": "SH601899",
+          "weight": 0.03333,
+          "target_shares": 2700,
+          "ref_price": 33.9
+        },
+        {
+          "instrument": "SH600875",
+          "weight": 0.033211,
+          "target_shares": 2400,
+          "ref_price": 38.31
+        },
+        {
+          "instrument": "SH688169",
+          "weight": 0.033357,
+          "target_shares": 800,
+          "ref_price": 114.0
+        },
+        {
+          "instrument": "SH601689",
+          "weight": 0.033112,
+          "target_shares": 1500,
+          "ref_price": 58.33
+        },
+        {
+          "instrument": "SH688271",
+          "weight": 0.03318,
+          "target_shares": 800,
+          "ref_price": 112.79
+        },
+        {
+          "instrument": "SZ300760",
+          "weight": 0.03335,
+          "target_shares": 500,
+          "ref_price": 156.3
+        },
+        {
+          "instrument": "SH600000",
+          "weight": 0.033414,
+          "target_shares": 9400,
+          "ref_price": 9.93
+        },
+        {
+          "instrument": "SZ002241",
+          "weight": 0.03327,
+          "target_shares": 3900,
+          "ref_price": 23.69
+        },
+        {
+          "instrument": "SH600515",
+          "weight": 0.033305,
+          "target_shares": 25700,
+          "ref_price": 3.61
+        },
+        {
+          "instrument": "SZ300832",
+          "weight": 0.033326,
+          "target_shares": 2000,
+          "ref_price": 46.36
+        },
+        {
+          "instrument": "SZ002938",
+          "weight": 0.033361,
+          "target_shares": 1600,
+          "ref_price": 55.6
+        },
+        {
+          "instrument": "SZ000895",
+          "weight": 0.033421,
+          "target_shares": 3300,
+          "ref_price": 27.71
+        },
+        {
+          "instrument": "SH601888",
+          "weight": 0.033414,
+          "target_shares": 1300,
+          "ref_price": 67.89
+        },
+        {
+          "instrument": "SH601988",
+          "weight": 0.033338,
+          "target_shares": 16300,
+          "ref_price": 5.69
+        },
+        {
+          "instrument": "SH601166",
+          "weight": 0.033429,
+          "target_shares": 5000,
+          "ref_price": 18.6
+        },
+        {
+          "instrument": "SZ300347",
+          "weight": 0.033388,
+          "target_shares": 1600,
+          "ref_price": 55.8
+        },
+        {
+          "instrument": "SH601127",
+          "weight": 0.033195,
+          "target_shares": 1000,
+          "ref_price": 88.58
+        },
+        {
+          "instrument": "SH601825",
+          "weight": 0.033318,
+          "target_shares": 10200,
+          "ref_price": 9.04
+        },
+        {
+          "instrument": "SZ300442",
+          "weight": 0.033434,
+          "target_shares": 1000,
+          "ref_price": 87.29
+        },
+        {
+          "instrument": "SZ002179",
+          "weight": 0.03332,
+          "target_shares": 2500,
+          "ref_price": 36.88
         }
       ]
     },
     "latest_orders": {
-      "date": "2026-04-08",
-      "order_count": 29,
-      "buy_count": 29,
-      "sell_count": 0,
+      "date": "2026-04-09",
+      "order_count": 14,
+      "buy_count": 6,
+      "sell_count": 8,
       "orders": [
         {
-          "symbol": "SHSE.688012",
-          "side": "BUY",
-          "volume": 200,
-          "price": 324.05,
-          "type": "limit"
-        },
-        {
           "symbol": "SHSE.601998",
-          "side": "BUY",
-          "volume": 11100,
-          "price": 8.48,
-          "type": "limit"
-        },
-        {
-          "symbol": "SHSE.600845",
-          "side": "BUY",
-          "volume": 4000,
-          "price": 23.43,
-          "type": "limit"
-        },
-        {
-          "symbol": "SHSE.600233",
-          "side": "BUY",
-          "volume": 4600,
-          "price": 20.31,
-          "type": "limit"
-        },
-        {
-          "symbol": "SHSE.600426",
-          "side": "BUY",
-          "volume": 2400,
-          "price": 39.17,
-          "type": "limit"
-        },
-        {
-          "symbol": "SZSE.002179",
-          "side": "BUY",
-          "volume": 2600,
-          "price": 36.42,
-          "type": "limit"
-        },
-        {
-          "symbol": "SHSE.603799",
-          "side": "BUY",
-          "volume": 1500,
-          "price": 62.32,
+          "side": "SELL",
+          "volume": 11200,
+          "price": 8.07,
           "type": "limit"
         },
         {
           "symbol": "SZSE.002371",
-          "side": "BUY",
+          "side": "SELL",
           "volume": 200,
-          "price": 473.26,
-          "type": "limit"
-        },
-        {
-          "symbol": "SHSE.600111",
-          "side": "BUY",
-          "volume": 1700,
-          "price": 52.74,
-          "type": "limit"
-        },
-        {
-          "symbol": "SHSE.601698",
-          "side": "BUY",
-          "volume": 2800,
-          "price": 33.65,
-          "type": "limit"
-        },
-        {
-          "symbol": "SHSE.603288",
-          "side": "BUY",
-          "volume": 2200,
-          "price": 41.98,
-          "type": "limit"
-        },
-        {
-          "symbol": "SHSE.603392",
-          "side": "BUY",
-          "volume": 2300,
-          "price": 40.88,
-          "type": "limit"
-        },
-        {
-          "symbol": "SZSE.300251",
-          "side": "BUY",
-          "volume": 5900,
-          "price": 15.92,
-          "type": "limit"
-        },
-        {
-          "symbol": "SHSE.601899",
-          "side": "BUY",
-          "volume": 2600,
-          "price": 35.32,
-          "type": "limit"
-        },
-        {
-          "symbol": "SHSE.600061",
-          "side": "BUY",
-          "volume": 13400,
-          "price": 7.08,
-          "type": "limit"
-        },
-        {
-          "symbol": "SHSE.601689",
-          "side": "BUY",
-          "volume": 1500,
-          "price": 60.79,
-          "type": "limit"
-        },
-        {
-          "symbol": "SHSE.688271",
-          "side": "BUY",
-          "volume": 800,
-          "price": 117.69,
-          "type": "limit"
-        },
-        {
-          "symbol": "SZSE.003816",
-          "side": "BUY",
-          "volume": 20500,
-          "price": 4.64,
-          "type": "limit"
-        },
-        {
-          "symbol": "SZSE.000895",
-          "side": "BUY",
-          "volume": 3300,
-          "price": 28.33,
+          "price": 463.38,
           "type": "limit"
         },
         {
           "symbol": "SZSE.002475",
-          "side": "BUY",
+          "side": "SELL",
           "volume": 1700,
-          "price": 53.32,
-          "type": "limit"
-        },
-        {
-          "symbol": "SHSE.600515",
-          "side": "BUY",
-          "volume": 24900,
-          "price": 3.8,
+          "price": 53.98,
           "type": "limit"
         },
         {
           "symbol": "SZSE.300124",
-          "side": "BUY",
+          "side": "SELL",
           "volume": 1300,
-          "price": 68.8,
-          "type": "limit"
-        },
-        {
-          "symbol": "SZSE.002027",
-          "side": "BUY",
-          "volume": 14300,
-          "price": 6.61,
-          "type": "limit"
-        },
-        {
-          "symbol": "SHSE.600346",
-          "side": "BUY",
-          "volume": 4000,
-          "price": 23.71,
-          "type": "limit"
-        },
-        {
-          "symbol": "SZSE.002938",
-          "side": "BUY",
-          "volume": 1600,
-          "price": 55.77,
-          "type": "limit"
-        },
-        {
-          "symbol": "SHSE.601117",
-          "side": "BUY",
-          "volume": 10200,
-          "price": 9.3,
-          "type": "limit"
-        },
-        {
-          "symbol": "SHSE.600104",
-          "side": "BUY",
-          "volume": 6500,
-          "price": 14.52,
-          "type": "limit"
-        },
-        {
-          "symbol": "SZSE.002028",
-          "side": "BUY",
-          "volume": 400,
-          "price": 210.88,
+          "price": 64.71,
           "type": "limit"
         },
         {
           "symbol": "SZSE.002601",
-          "side": "BUY",
+          "side": "SELL",
           "volume": 5100,
-          "price": 18.34,
+          "price": 17.26,
+          "type": "limit"
+        },
+        {
+          "symbol": "SZSE.002027",
+          "side": "SELL",
+          "volume": 14400,
+          "price": 6.17,
+          "type": "limit"
+        },
+        {
+          "symbol": "SHSE.600426",
+          "side": "SELL",
+          "volume": 2400,
+          "price": 37.97,
+          "type": "limit"
+        },
+        {
+          "symbol": "SHSE.600233",
+          "side": "SELL",
+          "volume": 4600,
+          "price": 19.52,
+          "type": "limit"
+        },
+        {
+          "symbol": "SHSE.600015",
+          "side": "BUY",
+          "volume": 12700,
+          "price": 7.47,
+          "type": "limit"
+        },
+        {
+          "symbol": "SHSE.600875",
+          "side": "BUY",
+          "volume": 2400,
+          "price": 39.08,
+          "type": "limit"
+        },
+        {
+          "symbol": "SHSE.688169",
+          "side": "BUY",
+          "volume": 800,
+          "price": 116.28,
+          "type": "limit"
+        },
+        {
+          "symbol": "SZSE.300760",
+          "side": "BUY",
+          "volume": 500,
+          "price": 159.43,
+          "type": "limit"
+        },
+        {
+          "symbol": "SHSE.600000",
+          "side": "BUY",
+          "volume": 9400,
+          "price": 10.13,
+          "type": "limit"
+        },
+        {
+          "symbol": "SZSE.002241",
+          "side": "BUY",
+          "volume": 3900,
+          "price": 24.17,
           "type": "limit"
         }
       ]
