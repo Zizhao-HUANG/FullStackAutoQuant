@@ -98,11 +98,13 @@ except: print('$TODAY')
 fi
 
 git add -A
-git commit -m "Dashboard update signals ${DATA_DATE} [skip ci]
+git commit -m "Dashboard update signals ${DATA_DATE}
 
 Auto-deployed by deploy_dashboard.sh
 Export time: $(date +'%Y-%m-%d %H:%M:%S %Z')
-Source: FullStackAutoQuant-private/dashboard/"
+Source: FullStackAutoQuant-private/dashboard/
+
+[skip ci]"
 
 git push origin "$DEPLOY_BRANCH" --force-with-lease
 

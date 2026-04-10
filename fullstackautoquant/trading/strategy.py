@@ -632,7 +632,9 @@ def main():
             sh = int(p.get("shares", 0))
             if sym and sh > 0:
                 current_positions[sym] = sh
-        logger.info("Loaded %d positions from file: %s", len(current_positions), args.current_positions)
+        logger.info(
+            "Loaded %d positions from file: %s", len(current_positions), args.current_positions
+        )
     # auto-fetch from gmtrade if still empty (typical for day-2 rebalance)
     if len(current_positions) == 0:
         logger.info("No positions from file; attempting auto-fetch from GM SDK…")
