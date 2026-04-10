@@ -37,10 +37,11 @@ def extract_trading_logs() -> dict[str, Any]:
 
 def _extract_latest_signals(logs_dir, result: dict[str, Any]) -> None:
     """Load the most recent signals JSON."""
-    signals_files = sorted(logs_dir.glob("signals_*.json"))
+    signals_files = list(logs_dir.glob("signals_*.json"))
     if signals_files:
         try:
-            with open(signals_files[-1], encoding="utf-8") as f:
+            latest = max(signals_files, key=lambda f: f.stat().st_mtime)
+            with open(latest, encoding="utf-8") as f:
                 result["latest_signals"] = json.load(f)
         except Exception:
             pass
@@ -48,11 +49,12 @@ def _extract_latest_signals(logs_dir, result: dict[str, Any]) -> None:
 
 def _extract_latest_targets(logs_dir, result: dict[str, Any]) -> None:
     """Load and sanitize the most recent targets JSON."""
-    targets_files = sorted(logs_dir.glob("targets_*.json"))
+    targets_files = list(logs_dir.glob("targets_*.json"))
     if not targets_files:
         return
     try:
-        with open(targets_files[-1], encoding="utf-8") as f:
+        latest = max(targets_files, key=lambda f: f.stat().st_mtime)
+        with open(latest, encoding="utf-8") as f:
             data = json.load(f)
         targets = data.get("targets", [])
         sanitized = [
@@ -75,11 +77,12 @@ def _extract_latest_targets(logs_dir, result: dict[str, Any]) -> None:
 
 def _extract_latest_orders(logs_dir, result: dict[str, Any]) -> None:
     """Load and sanitize the most recent orders JSON."""
-    orders_files = sorted(logs_dir.glob("orders_*.json"))
+    orders_files = list(logs_dir.glob("orders_*.json"))
     if not orders_files:
         return
     try:
-        with open(orders_files[-1], encoding="utf-8") as f:
+        latest = max(orders_files, key=lambda f: f.stat().st_mtime)
+        with open(latest, encoding="utf-8") as f:
             data = json.load(f)
         orders = data.get("orders", [])
         sanitized = [

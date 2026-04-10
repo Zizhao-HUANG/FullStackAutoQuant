@@ -3,9 +3,7 @@
     "allow_buy": true,
     "day_drawdown": 0.0,
     "rolling5d_drawdown": 0.0,
-    "limit_up_symbols": [
-      "SZSE.300418"
-    ],
+    "limit_up_symbols": [],
     "limit_down_symbols": [],
     "reasons": []
   }
