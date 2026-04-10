@@ -9,6 +9,7 @@
 #   TRADE_DRY_RUN    — "1" for dry-run (no orders placed)
 #   SKIP_INFERENCE   — "1" to skip inference, use existing CSV
 #   SKIP_TRADING     — "1" to skip trading
+#   SKIP_DASHBOARD   — "1" to skip dashboard export & deploy
 set -euo pipefail
 
 log(){ printf "[%s] %s\n" "$(date +'%F %T')" "$*"; }
@@ -42,6 +43,14 @@ else
 
   log "[Phase 2] Trading (${TRADE_DRY_RUN:+dry-run}${TRADE_DRY_RUN:-live})"
   bash "$SCRIPT_DIR/run_trading.sh" "${ARGS[@]}"
+fi
+
+# ── Phase 3: Dashboard ──────────────────────────────────────────
+if [[ "${SKIP_DASHBOARD:-0}" == "1" ]]; then
+  log "[Phase 3] Dashboard — skipped"
+else
+  log "[Phase 3] Dashboard export & deploy to GitHub Pages"
+  bash "$SCRIPT_DIR/deploy_dashboard.sh"
 fi
 
 log "Pipeline complete"
