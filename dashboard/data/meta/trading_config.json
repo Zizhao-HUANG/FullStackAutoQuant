@@ -1,0 +1,38 @@
+{
+  "portfolio": {
+    "topk": 30,
+    "n_drop": 5,
+    "invest_ratio": 0.95,
+    "max_weight": 0.05,
+    "lot": 100,
+    "confidence_floor": 0.96
+  },
+  "weights": {
+    "mode": "equal",
+    "confidence_tilt": true,
+    "rank_metric": "rank",
+    "rank_exponent": 1.0
+  },
+  "order": {
+    "price_source": "qlib_close",
+    "buy_limit_offset": 0.02,
+    "sell_limit_offset": -0.02,
+    "min_buy_notional": 8000,
+    "min_sell_notional": 8000,
+    "limit_threshold": 0.095,
+    "clamp_tick": 0.01
+  },
+  "risk": {
+    "day_drawdown_limit": 0.03,
+    "rolling5d_drawdown_limit": 0.08,
+    "enforce_limit_up_down_filter": true
+  },
+  "rebalance_trigger": {
+    "max_non_target_to_replace": 3,
+    "enable_weight_drift": false,
+    "weight_drift_threshold": 0.2
+  },
+  "capital": {
+    "note": "Real capital amount redacted for privacy"
+  }
+}

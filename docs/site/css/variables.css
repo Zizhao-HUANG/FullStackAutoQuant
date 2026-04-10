@@ -1,0 +1,27 @@
+:root {
+  --black:    #000000;
+  --grey-900: #111111;
+  --grey-800: #222222;
+  --grey-700: #333333;
+  --grey-600: #555555;
+  --grey-500: #777777;
+  --grey-400: #999999;
+  --grey-300: #bbbbbb;
+  --grey-200: #dddddd;
+  --grey-100: #eeeeee;
+  --grey-50:  #f7f7f7;
+  --white:    #ffffff;
+
+  /* No accent color — monochrome with green/red only in trading tab */
+  --accent:       #000000;
+  --accent-light: #f7f7f7;
+  --positive:     #0d8a4a;
+  --negative:     #c0392b;
+  --live-green:   #0d8a4a;
+
+  --font-main: 'Inter', 'Helvetica Neue', Helvetica, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', 'Consolas', monospace;
+  --font-serif: 'Source Serif 4', Georgia, serif;
+
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+}

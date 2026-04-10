@@ -1,0 +1,14 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 16px; scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+body {
+  font-family: var(--font-main);
+  color: var(--grey-900);
+  background: var(--white);
+  overflow-x: hidden;
+  line-height: 1.5;
+}
+a { color: inherit; text-decoration: none; }
+img, svg { max-width: 100%; display: block; }
+button { border: none; background: none; font: inherit; cursor: pointer; }
+ul, ol { list-style: none; }
+::selection { background: var(--accent); color: var(--white); }
