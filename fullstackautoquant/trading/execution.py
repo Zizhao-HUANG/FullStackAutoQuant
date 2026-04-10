@@ -344,7 +344,13 @@ def place_orders(
     sells = [od for od in orders if str(od.get("side", "")).upper() == "SELL"]
     buys = [od for od in orders if str(od.get("side", "")).upper() == "BUY"]
 
-    logger.info("place_orders: %d sells + %d buys, do_place=%s, src=%s", len(sells), len(buys), do_place, src)
+    logger.info(
+        "place_orders: %d sells + %d buys, do_place=%s, src=%s",
+        len(sells),
+        len(buys),
+        do_place,
+        src,
+    )
 
     gm_symbols = [od["symbol"] for od in orders]
     ts_codes = [tc for s in gm_symbols if (tc := gm_to_ts_code(s)) is not None]
@@ -627,7 +633,12 @@ def place_orders(
         available_cash = 1e18
 
     # 2) BUY within both per-name cap and available cash
-    logger.info("== BUY phase: %d orders (cash=%.0f, valid=%s) ==", len(buys), available_cash, cash_check_valid)
+    logger.info(
+        "== BUY phase: %d orders (cash=%.0f, valid=%s) ==",
+        len(buys),
+        available_cash,
+        cash_check_valid,
+    )
     for i_buy, od in enumerate(buys, 1):
         sym = od["symbol"]
         side = "BUY"
@@ -831,7 +842,13 @@ def place_orders(
     submitted = sum(1 for r in receipts if r.get("status") == "SUBMITTED")
     skipped = sum(1 for r in receipts if "SKIP" in r.get("status", ""))
     dry = sum(1 for r in receipts if r.get("status") == "DRY_RUN")
-    logger.info("place_orders done: %d total (%d submitted, %d skipped, %d dry-run)", len(receipts), submitted, skipped, dry)
+    logger.info(
+        "place_orders done: %d total (%d submitted, %d skipped, %d dry-run)",
+        len(receipts),
+        submitted,
+        skipped,
+        dry,
+    )
     return receipts
 
 
