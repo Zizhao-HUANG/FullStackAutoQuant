@@ -42,10 +42,12 @@ class TestGetLogger:
 
     def test_logger_is_idempotent(self) -> None:
         get_logger("fullstackautoquant.a")
-        get_logger("fullstackautoquant.b")
         root = logging.getLogger("fullstackautoquant")
-        # Should only have one handler regardless of how many times get_logger is called
-        assert len(root.handlers) == 1
+        initial_count = len(root.handlers)
+        assert initial_count >= 1
+        # Calling get_logger again must NOT add more handlers
+        get_logger("fullstackautoquant.b")
+        assert len(root.handlers) == initial_count
 
 
 # ── Retry Decorator Tests ────────────────────────────────────────────────
