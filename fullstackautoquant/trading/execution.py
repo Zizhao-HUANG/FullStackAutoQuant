@@ -1,6 +1,12 @@
 import argparse
 import json
 import os
+
+# gmtrade 3.0.6 ships old-style protobuf descriptors incompatible with protobuf >=4.x;
+# force pure-Python implementation BEFORE any gmtrade import to avoid descriptor errors.
+if "PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION" not in os.environ:
+    os.environ["PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION"] = "python"
+
 from datetime import datetime, time
 
 try:

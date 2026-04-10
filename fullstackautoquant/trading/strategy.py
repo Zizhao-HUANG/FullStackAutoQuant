@@ -3,6 +3,11 @@ import json
 import math
 import os
 
+# gmtrade 3.0.6 ships old-style protobuf descriptors incompatible with protobuf >=4.x;
+# force pure-Python implementation BEFORE any gmtrade import to avoid descriptor errors.
+if "PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION" not in os.environ:
+    os.environ["PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION"] = "python"
+
 import numpy as np
 
 from fullstackautoquant.logging_config import get_logger
@@ -58,12 +63,18 @@ def fetch_current_positions_from_gm(
 ) -> dict[str, int]:
     """Fetch current positions from gmtrade; return {GM symbol: shares}. Empty on failure."""
     try:
-        from gm_api_wrapper import gm_login  # type: ignore
+        from fullstackautoquant.trading.execution import gm_login
+    except ImportError as exc:
+        logger.warning("execution.gm_login not available, cannot fetch positions: %s", exc)
+        return {}
 
-        try:
-            from gmtrade.api import get_positions  # type: ignore
-        except Exception:  # noqa: E722
-            return {}
+    try:
+        from gmtrade.api import get_positions  # type: ignore
+    except Exception as exc:  # noqa: E722
+        logger.warning("gmtrade SDK import failed, cannot fetch positions: %s", exc)
+        return {}
+
+    try:
         # login via shared helper (reads .env or config)
         try:
             gm_login(cfg, account_id_override=account_id_override)
@@ -103,8 +114,10 @@ def fetch_current_positions_from_gm(
                         pass
             if isinstance(sym, str) and sh and sh > 0:
                 cur[sym.upper()] = int(sh)
+        logger.info("Fetched %d current positions from GM", len(cur))
         return cur
-    except Exception:  # noqa: E722
+    except Exception as exc:  # noqa: E722
+        logger.error("Failed to fetch positions from GM: %s", exc, exc_info=True)
         return {}
 
 
@@ -619,11 +632,22 @@ def main():
             sh = int(p.get("shares", 0))
             if sym and sh > 0:
                 current_positions[sym] = sh
+        logger.info("Loaded %d positions from file: %s", len(current_positions), args.current_positions)
     # auto-fetch from gmtrade if still empty (typical for day-2 rebalance)
     if len(current_positions) == 0:
+        logger.info("No positions from file; attempting auto-fetch from GM SDK…")
         auto_cur = fetch_current_positions_from_gm(cfg, args.account_id)
         if auto_cur:
             current_positions = auto_cur
+            logger.info("Auto-fetched %d positions from GM", len(current_positions))
+
+    if len(current_positions) == 0:
+        logger.warning(
+            "current_positions is EMPTY — no SELL orders will be generated. "
+            "This is expected on first build but may indicate a GM SDK issue on subsequent runs."
+        )
+    else:
+        logger.info("Using %d current positions for rebalance", len(current_positions))
 
     targets, initial_buys, ref_prices_map, quote_details, invest_cap, total_target_value = (
         build_targets(
@@ -708,7 +732,7 @@ def main():
     # Optional: raise cash via trimming worst-ranked existing names when no sells present but planned buys exceed available cash
     if allow_buy:
         try:
-            from gm_api_wrapper import get_available_cash_amount  # type: ignore
+            from fullstackautoquant.trading.execution import get_available_cash_amount
 
             available_cash = float(get_available_cash_amount())
         except Exception:  # noqa: E722
