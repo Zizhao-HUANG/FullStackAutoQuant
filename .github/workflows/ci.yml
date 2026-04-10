@@ -3,6 +3,9 @@ name: CI
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - 'output/**'
+      - 'dashboard/data/**'
   pull_request:
     branches: [main]
 

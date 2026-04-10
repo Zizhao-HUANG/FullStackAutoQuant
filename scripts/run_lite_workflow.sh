@@ -65,14 +65,17 @@ step "[3/5] Verify daily_pv.h5" \
 step "[4/5] Synthesize factors → combined_factors_df.parquet" \
   python "$PKG_DIR/data/factor_synthesis.py" --workspace "$PKG_DIR/model"
 
-step "[5/6] Run inference (cached normalizer)" \
+step "[5/7] Run inference (cached normalizer)" \
   python -m fullstackautoquant.model.inference \
     --date auto \
     --combined_factors "$PKG_DIR/model/combined_factors_df.parquet" \
     --params "$PARAMS_FILE" --norm-cache "$NORM_CACHE" \
     --out "$PROJECT_ROOT/output/ranked_scores.csv"
 
-step "[6/6] Push CSV to private repo" \
+step "[6/7] Push CSV to private repo" \
   bash "$SCRIPT_DIR/push_csv_to_repo.sh"
+
+step "[7/7] Deploy dashboard to GitHub Pages" \
+  bash "$SCRIPT_DIR/deploy_dashboard.sh"
 
 log "Pipeline complete"

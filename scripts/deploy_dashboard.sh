@@ -98,7 +98,7 @@ except: print('$TODAY')
 fi
 
 git add -A
-git commit -m "Dashboard update — signals ${DATA_DATE}
+git commit -m "Dashboard update signals ${DATA_DATE} [skip ci]
 
 Auto-deployed by deploy_dashboard.sh
 Export time: $(date +'%Y-%m-%d %H:%M:%S %Z')
