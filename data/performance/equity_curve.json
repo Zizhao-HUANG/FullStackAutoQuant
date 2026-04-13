@@ -26,5 +26,12 @@
     "daily_return": 0.08911819,
     "cumulative_return": 0.446551,
     "drawdown": 0.0
+  },
+  {
+    "date": "2026-04-10",
+    "equity": 1.561627,
+    "daily_return": 0.0795518,
+    "cumulative_return": 0.561627,
+    "drawdown": 0.0
   }
 ]
