@@ -53,11 +53,17 @@ const Charts = (() => {
               title: (items) => items[0].label,
               label: (item) => {
                 const d = equityData[item.dataIndex];
-                return [
-                  `Cumulative  +${(d.cumulative_return * 100).toFixed(2)}%`,
-                  `Daily       +${(d.daily_return * 100).toFixed(2)}%`,
+                const cumSign = d.cumulative_return >= 0 ? '+' : '';
+                const daySign = d.daily_return >= 0 ? '+' : '';
+                const lines = [
+                  `Cumulative  ${cumSign}${(d.cumulative_return * 100).toFixed(2)}%`,
+                  `Daily       ${daySign}${(d.daily_return * 100).toFixed(2)}%`,
                   `NAV          ${d.equity.toFixed(4)}`
                 ];
+                if (d.topk_alpha != null) {
+                  lines.push(`Top-K Alpha +${(d.topk_alpha * 100).toFixed(2)}%`);
+                }
+                return lines;
               }
             }
           }
@@ -73,7 +79,7 @@ const Charts = (() => {
             ticks: {
               font: { family: FONT_MONO, size: 11 },
               color: GREY_4,
-              callback: (v) => `+${v.toFixed(0)}%`
+              callback: (v) => `${v >= 0 ? '+' : ''}${v.toFixed(1)}%`
             },
             border: { display: false }
           }

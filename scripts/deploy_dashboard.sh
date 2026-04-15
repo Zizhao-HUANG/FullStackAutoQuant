@@ -69,8 +69,8 @@ git clone --depth 1 --branch "$DEPLOY_BRANCH" "$PUBLIC_REPO_URL" "$WORK_DIR/repo
 cd "$WORK_DIR/repo"
 
 # Configure git identity
-git config user.name  "FullStackAutoQuant Bot"
-git config user.email "bot@fullstackautoquant.local"
+git config user.name  "Zizhao-HUANG"
+git config user.email "Zizhaohuang26@gmail.com"
 
 # Remove old site files (keep .git)
 find . -maxdepth 1 ! -name '.git' ! -name '.' -exec rm -rf {} +

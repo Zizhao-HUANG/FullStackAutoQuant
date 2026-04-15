@@ -1,30 +1,58 @@
 [
   {
     "date": "2026-04-03",
-    "equity": 1.10612,
-    "daily_return": 0.1061204,
-    "cumulative_return": 0.10612,
-    "drawdown": 0.0
+    "equity": 1.022448,
+    "daily_return": 0.02244847,
+    "cumulative_return": 0.022448,
+    "drawdown": 0.0,
+    "topk_alpha": 0.1061204
   },
   {
     "date": "2026-04-07",
-    "equity": 1.219895,
-    "daily_return": 0.10285882,
-    "cumulative_return": 0.219895,
-    "drawdown": 0.0
+    "equity": 1.026088,
+    "daily_return": 0.00355954,
+    "cumulative_return": 0.026088,
+    "drawdown": 0.0,
+    "topk_alpha": 0.10285882
   },
   {
     "date": "2026-04-08",
-    "equity": 1.328185,
-    "daily_return": 0.08877054,
-    "cumulative_return": 0.328185,
-    "drawdown": 0.0
+    "equity": 1.022587,
+    "daily_return": -0.00341232,
+    "cumulative_return": 0.022587,
+    "drawdown": -0.003412,
+    "topk_alpha": 0.08877054
   },
   {
     "date": "2026-04-09",
-    "equity": 1.446551,
-    "daily_return": 0.08911819,
-    "cumulative_return": 0.446551,
-    "drawdown": 0.0
+    "equity": 1.03881,
+    "daily_return": 0.01586472,
+    "cumulative_return": 0.03881,
+    "drawdown": 0.0,
+    "topk_alpha": 0.08911819
+  },
+  {
+    "date": "2026-04-10",
+    "equity": 1.037379,
+    "daily_return": -0.00137754,
+    "cumulative_return": 0.037379,
+    "drawdown": -0.001378,
+    "topk_alpha": 0.0795518
+  },
+  {
+    "date": "2026-04-13",
+    "equity": 1.024528,
+    "daily_return": -0.01238758,
+    "cumulative_return": 0.024528,
+    "drawdown": -0.013748,
+    "topk_alpha": 0.07859309
+  },
+  {
+    "date": "2026-04-14",
+    "equity": 1.010039,
+    "daily_return": -0.01414234,
+    "cumulative_return": 0.010039,
+    "drawdown": -0.027696,
+    "topk_alpha": 0.07873157
   }
 ]
