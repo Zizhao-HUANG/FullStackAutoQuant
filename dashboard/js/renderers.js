@@ -74,13 +74,35 @@ const Renderers = (() => {
     if (!el || !data.performance) return;
 
     const p = data.performance;
+
+    // Cumulative return from equity curve (changes daily)
+    const cumRet = Number(p.cumulative_return || 0);
+    const cumRetStr = (cumRet >= 0 ? '+' : '') + (cumRet * 100).toFixed(2) + '%';
+
+    // Sharpe — now computed from universe-wide returns (realistic range)
+    const sharpe = Number(p.topk_sharpe_ratio || 0).toFixed(2);
+
+    // Today's top-K alpha score (changes every day)
+    const alpha = Number(p.latest_topk_alpha || 0);
+    const alphaStr = (alpha >= 0 ? '+' : '') + (alpha * 100).toFixed(2) + '%';
+
+    // Win rate — universe-based (no longer always 100%)
+    const winRate = pct(p.topk_win_rate, 0);
+
+    // Max drawdown — universe-based (no longer always 0%)
+    const maxDd = Number(p.topk_max_drawdown || 0);
+    const maxDdStr = (maxDd * 100).toFixed(2) + '%';
+
+    // Today's confidence (per-day value, not all-time average)
+    const conf = pct(p.latest_confidence || p.avg_confidence, 1);
+
     const items = [
-      ['+' + Number(p.topk_annualized_score).toFixed(1) + '%', 'Annualized'],
-      [Number(p.topk_sharpe_ratio).toFixed(1), 'Sharpe'],
-      [Number(p.long_short_information_ratio).toFixed(2), 'Info Ratio'],
-      [pct(p.topk_win_rate, 0), 'Win Rate'],
-      [pct(p.topk_max_drawdown), 'Max Drawdown'],
-      [pct(p.avg_confidence, 1), 'Avg Confidence']
+      [cumRetStr, 'Cumulative'],
+      [sharpe, 'Sharpe'],
+      [alphaStr, "Today's Alpha"],
+      [winRate, 'Win Rate'],
+      [maxDdStr, 'Max Drawdown'],
+      [conf, 'Confidence']
     ];
 
     el.innerHTML = items.map(([v, l]) => `
