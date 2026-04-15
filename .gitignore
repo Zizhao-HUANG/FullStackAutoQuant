@@ -59,6 +59,11 @@ output/
 .agent/
 .gemini/
 
+# ----- Dashboard Data (deployed via gh-pages) -----
+dashboard/data/*.json
+dashboard/data/**/*.json
+!dashboard/data/meta/*.json
+
 # ----- Misc -----
 *.tar.gz
 *.zip
