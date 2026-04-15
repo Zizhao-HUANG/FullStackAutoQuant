@@ -12,6 +12,11 @@
     <img src="https://img.shields.io/badge/license-CC%20BY--NC--SA%204.0-blue.svg" alt="CC BY-NC-SA 4.0">
     <img src="https://img.shields.io/badge/qlib-microsoft-blueviolet.svg" alt="Qlib">
   </p>
+  <p align="center">
+    <a href="https://zizhao-huang.github.io/FullStackAutoQuant/">
+      <img src="https://img.shields.io/badge/Live_Dashboard-Click_to_View-4361ee?style=for-the-badge&logoColor=white" alt="Live Dashboard">
+    </a>
+  </p>
 </p>
 
 ---
