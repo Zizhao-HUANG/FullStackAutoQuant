@@ -54,5 +54,13 @@
     "cumulative_return": 0.010039,
     "drawdown": -0.027696,
     "topk_alpha": 0.07873157
+  },
+  {
+    "date": "2026-04-15",
+    "equity": 1.018991,
+    "daily_return": 0.00886338,
+    "cumulative_return": 0.018991,
+    "drawdown": -0.019078,
+    "topk_alpha": 0.1038342
   }
 ]
