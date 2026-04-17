@@ -40,30 +40,12 @@
       </div>
     </div>
 
-    <!-- ═══════ SCREEN 1: SIGNAL BOARD ═══════ -->
-    <div class="screen-signals" id="screen-signals">
-      <div class="signal-header" id="signal-header">
-        <!-- JS: date + summary stats -->
-      </div>
-      <div class="signal-table-wrap">
-        <table class="signal-table" id="signal-table">
-          <!-- JS: full signal table -->
-        </table>
-      </div>
-    </div>
-
-    <!-- ═══════ SCREEN 2: DETAIL PANELS ═══════ -->
+    <!-- ═══════ SCREEN 1: DETAIL PANELS ═══════ -->
     <div class="screen-detail">
 
-      <div class="detail-header">
-        <div>
-          <div class="detail-title" id="detail-title"><!-- JS: Day N --></div>
-          <div class="detail-subtitle">End to End Deep Learning Quantitative Trading System</div>
-        </div>
-        <a href="https://github.com/Zizhao-HUANG/FullStackAutoQuant"
-           class="btn-text" target="_blank" rel="noopener">
-          GitHub Repository
-        </a>
+      <!-- Hero: giant date + Day N + summary stats (merged from signal-header) -->
+      <div class="detail-hero" id="detail-hero">
+        <!-- JS: renderDetailHero fills this -->
       </div>
 
       <!-- Tab bar -->
@@ -108,6 +90,18 @@
         <div class="reveal" id="backtest-content"><!-- JS --></div>
       </div>
 
+    </div>
+
+    <!-- ═══════ SCREEN 2: SIGNAL TABLE ═══════ -->
+    <div class="screen-signals" id="screen-signals">
+      <div class="signal-header" id="signal-header">
+        <!-- JS: summary stats -->
+      </div>
+      <div class="signal-table-wrap">
+        <table class="signal-table" id="signal-table">
+          <!-- JS: full signal table -->
+        </table>
+      </div>
     </div>
 
     <!-- ═══════ FOOTER ═══════ -->

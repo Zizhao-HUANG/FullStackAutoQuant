@@ -10,9 +10,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('app-content').style.display = 'block';
 
   /* ─── Render everything ─── */
+  Renderers.renderDetailHero(data);
   Renderers.renderSignalHeader(data);
   Renderers.renderSignalTable(data);
-  Renderers.renderDetailTitle(data);
   Renderers.renderMetrics(data);
   Renderers.renderPipeline(data);
   Renderers.renderSpecs(data);
