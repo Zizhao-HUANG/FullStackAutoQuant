@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FullStackAutoQuant</title>
+  <meta name="description" content="End to end deep learning quantitative trading system. Live production on CSI300.">
+  <meta name="author" content="Zizhao Huang">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=JetBrains+Mono:wght@400;500;600;700;800&family=Source+Serif+4:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/variables.css">
+  <link rel="stylesheet" href="css/reset.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/hero.css">
+  <link rel="stylesheet" href="css/animations.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' fill='%23000'/><text x='16' y='23' text-anchor='middle' fill='white' font-family='monospace' font-size='18' font-weight='900'>Q</text></svg>">
+</head>
+<body>
+
+  <div id="app-loading">Loading</div>
+
+  <div id="app-content">
+
+    <!-- ═══════ TOP BAR ═══════ -->
+    <div class="topbar">
+      <div class="topbar-name">FullStackAutoQuant</div>
+      <div class="topbar-right">
+        <span class="topbar-status"><span class="dot"></span>Live</span>
+        <a href="https://github.com/Zizhao-HUANG/FullStackAutoQuant"
+           class="btn-text btn-accent" target="_blank" rel="noopener">
+          View Source
+        </a>
+      </div>
+    </div>
+
+    <!-- ═══════ SCREEN 1: DETAIL PANELS ═══════ -->
+    <div class="screen-detail">
+
+      <!-- Hero: giant date + Day N + summary stats (merged from signal-header) -->
+      <div class="detail-hero" id="detail-hero">
+        <!-- JS: renderDetailHero fills this -->
+      </div>
+
+      <!-- Tab bar -->
+      <div class="tab-bar">
+        <button class="tab-btn active" data-tab="perf">Performance</button>
+        <button class="tab-btn" data-tab="trading">Trading</button>
+        <button class="tab-btn" data-tab="arch">Architecture</button>
+        <button class="tab-btn" data-tab="spec">Model</button>
+        <button class="tab-btn" data-tab="backtest">Backtest</button>
+      </div>
+
+      <!-- Panel: Performance -->
+      <div class="panel active" id="panel-perf">
+        <div class="metrics-grid reveal" id="metrics-grid"><!-- JS --></div>
+        <div class="chart-wrap reveal" style="margin-top: 32px;">
+          <canvas id="chart-equity"></canvas>
+        </div>
+      </div>
+
+      <!-- Panel: Trading -->
+      <div class="panel" id="panel-trading">
+        <div class="reveal" id="trading-content"><!-- JS --></div>
+      </div>
+
+      <!-- Panel: Architecture -->
+      <div class="panel" id="panel-arch">
+        <div class="reveal" id="pipeline-content"><!-- JS --></div>
+      </div>
+
+      <!-- Panel: Model -->
+      <div class="panel" id="panel-spec">
+        <p style="font-family:var(--font-serif);font-style:italic;color:var(--grey-500);font-size:16px;line-height:1.8;max-width:560px;margin-bottom:32px;" class="reveal">
+          A hybrid deep learning architecture for cross sectional stock ranking.
+          Causal temporal convolutions, overlapping local self attention, and
+          GRU aggregation with Monte Carlo Dropout uncertainty estimation.
+        </p>
+        <div class="reveal" id="spec-content"><!-- JS --></div>
+      </div>
+
+      <!-- Panel: Backtest -->
+      <div class="panel" id="panel-backtest">
+        <div class="reveal" id="backtest-content"><!-- JS --></div>
+      </div>
+
+    </div>
+
+    <!-- ═══════ SCREEN 2: SIGNAL TABLE ═══════ -->
+    <div class="screen-signals" id="screen-signals">
+      <div class="signal-header" id="signal-header">
+        <!-- JS: summary stats -->
+      </div>
+      <div class="signal-table-wrap">
+        <table class="signal-table" id="signal-table">
+          <!-- JS: full signal table -->
+        </table>
+      </div>
+    </div>
+
+    <!-- ═══════ FOOTER ═══════ -->
+    <div class="footer">
+      <div class="footer-text">FullStackAutoQuant / Zizhao Huang / CC BY NC SA 4.0</div>
+      <div class="footer-links">
+        <a href="https://github.com/Zizhao-HUANG/FullStackAutoQuant" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://github.com/Zizhao-HUANG/FullStackAutoQuant/blob/main/docs/architecture.md" target="_blank" rel="noopener">Docs</a>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="js/data-loader.js"></script>
+  <script src="js/charts.js"></script>
+  <script src="js/renderers.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
