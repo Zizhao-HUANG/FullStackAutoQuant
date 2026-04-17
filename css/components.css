@@ -1,0 +1,655 @@
+/* ═══════════════════════════════════════
+   Styles — Everything in one file for clarity
+   Text-game aesthetic + quant terminal
+   ═══════════════════════════════════════ */
+
+/* ─── Top bar ─── */
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px clamp(20px, 4vw, 48px);
+  border-bottom: 3px solid var(--black);
+}
+
+.topbar-name {
+  font-family: var(--font-mono);
+  font-size: clamp(14px, 2vw, 18px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--black);
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.topbar-status {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--grey-400);
+}
+
+.topbar-status .dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--live-green);
+  margin-right: 6px;
+  vertical-align: middle;
+  animation: blink 2s ease-in-out infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+/* Text-game button */
+.btn-text {
+  font-family: var(--font-mono);
+  font-size: clamp(11px, 1.4vw, 14px);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--black);
+  border: 2px solid var(--black);
+  padding: 8px 20px;
+  background: var(--white);
+  cursor: pointer;
+  transition: all 0.15s;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-text:hover {
+  background: var(--black);
+  color: var(--white);
+}
+
+.btn-accent {
+  border-color: var(--black);
+  color: var(--black);
+}
+.btn-accent:hover {
+  background: var(--black);
+  color: var(--white);
+}
+
+/* ─── Screen 1: Signal board ─── */
+.screen-signals {
+  display: flex;
+  flex-direction: column;
+  padding: 0 clamp(20px, 4vw, 48px);
+  border-top: 3px solid var(--black);
+  margin-top: clamp(40px, 6vw, 80px);
+}
+
+.signal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  padding: clamp(24px, 4vw, 40px) 0;
+  border-bottom: 1px solid var(--grey-200);
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.signal-title {
+  font-family: var(--font-mono);
+  font-size: clamp(32px, 5vw, 64px);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  color: var(--black);
+}
+
+/* Signal table — full width, big text */
+.signal-table-wrap {
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: 20px;
+}
+
+.signal-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-mono);
+}
+
+.signal-table thead {
+  position: sticky;
+  top: 0;
+  background: var(--white);
+  z-index: 2;
+}
+
+.signal-table th {
+  font-size: clamp(10px, 1.2vw, 12px);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--grey-400);
+  text-align: left;
+  padding: 12px 0;
+  border-bottom: 2px solid var(--black);
+}
+
+.signal-table th.r { text-align: right; }
+
+.signal-table td {
+  font-size: clamp(14px, 1.8vw, 18px);
+  font-weight: 600;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--grey-100);
+  color: var(--grey-800);
+}
+
+.signal-table td.r { text-align: right; }
+
+.signal-table td.rank-cell {
+  font-weight: 900;
+  font-size: clamp(16px, 2vw, 22px);
+  color: var(--black);
+  width: 48px;
+}
+
+.signal-table td.ticker {
+  font-weight: 800;
+  color: var(--black);
+  letter-spacing: 0.02em;
+}
+
+.signal-table td.score-pos { color: var(--black); font-weight: 800; }
+.signal-table td.score-neg { color: var(--grey-500); font-weight: 800; }
+
+.signal-table td.conf-high { color: var(--black); }
+
+.signal-table tbody tr:hover {
+  background: var(--grey-50);
+}
+
+.signal-table tbody tr:nth-child(-n+5) td {
+  font-size: clamp(16px, 2.2vw, 22px);
+}
+
+.signal-table tbody tr:nth-child(-n+3) td.rank-cell {
+  color: var(--black);
+}
+
+/* ─── Screen 2: Tabs ─── */
+.screen-detail {
+  padding: 0 clamp(20px, 4vw, 48px);
+}
+
+.detail-hero {
+  padding: clamp(32px, 5vw, 56px) 0 clamp(24px, 3vw, 40px);
+}
+
+.hero-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.hero-left {
+  flex: 1;
+  min-width: 0;
+}
+
+.hero-dayn {
+  font-family: var(--font-mono);
+  font-size: clamp(40px, 7vw, 80px);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  line-height: 0.95;
+  color: var(--black);
+  flex-shrink: 0;
+}
+
+.detail-subtitle {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--grey-400);
+  margin-top: 8px;
+}
+
+/* Signal date + summary stats (used in detail-hero) */
+.signal-date {
+  font-family: var(--font-mono);
+  font-size: clamp(48px, 8vw, 96px);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+  line-height: 0.95;
+  color: var(--black);
+}
+
+.signal-summary {
+  display: flex;
+  gap: clamp(24px, 3vw, 48px);
+  align-items: flex-end;
+}
+
+.signal-stat {
+  text-align: right;
+}
+
+.signal-stat-value {
+  font-family: var(--font-mono);
+  font-size: clamp(28px, 4vw, 48px);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  color: var(--black);
+}
+
+.signal-stat-value.accent {
+  color: var(--black);
+  font-weight: 900;
+}
+
+.signal-stat-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--grey-400);
+  margin-top: 4px;
+}
+
+/* Tab bar — text game buttons */
+.tab-bar {
+  display: flex;
+  gap: 0;
+  border-bottom: 3px solid var(--black);
+  flex-wrap: wrap;
+}
+
+.tab-btn {
+  font-family: var(--font-mono);
+  font-size: clamp(12px, 1.5vw, 14px);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--grey-300);
+  padding: 16px clamp(16px, 2.5vw, 32px);
+  border: none;
+  border-right: 1px solid var(--grey-200);
+  background: none;
+  cursor: pointer;
+  transition: all 0.12s;
+  position: relative;
+}
+
+.tab-btn:last-child { border-right: none; }
+.tab-btn:hover { color: var(--grey-600); background: var(--grey-50); }
+
+.tab-btn.active {
+  color: var(--black);
+  background: var(--grey-50);
+}
+
+.tab-btn.active::before {
+  content: '[ ';
+  color: var(--accent);
+}
+.tab-btn.active::after {
+  content: ' ]';
+  color: var(--accent);
+}
+
+.panel {
+  display: none;
+  padding-bottom: 32px;
+}
+.panel.active { display: block; }
+
+/* ─── Metric blocks ─── */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0;
+}
+
+.metric-block {
+  padding: clamp(16px, 2vw, 24px) clamp(12px, 2vw, 20px);
+  border-right: 1px solid var(--grey-200);
+  border-bottom: 1px solid var(--grey-200);
+}
+
+.metric-block:last-child { border-right: none; }
+
+.metric-block-value {
+  font-family: var(--font-mono);
+  font-size: clamp(28px, 4vw, 44px);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  color: var(--black);
+}
+
+.metric-block-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--grey-400);
+  margin-top: 8px;
+}
+
+/* ─── Data table (general) ─── */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-mono);
+}
+
+.data-table th {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--grey-400);
+  text-align: left;
+  padding: 10px 0;
+  border-bottom: 2px solid var(--black);
+}
+.data-table th.r { text-align: right; }
+.data-table td {
+  font-size: clamp(13px, 1.5vw, 16px);
+  font-weight: 600;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--grey-100);
+  color: var(--grey-700);
+}
+.data-table td.r { text-align: right; }
+.data-table .strong { font-weight: 800; color: var(--black); }
+.data-table tbody tr:last-child td { border-bottom: 1px solid var(--grey-300); }
+
+/* ─── Pipeline ─── */
+.pipeline {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-top: 3px solid var(--black);
+}
+.pipe-stage {
+  padding: clamp(16px, 2vw, 24px) clamp(12px, 2vw, 20px);
+  border-right: 1px solid var(--grey-200);
+  border-bottom: 1px solid var(--grey-200);
+}
+.pipe-stage:last-child { border-right: none; }
+.pipe-num {
+  font-family: var(--font-mono);
+  font-size: clamp(40px, 6vw, 72px);
+  font-weight: 900;
+  line-height: 1;
+  color: var(--grey-100);
+  letter-spacing: -0.04em;
+}
+.pipe-title {
+  font-family: var(--font-mono);
+  font-size: clamp(12px, 1.4vw, 16px);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--black);
+  margin: 8px 0;
+}
+.pipe-items {
+  font-size: 13px;
+  color: var(--grey-500);
+  line-height: 1.9;
+}
+
+@media (max-width: 768px) {
+  .pipeline { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 480px) {
+  .pipeline { grid-template-columns: 1fr; }
+}
+
+/* ─── Spec grid ─── */
+.spec-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  border-top: 1px solid var(--grey-200);
+}
+.spec-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--grey-100);
+  gap: 12px;
+}
+.spec-row:nth-child(odd) { padding-right: 24px; border-right: 1px solid var(--grey-100); }
+.spec-row:nth-child(even) { padding-left: 24px; }
+.spec-k { font-size: 13px; color: var(--grey-400); }
+.spec-v { font-family: var(--font-mono); font-size: 13px; font-weight: 600; color: var(--grey-800); text-align: right; }
+
+@media (max-width: 768px) {
+  .spec-grid { grid-template-columns: 1fr; }
+  .spec-row:nth-child(odd) { padding-right: 0; border-right: none; }
+  .spec-row:nth-child(even) { padding-left: 0; }
+}
+
+/* ─── Chart ─── */
+.chart-wrap {
+  width: 100%;
+  height: clamp(240px, 30vw, 360px);
+  position: relative;
+  margin-top: 20px;
+}
+
+/* ─── Footer ─── */
+.footer {
+  border-top: 3px solid var(--black);
+  padding: 24px clamp(20px, 4vw, 48px);
+  margin-top: clamp(40px, 6vw, 80px);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.footer-text {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--grey-400);
+  letter-spacing: 0.04em;
+}
+.footer-links {
+  display: flex;
+  gap: 20px;
+}
+.footer-links a {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--grey-400);
+  transition: color 0.15s;
+}
+.footer-links a:hover { color: var(--black); }
+
+/* ─── Scroll reveal ─── */
+.reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.5s var(--ease), transform 0.5s var(--ease);
+}
+.reveal.vis { opacity: 1; transform: none; }
+
+/* ─── Loading ─── */
+#app-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--grey-300);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+#app-content { display: none; }
+
+/* ─── Trading section ─── */
+.trading-header {
+  display: flex;
+  gap: 0;
+  border-top: 3px solid var(--black);
+  border-bottom: 1px solid var(--grey-200);
+}
+
+.trading-capital {
+  padding: clamp(12px, 2vw, 20px) clamp(12px, 2vw, 24px);
+  border-right: 1px solid var(--grey-200);
+  flex-shrink: 0;
+}
+
+.trading-capital-value {
+  font-family: var(--font-mono);
+  font-size: clamp(28px, 4vw, 44px);
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  color: var(--black);
+}
+
+.trading-capital-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--grey-400);
+  margin-top: 4px;
+}
+
+.trading-stats {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  flex: 1;
+  overflow-x: auto;
+}
+
+.trading-stat {
+  padding: clamp(8px, 1.5vw, 16px) clamp(12px, 2vw, 20px);
+  border-right: 1px solid var(--grey-100);
+  white-space: nowrap;
+}
+
+.trading-stat:last-child { border-right: none; }
+
+.trading-stat-value {
+  font-family: var(--font-mono);
+  font-size: clamp(16px, 2vw, 22px);
+  font-weight: 800;
+  color: var(--grey-900);
+  line-height: 1.2;
+}
+
+.trading-stat-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--grey-400);
+  margin-top: 2px;
+}
+
+/* Order table (compact) */
+.order-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-mono);
+  margin-top: 16px;
+}
+
+.order-table th {
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--grey-400);
+  text-align: left;
+  padding: 8px 6px;
+  border-bottom: 2px solid var(--black);
+}
+.order-table th.r { text-align: right; }
+
+.order-table td {
+  font-size: clamp(12px, 1.3vw, 14px);
+  font-weight: 600;
+  padding: 5px 6px;
+  border-bottom: 1px solid var(--grey-100);
+  color: var(--grey-700);
+}
+.order-table td.r { text-align: right; }
+
+.order-table .sym { font-weight: 800; color: var(--black); }
+
+.side-buy {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--positive);
+}
+
+.side-sell {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--negative);
+}
+
+.order-table tbody tr:hover { background: var(--grey-50); }
+
+/* Risk state */
+.risk-row {
+  display: flex;
+  gap: 0;
+  border-top: 1px solid var(--grey-200);
+  margin-top: 16px;
+}
+
+.risk-item {
+  padding: 10px 16px 10px 0;
+  border-right: 1px solid var(--grey-100);
+}
+.risk-item:last-child { border-right: none; }
+
+.risk-item-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--grey-400);
+}
+
+.risk-item-value {
+  font-family: var(--font-mono);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--grey-800);
+}
+
+.risk-ok { color: var(--positive); }
+
