@@ -2,25 +2,7 @@ const Renderers = (() => {
 
   function pct(v, d = 2) { return (v * 100).toFixed(d) + '%'; }
 
-  /* ─── Detail hero: giant date (left) + Day N (right) ─── */
-  function renderDetailHero(data) {
-    const el = document.getElementById('detail-hero');
-    if (!el) return;
-
-    const s = data.latest_signals || {};
-    const date = s.date || '';
-    const dayN = data.system_health ? 'Day ' + data.system_health.total_inference_days : '';
-
-    el.innerHTML = `
-      <div class="hero-row">
-        <div class="signal-date">${date}</div>
-        <div class="hero-dayn">${dayN}</div>
-      </div>
-      <div class="detail-subtitle">End to End Deep Learning Quantitative Trading System</div>
-    `;
-  }
-
-  /* ─── Signal header: title + summary stats ─── */
+  /* ─── Signal header: giant date + summary ─── */
   function renderSignalHeader(data) {
     const el = document.getElementById('signal-header');
     if (!el || !data.latest_signals) return;
@@ -29,7 +11,7 @@ const Renderers = (() => {
     const stats = s.statistics;
 
     el.innerHTML = `
-      <div class="signal-title">Today's Signals</div>
+      <div class="signal-date">${s.date}</div>
       <div class="signal-summary">
         <div class="signal-stat">
           <div class="signal-stat-value">${stats.total_count}</div>
@@ -77,6 +59,13 @@ const Renderers = (() => {
         }).join('')}
       </tbody>
     `;
+  }
+
+  /* ─── Detail title: Day N ─── */
+  function renderDetailTitle(data) {
+    const el = document.getElementById('detail-title');
+    if (!el || !data.system_health) return;
+    el.textContent = 'Day ' + data.system_health.total_inference_days;
   }
 
   /* ─── Metrics grid ─── */
@@ -351,9 +340,9 @@ const Renderers = (() => {
   }
 
   return {
-    renderDetailHero,
     renderSignalHeader,
     renderSignalTable,
+    renderDetailTitle,
     renderMetrics,
     renderPipeline,
     renderSpecs,

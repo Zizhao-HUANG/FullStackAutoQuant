@@ -85,11 +85,10 @@
 
 /* ─── Screen 1: Signal board ─── */
 .screen-signals {
+  min-height: calc(100vh - 70px);
   display: flex;
   flex-direction: column;
   padding: 0 clamp(20px, 4vw, 48px);
-  border-top: 3px solid var(--black);
-  margin-top: clamp(40px, 6vw, 80px);
 }
 
 .signal-header {
@@ -102,13 +101,43 @@
   gap: 16px;
 }
 
-.signal-title {
+.signal-date {
   font-family: var(--font-mono);
-  font-size: clamp(32px, 5vw, 64px);
+  font-size: clamp(48px, 8vw, 96px);
   font-weight: 900;
   letter-spacing: -0.04em;
+  line-height: 0.95;
+  color: var(--black);
+}
+
+.signal-summary {
+  display: flex;
+  gap: clamp(24px, 3vw, 48px);
+  align-items: flex-end;
+}
+
+.signal-stat {
+  text-align: right;
+}
+
+.signal-stat-value {
+  font-family: var(--font-mono);
+  font-size: clamp(28px, 4vw, 48px);
+  font-weight: 900;
+  letter-spacing: -0.03em;
   line-height: 1;
   color: var(--black);
+}
+
+.signal-stat-value.accent { color: var(--black); font-weight: 900; }
+
+.signal-stat-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--grey-400);
+  margin-top: 4px;
 }
 
 /* Signal table — full width, big text */
@@ -187,33 +216,25 @@
 /* ─── Screen 2: Tabs ─── */
 .screen-detail {
   padding: 0 clamp(20px, 4vw, 48px);
+  padding-top: clamp(40px, 6vw, 80px);
 }
 
-.detail-hero {
-  padding: clamp(32px, 5vw, 56px) 0 clamp(24px, 3vw, 40px);
-}
-
-.hero-row {
+.detail-header {
   display: flex;
   justify-content: space-between;
-  align-items: baseline;
+  align-items: flex-end;
   flex-wrap: wrap;
   gap: 16px;
+  margin-bottom: clamp(24px, 4vw, 40px);
 }
 
-.hero-left {
-  flex: 1;
-  min-width: 0;
-}
-
-.hero-dayn {
+.detail-title {
   font-family: var(--font-mono);
-  font-size: clamp(40px, 7vw, 80px);
+  font-size: clamp(32px, 5vw, 64px);
   font-weight: 900;
   letter-spacing: -0.04em;
-  line-height: 0.95;
+  line-height: 1;
   color: var(--black);
-  flex-shrink: 0;
 }
 
 .detail-subtitle {
@@ -222,57 +243,14 @@
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--grey-400);
-  margin-top: 8px;
-}
-
-/* Signal date + summary stats (used in detail-hero) */
-.signal-date {
-  font-family: var(--font-mono);
-  font-size: clamp(48px, 8vw, 96px);
-  font-weight: 900;
-  letter-spacing: -0.04em;
-  line-height: 0.95;
-  color: var(--black);
-}
-
-.signal-summary {
-  display: flex;
-  gap: clamp(24px, 3vw, 48px);
-  align-items: flex-end;
-}
-
-.signal-stat {
-  text-align: right;
-}
-
-.signal-stat-value {
-  font-family: var(--font-mono);
-  font-size: clamp(28px, 4vw, 48px);
-  font-weight: 900;
-  letter-spacing: -0.03em;
-  line-height: 1;
-  color: var(--black);
-}
-
-.signal-stat-value.accent {
-  color: var(--black);
-  font-weight: 900;
-}
-
-.signal-stat-label {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--grey-400);
-  margin-top: 4px;
 }
 
 /* Tab bar — text game buttons */
 .tab-bar {
   display: flex;
   gap: 0;
-  border-bottom: 3px solid var(--black);
+  border-top: 3px solid var(--black);
+  border-bottom: 1px solid var(--grey-200);
   flex-wrap: wrap;
 }
 
@@ -311,6 +289,7 @@
 
 .panel {
   display: none;
+  padding-top: clamp(16px, 2vw, 32px);
   padding-bottom: 32px;
 }
 .panel.active { display: block; }
@@ -320,6 +299,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 0;
+  border-top: 2px solid var(--black);
 }
 
 .metric-block {
