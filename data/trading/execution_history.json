@@ -698,5 +698,89 @@
         "status": "SUBMITTED"
       }
     ]
+  },
+  {
+    "date": "2026-04-17",
+    "order_count": 11,
+    "placed": true,
+    "orders": [
+      {
+        "symbol": "SHSE.600522",
+        "side": "SELL",
+        "volume": 3200,
+        "price": 28.14,
+        "status": "SUBMITTED"
+      },
+      {
+        "symbol": "SHSE.600660",
+        "side": "SELL",
+        "volume": 1600,
+        "price": 58.79,
+        "status": "SUBMITTED"
+      },
+      {
+        "symbol": "SHSE.601998",
+        "side": "SELL",
+        "volume": 11300,
+        "price": 8.19,
+        "status": "SUBMITTED"
+      },
+      {
+        "symbol": "SHSE.688271",
+        "side": "SELL",
+        "volume": 800,
+        "price": 112.98,
+        "status": "SUBMITTED"
+      },
+      {
+        "symbol": "SHSE.601872",
+        "side": "SELL",
+        "volume": 4800,
+        "price": 18.23,
+        "status": "SUBMITTED"
+      },
+      {
+        "symbol": "SZSE.002460",
+        "side": "BUY",
+        "volume": 1100,
+        "price": 83.34,
+        "status": "SUBMITTED"
+      },
+      {
+        "symbol": "SZSE.000975",
+        "side": "BUY",
+        "volume": 3100,
+        "price": 30.12,
+        "status": "SUBMITTED"
+      },
+      {
+        "symbol": "SZSE.000338",
+        "side": "BUY",
+        "volume": 3500,
+        "price": 26.59,
+        "status": "SUBMITTED"
+      },
+      {
+        "symbol": "SHSE.603259",
+        "side": "BUY",
+        "volume": 900,
+        "price": 99.63,
+        "status": "SUBMITTED"
+      },
+      {
+        "symbol": "SHSE.600031",
+        "side": "BUY",
+        "volume": 4600,
+        "price": 19.89,
+        "status": "SKIPPED_INSUFFICIENT_CASH"
+      },
+      {
+        "symbol": "SHSE.601318",
+        "side": "BUY",
+        "volume": 1600,
+        "price": 57.94,
+        "status": "SKIPPED_INSUFFICIENT_CASH"
+      }
+    ]
   }
 ]
