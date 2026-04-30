@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generated_at": "2026-04-30T09:38:23Z",
+    "generated_at": "2026-04-30T19:12:43Z",
     "generator": "scripts/export_dashboard_data.py",
     "version": "1.0.0",
     "description": "FullStackAutoQuant Dashboard — comprehensive dataset for live visualization"
@@ -11,7 +11,7 @@
     "first_inference_date": "2026-04-03",
     "last_inference_date": "2026-04-30",
     "last_updated_iso": "2026-04-30T00:00:00",
-    "hours_since_last_run": 9.6,
+    "hours_since_last_run": 19.2,
     "pipeline_components": [
       "Tushare Data Fetch (CSI300, ~200 trading days)",
       "Qlib Export → daily_pv.h5",
@@ -209,155 +209,31 @@
     "topk_cumulative_score": 1.748793,
     "topk_annualized_score": 25.923279,
     "topk_score_volatility": 0.012129,
-    "topk_sharpe_ratio": 13.0757,
-    "topk_max_drawdown": -0.027907,
-    "topk_calmar_ratio": 97.9069,
-    "topk_win_rate": 0.7647,
+    "topk_sharpe_ratio": 0.0,
+    "topk_max_drawdown": 0.0,
+    "topk_calmar_ratio": 0.0,
+    "topk_win_rate": 0.0,
     "mean_spread_top_bottom": 0.19375578,
     "mean_positive_ratio": 0.5916,
     "avg_confidence": 0.981749,
     "latest_topk_alpha": 0.10578773,
-    "latest_daily_return": 0.01183455,
+    "latest_daily_return": 0.0,
     "latest_confidence": 0.981994,
     "latest_positive_ratio": 0.602,
-    "cumulative_return": 0.184324
+    "cumulative_return": 0.0
   },
   "equity_curve": [
     {
-      "date": "2026-04-03",
-      "equity": 1.022448,
-      "daily_return": 0.02244847,
-      "cumulative_return": 0.022448,
-      "drawdown": 0.0,
-      "topk_alpha": 0.1061204
-    },
-    {
-      "date": "2026-04-07",
-      "equity": 1.026088,
-      "daily_return": 0.00355954,
-      "cumulative_return": 0.026088,
-      "drawdown": 0.0,
-      "topk_alpha": 0.10285882
-    },
-    {
-      "date": "2026-04-08",
-      "equity": 1.022587,
-      "daily_return": -0.00341232,
-      "cumulative_return": 0.022587,
-      "drawdown": -0.003412,
-      "topk_alpha": 0.08877054
-    },
-    {
-      "date": "2026-04-09",
-      "equity": 1.03881,
-      "daily_return": 0.01586472,
-      "cumulative_return": 0.03881,
-      "drawdown": 0.0,
-      "topk_alpha": 0.08911819
-    },
-    {
-      "date": "2026-04-10",
-      "equity": 1.037379,
-      "daily_return": -0.00137754,
-      "cumulative_return": 0.037379,
-      "drawdown": -0.001378,
-      "topk_alpha": 0.0795518
-    },
-    {
-      "date": "2026-04-13",
-      "equity": 1.024528,
-      "daily_return": -0.01238758,
-      "cumulative_return": 0.024528,
-      "drawdown": -0.013748,
-      "topk_alpha": 0.07859309
-    },
-    {
-      "date": "2026-04-14",
-      "equity": 1.010039,
-      "daily_return": -0.01414234,
-      "cumulative_return": 0.010039,
-      "drawdown": -0.027696,
-      "topk_alpha": 0.07873157
-    },
-    {
-      "date": "2026-04-15",
-      "equity": 1.018991,
-      "daily_return": 0.00886338,
-      "cumulative_return": 0.018991,
-      "drawdown": -0.019078,
-      "topk_alpha": 0.1038342
-    },
-    {
-      "date": "2026-04-16",
-      "equity": 1.036723,
-      "daily_return": 0.01740137,
-      "cumulative_return": 0.036723,
-      "drawdown": -0.002009,
-      "topk_alpha": 0.10481474
-    },
-    {
-      "date": "2026-04-17",
-      "equity": 1.058968,
-      "daily_return": 0.02145673,
-      "cumulative_return": 0.058968,
-      "drawdown": 0.0,
-      "topk_alpha": 0.11555241
-    },
-    {
-      "date": "2026-04-20",
-      "equity": 1.078922,
-      "daily_return": 0.01884349,
-      "cumulative_return": 0.078922,
-      "drawdown": 0.0,
-      "topk_alpha": 0.12097836
-    },
-    {
-      "date": "2026-04-21",
-      "equity": 1.09971,
-      "daily_return": 0.01926719,
-      "cumulative_return": 0.09971,
-      "drawdown": 0.0,
-      "topk_alpha": 0.12615451
-    },
-    {
-      "date": "2026-04-22",
-      "equity": 1.124288,
-      "daily_return": 0.02234947,
-      "cumulative_return": 0.124288,
-      "drawdown": 0.0,
-      "topk_alpha": 0.11513696
-    },
-    {
-      "date": "2026-04-24",
-      "equity": 1.148469,
-      "daily_return": 0.02150765,
-      "cumulative_return": 0.148469,
-      "drawdown": 0.0,
-      "topk_alpha": 0.12012689
-    },
-    {
-      "date": "2026-04-27",
-      "equity": 1.167128,
-      "daily_return": 0.01624714,
-      "cumulative_return": 0.167128,
-      "drawdown": 0.0,
-      "topk_alpha": 0.11653373
-    },
-    {
-      "date": "2026-04-29",
-      "equity": 1.170472,
-      "daily_return": 0.00286504,
-      "cumulative_return": 0.170472,
-      "drawdown": 0.0,
-      "topk_alpha": 0.09612875
-    },
-    {
       "date": "2026-04-30",
-      "equity": 1.184324,
-      "daily_return": 0.01183455,
-      "cumulative_return": 0.184324,
+      "equity": 1.0,
+      "daily_return": 0.0,
+      "cumulative_return": 0.0,
       "drawdown": 0.0,
-      "topk_alpha": 0.10578773
+      "nav": 3028238.38,
+      "total_market_value": 2694481.02,
+      "available_cash": 333757.36,
+      "position_count": 30,
+      "source": "real_portfolio"
     }
   ],
   "latest_signals": {

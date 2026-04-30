@@ -1,138 +1,14 @@
 [
   {
-    "date": "2026-04-03",
-    "equity": 1.022448,
-    "daily_return": 0.02244847,
-    "cumulative_return": 0.022448,
-    "drawdown": 0.0,
-    "topk_alpha": 0.1061204
-  },
-  {
-    "date": "2026-04-07",
-    "equity": 1.026088,
-    "daily_return": 0.00355954,
-    "cumulative_return": 0.026088,
-    "drawdown": 0.0,
-    "topk_alpha": 0.10285882
-  },
-  {
-    "date": "2026-04-08",
-    "equity": 1.022587,
-    "daily_return": -0.00341232,
-    "cumulative_return": 0.022587,
-    "drawdown": -0.003412,
-    "topk_alpha": 0.08877054
-  },
-  {
-    "date": "2026-04-09",
-    "equity": 1.03881,
-    "daily_return": 0.01586472,
-    "cumulative_return": 0.03881,
-    "drawdown": 0.0,
-    "topk_alpha": 0.08911819
-  },
-  {
-    "date": "2026-04-10",
-    "equity": 1.037379,
-    "daily_return": -0.00137754,
-    "cumulative_return": 0.037379,
-    "drawdown": -0.001378,
-    "topk_alpha": 0.0795518
-  },
-  {
-    "date": "2026-04-13",
-    "equity": 1.024528,
-    "daily_return": -0.01238758,
-    "cumulative_return": 0.024528,
-    "drawdown": -0.013748,
-    "topk_alpha": 0.07859309
-  },
-  {
-    "date": "2026-04-14",
-    "equity": 1.010039,
-    "daily_return": -0.01414234,
-    "cumulative_return": 0.010039,
-    "drawdown": -0.027696,
-    "topk_alpha": 0.07873157
-  },
-  {
-    "date": "2026-04-15",
-    "equity": 1.018991,
-    "daily_return": 0.00886338,
-    "cumulative_return": 0.018991,
-    "drawdown": -0.019078,
-    "topk_alpha": 0.1038342
-  },
-  {
-    "date": "2026-04-16",
-    "equity": 1.036723,
-    "daily_return": 0.01740137,
-    "cumulative_return": 0.036723,
-    "drawdown": -0.002009,
-    "topk_alpha": 0.10481474
-  },
-  {
-    "date": "2026-04-17",
-    "equity": 1.058968,
-    "daily_return": 0.02145673,
-    "cumulative_return": 0.058968,
-    "drawdown": 0.0,
-    "topk_alpha": 0.11555241
-  },
-  {
-    "date": "2026-04-20",
-    "equity": 1.078922,
-    "daily_return": 0.01884349,
-    "cumulative_return": 0.078922,
-    "drawdown": 0.0,
-    "topk_alpha": 0.12097836
-  },
-  {
-    "date": "2026-04-21",
-    "equity": 1.09971,
-    "daily_return": 0.01926719,
-    "cumulative_return": 0.09971,
-    "drawdown": 0.0,
-    "topk_alpha": 0.12615451
-  },
-  {
-    "date": "2026-04-22",
-    "equity": 1.124288,
-    "daily_return": 0.02234947,
-    "cumulative_return": 0.124288,
-    "drawdown": 0.0,
-    "topk_alpha": 0.11513696
-  },
-  {
-    "date": "2026-04-24",
-    "equity": 1.148469,
-    "daily_return": 0.02150765,
-    "cumulative_return": 0.148469,
-    "drawdown": 0.0,
-    "topk_alpha": 0.12012689
-  },
-  {
-    "date": "2026-04-27",
-    "equity": 1.167128,
-    "daily_return": 0.01624714,
-    "cumulative_return": 0.167128,
-    "drawdown": 0.0,
-    "topk_alpha": 0.11653373
-  },
-  {
-    "date": "2026-04-29",
-    "equity": 1.170472,
-    "daily_return": 0.00286504,
-    "cumulative_return": 0.170472,
-    "drawdown": 0.0,
-    "topk_alpha": 0.09612875
-  },
-  {
     "date": "2026-04-30",
-    "equity": 1.184324,
-    "daily_return": 0.01183455,
-    "cumulative_return": 0.184324,
+    "equity": 1.0,
+    "daily_return": 0.0,
+    "cumulative_return": 0.0,
     "drawdown": 0.0,
-    "topk_alpha": 0.10578773
+    "nav": 3028238.38,
+    "total_market_value": 2694481.02,
+    "available_cash": 333757.36,
+    "position_count": 30,
+    "source": "real_portfolio"
   }
 ]

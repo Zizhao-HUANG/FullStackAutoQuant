@@ -116,12 +116,24 @@ const Renderers = (() => {
       [conf, 'Confidence']
     ];
 
+    // Detect data source from equity curve
+    const ec = data.equity_curve || [];
+    const lastPt = ec.length > 0 ? ec[ec.length - 1] : {};
+    const isReal = lastPt.source === 'real_portfolio';
+    const sourceLabel = ec.length > 0 && isReal ? 'Portfolio' : 'Pending';
+    const sourceClass = ec.length > 0 && isReal ? 'source-real' : 'source-pending';
+
     el.innerHTML = items.map(([v, l]) => `
       <div class="metric-block">
         <div class="metric-block-value">${v}</div>
         <div class="metric-block-label">${l}</div>
       </div>
-    `).join('');
+    `).join('') + `
+      <div class="metric-block">
+        <div class="metric-block-value"><span class="${sourceClass}">${sourceLabel}</span></div>
+        <div class="metric-block-label">Data Source</div>
+      </div>
+    `;
   }
 
   /* ─── Pipeline ─── */
