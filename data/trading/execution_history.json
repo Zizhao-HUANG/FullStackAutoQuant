@@ -1223,5 +1223,103 @@
         "status": "SKIPPED_INSUFFICIENT_CASH"
       }
     ]
+  },
+  {
+    "date": "2026-04-30",
+    "order_count": 13,
+    "placed": true,
+    "orders": [
+      {
+        "symbol": "SZSE.002384",
+        "side": "SELL",
+        "volume": 100,
+        "price": 184.25,
+        "status": "SUBMITTED"
+      },
+      {
+        "symbol": "SZSE.300408",
+        "side": "SELL",
+        "volume": 1400,
+        "price": 82.01,
+        "status": "SUBMITTED"
+      },
+      {
+        "symbol": "SHSE.601100",
+        "side": "SELL",
+        "volume": 900,
+        "price": 104.71,
+        "status": "SUBMITTED"
+      },
+      {
+        "symbol": "SHSE.600176",
+        "side": "SELL",
+        "volume": 2900,
+        "price": 34.42,
+        "status": "SUBMITTED"
+      },
+      {
+        "symbol": "SHSE.601881",
+        "side": "SELL",
+        "volume": 7300,
+        "price": 12.75,
+        "status": "SUBMITTED"
+      },
+      {
+        "symbol": "SHSE.600015",
+        "side": "SELL",
+        "volume": 12700,
+        "price": 6.87,
+        "status": "SUBMITTED"
+      },
+      {
+        "symbol": "SZSE.002463",
+        "side": "BUY",
+        "volume": 900,
+        "price": 102.82,
+        "status": "SUBMITTED"
+      },
+      {
+        "symbol": "SHSE.600183",
+        "side": "BUY",
+        "volume": 1200,
+        "price": 76.7,
+        "status": "SUBMITTED"
+      },
+      {
+        "symbol": "SHSE.601138",
+        "side": "BUY",
+        "volume": 1400,
+        "price": 63.04,
+        "status": "SUBMITTED"
+      },
+      {
+        "symbol": "SHSE.601077",
+        "side": "BUY",
+        "volume": 12800,
+        "price": 7.31,
+        "status": "SUBMITTED"
+      },
+      {
+        "symbol": "SZSE.300502",
+        "side": "BUY",
+        "volume": 100,
+        "price": 527.1,
+        "status": "SUBMITTED"
+      },
+      {
+        "symbol": "SZSE.002916",
+        "side": "BUY",
+        "volume": 200,
+        "price": 313.3,
+        "status": "SUBMITTED"
+      },
+      {
+        "symbol": "SHSE.600875",
+        "side": "BUY",
+        "volume": 2300,
+        "price": 39.11,
+        "status": "SKIPPED_INSUFFICIENT_CASH"
+      }
+    ]
   }
 ]
