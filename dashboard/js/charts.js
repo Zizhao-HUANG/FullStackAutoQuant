@@ -58,10 +58,17 @@ const Charts = (() => {
                 const lines = [
                   `Cumulative  ${cumSign}${(d.cumulative_return * 100).toFixed(2)}%`,
                   `Daily       ${daySign}${(d.daily_return * 100).toFixed(2)}%`,
-                  `NAV          ${d.equity.toFixed(4)}`
                 ];
+                if (d.nav != null) {
+                  lines.push(`NAV          ¥${d.nav.toLocaleString()}`);
+                } else {
+                  lines.push(`NAV          ${d.equity.toFixed(4)}`);
+                }
                 if (d.topk_alpha != null) {
                   lines.push(`Top-K Alpha +${(d.topk_alpha * 100).toFixed(2)}%`);
+                }
+                if (d.position_count != null) {
+                  lines.push(`Positions    ${d.position_count}`);
                 }
                 return lines;
               }

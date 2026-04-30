@@ -1,13 +1,17 @@
 """Performance metrics computation and equity curve generation.
 
 Computes aggregated signal-quality metrics (Sharpe, IR, max drawdown, etc.)
-and builds a simulated equity curve from daily predicted scores.
+and builds an equity curve from daily data.
 
-Key design: Uses **universe-wide mean scores** (not top-K) for portfolio
-simulation metrics (Sharpe, win rate, max drawdown).  Universe mean scores
-naturally fluctuate between positive and negative values, producing
-realistic and daily-varying performance indicators.  Top-K metrics are
-still tracked for alpha signal characterisation.
+Key design:
+  - **Real portfolio data** (preferred): When GM Trade API position
+    snapshots are available (via ``portfolio.py``), the equity curve
+    and portfolio-level metrics (Sharpe, win rate, max drawdown) are
+    computed from actual daily NAV changes.
+  - **Fallback**: When no real data exists, uses universe-wide mean
+    prediction scores as a proxy.  This is clearly labeled as
+    ``source: simulated_signal`` in the output.
+  - Top-K metrics are always tracked for alpha signal characterisation.
 """
 
 from __future__ import annotations
@@ -108,32 +112,28 @@ def compute_performance(all_scores: list[DailyScores]) -> PerformanceSummary:
     topk_cumulative = float(np.sum(topk_arr))
     topk_annualized = topk_cumulative * (ANNUALIZATION_DAYS / max(n_days, 1))
 
-    # ── Portfolio simulation using universe-wide mean scores ──────
-    # Universe mean naturally goes positive/negative → realistic metrics
-    uni_mean = float(np.mean(universe_arr))
-    uni_std = float(np.std(universe_arr, ddof=1)) if n_days > 1 else 1e-9
+    # ── Portfolio metrics from real GM Trade API data only ──────────
+    from scripts.dashboard_export.portfolio import compute_real_performance
 
-    # Sharpe from universe returns (realistic range)
-    sharpe = (uni_mean - rf_daily) * np.sqrt(ANNUALIZATION_DAYS) / max(uni_std, 1e-9)
+    real_perf = compute_real_performance()
 
-    # Win rate from universe returns (not always 100%)
-    win_rate = float(np.mean(universe_arr > 0)) if n_days else 0.0
+    if real_perf is not None:
+        sharpe = real_perf["sharpe_ratio"]
+        win_rate = real_perf["win_rate"]
+        max_dd = real_perf["max_drawdown"]
+        cumulative_return = real_perf["cumulative_return"]
+        calmar = real_perf.get("calmar_ratio") or float("inf")
+        latest_daily_return = real_perf["latest_daily_return"]
+    else:
+        # No real portfolio data yet — show zeros, never fake it
+        sharpe = 0.0
+        win_rate = 0.0
+        max_dd = 0.0
+        cumulative_return = 0.0
+        calmar = 0.0
+        latest_daily_return = 0.0
 
-    # Max drawdown from universe cumulative returns
-    uni_cumsum = np.cumsum(universe_arr)
-    uni_peak = np.maximum.accumulate(uni_cumsum)
-    uni_drawdown = uni_cumsum - uni_peak
-    max_dd = float(np.min(uni_drawdown)) if len(uni_drawdown) else 0.0
-
-    # Cumulative return from universe equity curve
-    equity = 1.0
-    for ret in universe_arr:
-        equity *= (1.0 + ret)
-    cumulative_return = equity - 1.0
-
-    # Calmar ratio
-    uni_annualized = cumulative_return * (ANNUALIZATION_DAYS / max(n_days, 1))
-    calmar = uni_annualized / abs(max_dd) if max_dd < -1e-9 else float("inf")
+    uni_std_for_vol = float(np.std(universe_arr, ddof=1)) if n_days > 1 else 1e-9
 
     # ── Long-short spread metrics ─────────────────────────────────
     spread_mean = float(np.mean(spread_arr))
@@ -156,7 +156,7 @@ def compute_performance(all_scores: list[DailyScores]) -> PerformanceSummary:
         topk_mean_daily_score=round(topk_mean, 8),
         topk_cumulative_score=round(topk_cumulative, 6),
         topk_annualized_score=round(topk_annualized, 6),
-        topk_score_volatility=round(uni_std, 8),
+        topk_score_volatility=round(uni_std_for_vol, 8),
         topk_sharpe_ratio=round(float(sharpe), 4),
         topk_max_drawdown=round(max_dd, 6),
         topk_calmar_ratio=round(float(calmar), 4) if np.isfinite(calmar) else None,
@@ -166,7 +166,7 @@ def compute_performance(all_scores: list[DailyScores]) -> PerformanceSummary:
         avg_confidence=round(float(np.mean(daily_confidences)), 6),
         # Per-day values
         latest_topk_alpha=round(latest_topk_alpha, 8),
-        latest_daily_return=round(latest.mean_score, 8),
+        latest_daily_return=round(latest_daily_return, 8),
         latest_confidence=round(latest.mean_confidence, 6),
         latest_positive_ratio=round(latest_pos_ratio, 4),
         cumulative_return=round(cumulative_return, 6),
@@ -174,37 +174,16 @@ def compute_performance(all_scores: list[DailyScores]) -> PerformanceSummary:
 
 
 def build_equity_curve(all_scores: list[DailyScores]) -> list[dict[str, Any]]:
-    """Build a simulated equity curve from daily universe-wide mean scores.
+    """Build equity curve from real GM Trade API portfolio snapshots.
 
-    Uses universe mean (not top-K) as the daily return so the curve
-    realistically fluctuates — some days positive, some negative.
+    Returns actual daily NAV-based returns.  Each point includes nav,
+    total_market_value, and available_cash.
+
+    Returns an empty list if no portfolio snapshots are available yet.
     """
-    if not all_scores:
-        return []
+    from scripts.dashboard_export.portfolio import build_real_equity_curve
 
-    equity = 1.0
-    peak = 1.0
-    curve: list[dict[str, Any]] = []
-
-    for day in all_scores:
-        # Universe-wide mean score as daily return (can be negative)
-        daily_return = day.mean_score
-
-        # Also track today's top-K alpha for reference
-        top_k = [s["score"] for s in day.instruments[:TOP_K_DISPLAY]]
-        topk_alpha = float(np.mean(top_k)) if top_k else 0.0
-
-        equity *= (1.0 + daily_return)
-        peak = max(peak, equity)
-        dd = (equity / peak) - 1.0
-
-        curve.append({
-            "date": day.date,
-            "equity": round(equity, 6),
-            "daily_return": round(daily_return, 8),
-            "cumulative_return": round(equity - 1.0, 6),
-            "drawdown": round(dd, 6),
-            "topk_alpha": round(topk_alpha, 8),
-        })
-
+    curve = build_real_equity_curve()
+    for pt in curve:
+        pt["source"] = "real_portfolio"
     return curve
