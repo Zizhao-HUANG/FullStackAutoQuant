@@ -86,7 +86,7 @@ def main() -> int:
     performance = compute_performance(all_scores)
 
     # ── Step 3: Build equity curve ────────────────────────────────
-    log("3/7", "Building simulated equity curve")
+    log("3/7", "Building equity curve (real portfolio)")
     equity_curve = build_equity_curve(all_scores)
 
     # ── Step 4: Analyze confidence distribution ───────────────────

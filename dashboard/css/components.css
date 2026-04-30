@@ -653,3 +653,19 @@
 
 .risk-ok { color: var(--positive); }
 
+/* ─── Data source badges ─── */
+.source-real {
+  font-family: var(--font-mono);
+  font-size: clamp(11px, 1.4vw, 14px);
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: var(--positive, #22c55e);
+}
+
+.source-pending {
+  font-family: var(--font-mono);
+  font-size: clamp(11px, 1.4vw, 14px);
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: var(--grey-400, #9ca3af);
+}

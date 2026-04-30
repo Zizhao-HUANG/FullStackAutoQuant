@@ -64,6 +64,9 @@ dashboard/data/*.json
 dashboard/data/**/*.json
 !dashboard/data/meta/*.json
 
+# ----- Workflow Lock Files -----
+*.lock
+
 # ----- Misc -----
 *.tar.gz
 *.zip

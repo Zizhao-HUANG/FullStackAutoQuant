@@ -45,6 +45,22 @@ else
   bash "$SCRIPT_DIR/run_trading.sh" "${ARGS[@]}"
 fi
 
+# ── Phase 2.5: Portfolio Snapshot ────────────────────────────────
+# Capture real positions from GM Trade API for accurate equity curve.
+# Non-fatal: pipeline continues even if GM SDK is unavailable.
+if [[ "${SKIP_TRADING:-0}" == "1" ]] || [[ -z "${TRADE_ACCOUNTS:-}" ]]; then
+  log "[Phase 2.5] Portfolio snapshot — skipped (no trading)"
+else
+  log "[Phase 2.5] Snapshotting portfolio positions from GM"
+  CONFIG_ARGS=""
+  [[ -f "$CONFIG" ]] && CONFIG_ARGS="--config $CONFIG"
+  # Use the first account for position snapshot
+  FIRST_ACCOUNT=$(echo "${TRADE_ACCOUNTS}" | cut -d',' -f1)
+  python "$SCRIPT_DIR/snapshot_portfolio.py" --account-id "$FIRST_ACCOUNT" $CONFIG_ARGS || {
+    log "[Phase 2.5] Portfolio snapshot failed (non-fatal, continuing)"
+  }
+fi
+
 # ── Phase 3: Dashboard ──────────────────────────────────────────
 if [[ "${SKIP_DASHBOARD:-0}" == "1" ]]; then
   log "[Phase 3] Dashboard — skipped"
