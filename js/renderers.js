@@ -90,6 +90,10 @@ const Renderers = (() => {
     const cumRet = Number(p.cumulative_return || 0);
     const cumRetStr = (cumRet >= 0 ? '+' : '') + (cumRet * 100).toFixed(2) + '%';
 
+    // Annualized return (extrapolated from cumulative return over trading period)
+    const annRet = Number(p.annualized_return || 0);
+    const annRetStr = (annRet >= 0 ? '+' : '') + (annRet * 100).toFixed(2) + '%';
+
     // Sharpe — now computed from universe-wide returns (realistic range)
     const sharpe = Number(p.topk_sharpe_ratio || 0).toFixed(2);
 
@@ -109,6 +113,7 @@ const Renderers = (() => {
 
     const items = [
       [cumRetStr, 'Cumulative'],
+      [annRetStr, 'Annualized'],
       [sharpe, 'Sharpe'],
       [alphaStr, "Today's Alpha"],
       [winRate, 'Win Rate'],
