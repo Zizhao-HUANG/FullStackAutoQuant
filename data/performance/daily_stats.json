@@ -65,6 +65,27 @@
   {
     "date": "2026-04-09",
     "total_instruments": 300,
+    "positive_count": 156,
+    "negative_count": 144,
+    "positive_ratio": 0.52,
+    "mean_score": -0.00341232,
+    "median_score": 0.00331274,
+    "std_score": 0.05515184,
+    "score_spread_top_bottom": 0.32413458,
+    "top_k_mean_score": 0.08877054,
+    "top_k_mean_confidence": 0.976161,
+    "mean_confidence": 0.98246333,
+    "score_quantiles": {
+      "p5": -0.10442168,
+      "p25": -0.03388621,
+      "p50": 0.00331274,
+      "p75": 0.02974268,
+      "p95": 0.07885089
+    }
+  },
+  {
+    "date": "2026-04-10",
+    "total_instruments": 300,
     "positive_count": 218,
     "negative_count": 82,
     "positive_ratio": 0.7267,
@@ -84,7 +105,7 @@
     }
   },
   {
-    "date": "2026-04-10",
+    "date": "2026-04-13",
     "total_instruments": 300,
     "positive_count": 155,
     "negative_count": 145,
@@ -105,7 +126,7 @@
     }
   },
   {
-    "date": "2026-04-13",
+    "date": "2026-04-14",
     "total_instruments": 300,
     "positive_count": 116,
     "negative_count": 184,
@@ -126,7 +147,7 @@
     }
   },
   {
-    "date": "2026-04-14",
+    "date": "2026-04-15",
     "total_instruments": 300,
     "positive_count": 113,
     "negative_count": 187,
@@ -147,7 +168,7 @@
     }
   },
   {
-    "date": "2026-04-15",
+    "date": "2026-04-16",
     "total_instruments": 300,
     "positive_count": 168,
     "negative_count": 132,
@@ -168,7 +189,7 @@
     }
   },
   {
-    "date": "2026-04-16",
+    "date": "2026-04-17",
     "total_instruments": 300,
     "positive_count": 194,
     "negative_count": 106,
@@ -189,7 +210,7 @@
     }
   },
   {
-    "date": "2026-04-17",
+    "date": "2026-04-20",
     "total_instruments": 300,
     "positive_count": 204,
     "negative_count": 96,
@@ -210,7 +231,7 @@
     }
   },
   {
-    "date": "2026-04-20",
+    "date": "2026-04-21",
     "total_instruments": 299,
     "positive_count": 190,
     "negative_count": 109,
@@ -231,7 +252,7 @@
     }
   },
   {
-    "date": "2026-04-21",
+    "date": "2026-04-22",
     "total_instruments": 299,
     "positive_count": 183,
     "negative_count": 116,
@@ -252,7 +273,7 @@
     }
   },
   {
-    "date": "2026-04-22",
+    "date": "2026-04-23",
     "total_instruments": 299,
     "positive_count": 201,
     "negative_count": 98,
@@ -295,6 +316,27 @@
   },
   {
     "date": "2026-04-27",
+    "total_instruments": 299,
+    "positive_count": 201,
+    "negative_count": 98,
+    "positive_ratio": 0.6722,
+    "mean_score": 0.02150765,
+    "median_score": 0.0227839,
+    "std_score": 0.05781874,
+    "score_spread_top_bottom": 0.34655405,
+    "top_k_mean_score": 0.12012689,
+    "top_k_mean_confidence": 0.973981,
+    "mean_confidence": 0.98102732,
+    "score_quantiles": {
+      "p5": -0.07816416,
+      "p25": -0.00993956,
+      "p50": 0.0227839,
+      "p75": 0.06010876,
+      "p95": 0.11149522
+    }
+  },
+  {
+    "date": "2026-04-28",
     "total_instruments": 299,
     "positive_count": 198,
     "negative_count": 101,
@@ -348,6 +390,27 @@
     "top_k_mean_score": 0.10578773,
     "top_k_mean_confidence": 0.976492,
     "mean_confidence": 0.98199373,
+    "score_quantiles": {
+      "p5": -0.08389826,
+      "p25": -0.017382,
+      "p50": 0.01320604,
+      "p75": 0.04594073,
+      "p95": 0.09819776
+    }
+  },
+  {
+    "date": "2026-05-01",
+    "total_instruments": 299,
+    "positive_count": 180,
+    "negative_count": 119,
+    "positive_ratio": 0.602,
+    "mean_score": 0.01183455,
+    "median_score": 0.01320604,
+    "std_score": 0.0547387,
+    "score_spread_top_bottom": 0.31694266,
+    "top_k_mean_score": 0.10578773,
+    "top_k_mean_confidence": 0.975634,
+    "mean_confidence": 0.98172905,
     "score_quantiles": {
       "p5": -0.08389826,
       "p25": -0.017382,

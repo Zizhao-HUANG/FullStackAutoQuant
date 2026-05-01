@@ -1,9 +1,9 @@
 [
   {
     "date": "2026-04-30",
-    "equity": 1.0,
-    "daily_return": 0.0,
-    "cumulative_return": 0.0,
+    "equity": 1.009413,
+    "daily_return": 0.00941279,
+    "cumulative_return": 0.009413,
     "drawdown": 0.0,
     "nav": 3028238.38,
     "total_market_value": 2694481.02,
@@ -13,9 +13,9 @@
   },
   {
     "date": "2026-05-01",
-    "equity": 0.993467,
+    "equity": 1.002818,
     "daily_return": -0.00653299,
-    "cumulative_return": -0.006533,
+    "cumulative_return": 0.002818,
     "drawdown": -0.006533,
     "nav": 3008454.93,
     "total_market_value": 2646885.02,
