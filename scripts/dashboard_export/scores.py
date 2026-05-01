@@ -58,8 +58,17 @@ def _collect_score_csvs() -> list[Path]:
     return sorted(unique, key=lambda p: p.stem)
 
 
-def _parse_scores_csv(csv_path: Path) -> DailyScores | None:
-    """Parse a single ranked_scores CSV into a DailyScores object."""
+def _parse_scores_csv(csv_path: Path, override_date: str | None = None) -> DailyScores | None:
+    """Parse a single ranked_scores CSV into a DailyScores object.
+
+    Args:
+        csv_path: Path to the ranked_scores CSV file.
+        override_date: If provided, use this as the signal/trading date
+            instead of the CSV content datetime column.  The CSV content
+            date is the data observation date (T-1), while the filename
+            date from ``push_csv_to_repo.sh`` is the actual pipeline run /
+            trading day (T).
+    """
     try:
         df = pd.read_csv(csv_path)
     except Exception as exc:
@@ -73,7 +82,9 @@ def _parse_scores_csv(csv_path: Path) -> DailyScores | None:
     score_col = "0" if "0" in df.columns else df.columns[2]
     conf_col = "confidence" if "confidence" in df.columns else None
 
-    date_str = str(df["datetime"].iloc[0])
+    # Use override_date (filename-based trading date) when available,
+    # falling back to the CSV content date.
+    date_str = override_date or str(df["datetime"].iloc[0])
     scores = df[score_col].astype(float)
     instruments_data: list[dict[str, Any]] = []
 
@@ -111,7 +122,12 @@ def _parse_scores_csv(csv_path: Path) -> DailyScores | None:
 
 
 def collect_and_parse_scores() -> list[DailyScores]:
-    """Collect all CSVs, parse, deduplicate by content date, return sorted list.
+    """Collect all CSVs, parse, deduplicate by trading date, return sorted list.
+
+    The filename date (from ``push_csv_to_repo.sh``) represents the actual
+    trading day when the pipeline ran.  The CSV content datetime column
+    contains the data observation date (typically T-1).  We use the filename
+    date as the canonical signal date for display.
 
     Returns:
         Sorted list of DailyScores (ascending by date), empty if no data found.
@@ -123,13 +139,15 @@ def collect_and_parse_scores() -> list[DailyScores]:
 
     log("1/7", f"Found {len(csv_files)} CSV files")
     all_scores: list[DailyScores] = []
-    seen_content_dates: set[str] = set()
+    seen_dates: set[str] = set()
     for csv_path in csv_files:
-        parsed = _parse_scores_csv(csv_path)
-        if parsed and parsed.date not in seen_content_dates:
-            seen_content_dates.add(parsed.date)
+        # Extract the trading date from filename (e.g. ranked_scores_2026-05-01.csv → 2026-05-01)
+        filename_date = csv_path.stem.replace("ranked_scores_", "")
+        parsed = _parse_scores_csv(csv_path, override_date=filename_date)
+        if parsed and parsed.date not in seen_dates:
+            seen_dates.add(parsed.date)
             all_scores.append(parsed)
-    # Sort by content date (not filename)
+    # Sort by trading date
     all_scores.sort(key=lambda s: s.date)
     log("1/7", f"Parsed {len(all_scores)} unique trading days")
     return all_scores
