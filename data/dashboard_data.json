@@ -1,17 +1,17 @@
 {
   "_meta": {
-    "generated_at": "2026-05-01T14:16:30Z",
+    "generated_at": "2026-05-01T14:24:41Z",
     "generator": "scripts/export_dashboard_data.py",
     "version": "1.0.0",
     "description": "FullStackAutoQuant Dashboard — comprehensive dataset for live visualization"
   },
   "system_health": {
     "status": "operational",
-    "total_inference_days": 2,
-    "first_inference_date": "2026-04-30",
+    "total_inference_days": 20,
+    "first_inference_date": "2026-04-03",
     "last_inference_date": "2026-05-01",
     "last_updated_iso": "2026-05-01T00:00:00",
-    "hours_since_last_run": 14.3,
+    "hours_since_last_run": 14.4,
     "pipeline_components": [
       "Tushare Data Fetch (CSI300, ~200 trading days)",
       "Qlib Export → daily_pv.h5",
@@ -223,6 +223,18 @@
     "cumulative_return": 0.002818
   },
   "equity_curve": [
+    {
+      "date": "2026-04-03",
+      "equity": 1.0,
+      "daily_return": 0.0,
+      "cumulative_return": 0.0,
+      "drawdown": 0.0,
+      "nav": 3000000.0,
+      "total_market_value": 0.0,
+      "available_cash": 3000000.0,
+      "position_count": 0,
+      "source": "baseline"
+    },
     {
       "date": "2026-04-30",
       "equity": 1.009413,

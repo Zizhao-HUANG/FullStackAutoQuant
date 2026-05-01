@@ -1,5 +1,17 @@
 [
   {
+    "date": "2026-04-03",
+    "equity": 1.0,
+    "daily_return": 0.0,
+    "cumulative_return": 0.0,
+    "drawdown": 0.0,
+    "nav": 3000000.0,
+    "total_market_value": 0.0,
+    "available_cash": 3000000.0,
+    "position_count": 0,
+    "source": "baseline"
+  },
+  {
     "date": "2026-04-30",
     "equity": 1.009413,
     "daily_return": 0.00941279,
