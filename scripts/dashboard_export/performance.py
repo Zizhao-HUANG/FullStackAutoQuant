@@ -56,6 +56,7 @@ class PerformanceSummary:
     latest_confidence: float
     latest_positive_ratio: float
     cumulative_return: float
+    annualized_return: float
 
 
 def compute_performance(all_scores: list[DailyScores]) -> PerformanceSummary:
@@ -75,7 +76,7 @@ def compute_performance(all_scores: list[DailyScores]) -> PerformanceSummary:
             mean_spread_top_bottom=0, mean_positive_ratio=0, avg_confidence=0,
             latest_topk_alpha=0, latest_daily_return=0,
             latest_confidence=0, latest_positive_ratio=0,
-            cumulative_return=0,
+            cumulative_return=0, annualized_return=0,
         )
 
     n_days = len(all_scores)
@@ -124,12 +125,19 @@ def compute_performance(all_scores: list[DailyScores]) -> PerformanceSummary:
         cumulative_return = real_perf["cumulative_return"]
         calmar = real_perf.get("calmar_ratio") or float("inf")
         latest_daily_return = real_perf["latest_daily_return"]
+        # Re-annualize using actual trading days (n_days from all_scores),
+        # not snapshot count.  The cumulative_return from real portfolio NAV
+        # already reflects all trading days, but compute_real_performance()
+        # only knows about the number of snapshots (which may be fewer than
+        # the actual trading days if snapshotting was added mid-way).
+        annualized_return = cumulative_return * (ANNUALIZATION_DAYS / max(n_days, 1))
     else:
         # No real portfolio data yet — show zeros, never fake it
         sharpe = 0.0
         win_rate = 0.0
         max_dd = 0.0
         cumulative_return = 0.0
+        annualized_return = 0.0
         calmar = 0.0
         latest_daily_return = 0.0
 
@@ -170,6 +178,7 @@ def compute_performance(all_scores: list[DailyScores]) -> PerformanceSummary:
         latest_confidence=round(latest.mean_confidence, 6),
         latest_positive_ratio=round(latest_pos_ratio, 4),
         cumulative_return=round(cumulative_return, 6),
+        annualized_return=round(annualized_return, 6),
     )
 
 
@@ -179,11 +188,42 @@ def build_equity_curve(all_scores: list[DailyScores]) -> list[dict[str, Any]]:
     Returns actual daily NAV-based returns.  Each point includes nav,
     total_market_value, and available_cash.
 
+    A synthetic baseline point is prepended at the configured initial
+    capital (from ``configs/trading.yaml``) on the system start date, so
+    that the equity curve always begins at equity=1.0 / return=0%.  This
+    avoids the confusing situation where Day 0 already shows a gain
+    (e.g. because the first snapshot's NAV already includes accumulated
+    returns from before the snapshot period began).
+
     Returns an empty list if no portfolio snapshots are available yet.
     """
-    from scripts.dashboard_export.portfolio import build_real_equity_curve
+    from scripts.dashboard_export.portfolio import (
+        _get_configured_initial_capital,
+        build_real_equity_curve,
+    )
 
     curve = build_real_equity_curve()
     for pt in curve:
         pt["source"] = "real_portfolio"
+
+    # Prepend baseline point at initial capital on the system start date
+    capital = _get_configured_initial_capital() or 3_000_000.0
+    if all_scores:
+        start_date = all_scores[0].date
+        # Only prepend if the baseline date is before the first real data point
+        if not curve or start_date < curve[0]["date"]:
+            baseline = {
+                "date": start_date,
+                "equity": 1.0,
+                "daily_return": 0.0,
+                "cumulative_return": 0.0,
+                "drawdown": 0.0,
+                "nav": capital,
+                "total_market_value": 0.0,
+                "available_cash": capital,
+                "position_count": 0,
+                "source": "baseline",
+            }
+            curve.insert(0, baseline)
+
     return curve

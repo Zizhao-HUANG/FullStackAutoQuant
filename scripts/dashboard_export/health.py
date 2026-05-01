@@ -16,7 +16,13 @@ from scripts.dashboard_export.scores import DailyScores
 
 
 def build_system_health(all_scores: list[DailyScores]) -> dict[str, Any]:
-    """Build system health / operational status."""
+    """Build system health / operational status.
+
+    When real portfolio snapshots exist (from GM Trade API), uses their
+    count for ``total_inference_days`` instead of counting all historical
+    score CSVs.  This correctly reflects a portfolio reset — old score
+    CSVs remain in history/ but the day counter starts fresh.
+    """
     if not all_scores:
         return {"status": "no_data", "uptime_days": 0}
 

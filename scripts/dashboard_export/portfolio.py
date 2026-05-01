@@ -25,6 +25,26 @@ from typing import Any
 from scripts.dashboard_export.constants import REPO_ROOT, log
 
 SNAPSHOT_FILE = REPO_ROOT / "output" / "history" / "portfolio_snapshots.json"
+TRADING_CONFIG_FILE = REPO_ROOT / "configs" / "trading.yaml"
+
+
+def _get_configured_initial_capital() -> float | None:
+    """Read ``capital.initial`` from ``configs/trading.yaml``.
+
+    Returns the configured initial capital (e.g. 3_000_000) or None if
+    the config file is missing or the key is absent.
+    """
+    if not TRADING_CONFIG_FILE.exists():
+        return None
+    try:
+        import yaml  # noqa: F811
+
+        with open(TRADING_CONFIG_FILE, encoding="utf-8") as f:
+            cfg = yaml.safe_load(f)
+        val = cfg.get("capital", {}).get("initial")
+        return float(val) if val is not None else None
+    except Exception:
+        return None
 
 
 def _load_snapshots() -> list[dict[str, Any]]:
@@ -217,9 +237,12 @@ def build_real_equity_curve(
     true daily returns and cumulative performance.
 
     Args:
-        initial_capital: If provided, used as the baseline NAV for day-1
-            return calculation. Otherwise the first snapshot's NAV is
-            used as the starting point (day-1 return = 0).
+        initial_capital: Baseline NAV for return calculation.  When None
+            (default), automatically reads ``capital.initial`` from
+            ``configs/trading.yaml`` (e.g. 3,000,000).  This ensures the
+            equity curve reflects returns relative to the *actual* starting
+            capital, not the first snapshot's NAV which may already include
+            accumulated gains from before a portfolio reset.
 
     Returns:
         List of equity curve points compatible with the dashboard format:
@@ -230,8 +253,13 @@ def build_real_equity_curve(
     if not snapshots:
         return []
 
+    # Resolve baseline capital: explicit arg → trading config → first snapshot NAV
+    if initial_capital is None:
+        initial_capital = _get_configured_initial_capital()
+    base_nav = initial_capital if initial_capital and initial_capital > 0 else snapshots[0].get("nav", 0)
+
     curve: list[dict[str, Any]] = []
-    prev_nav: float | None = initial_capital
+    prev_nav: float | None = initial_capital or base_nav
     peak = 0.0
 
     for snap in snapshots:
@@ -244,7 +272,6 @@ def build_real_equity_curve(
         else:
             daily_return = 0.0
 
-        base_nav = initial_capital if initial_capital and initial_capital > 0 else snapshots[0].get("nav", nav)
         if base_nav <= 0:
             base_nav = nav
         equity = nav / base_nav
@@ -275,12 +302,20 @@ def compute_real_performance(
 ) -> dict[str, Any] | None:
     """Compute performance metrics from real portfolio snapshots.
 
+    Args:
+        initial_capital: Baseline capital for return calculation.  When
+            None, auto-reads from ``configs/trading.yaml``.
+
     Returns a dict with keys matching PerformanceSummary fields,
     or None if no snapshot data is available.
     """
     import numpy as np
 
     from scripts.dashboard_export.constants import ANNUALIZATION_DAYS, RISK_FREE_ANNUAL
+
+    # Resolve initial capital: explicit arg → trading config
+    if initial_capital is None:
+        initial_capital = _get_configured_initial_capital()
 
     curve = build_real_equity_curve(initial_capital)
     if len(curve) < 2:
