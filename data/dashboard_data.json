@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generated_at": "2026-04-30T19:12:43Z",
+    "generated_at": "2026-05-01T09:33:56Z",
     "generator": "scripts/export_dashboard_data.py",
     "version": "1.0.0",
     "description": "FullStackAutoQuant Dashboard — comprehensive dataset for live visualization"
@@ -11,7 +11,7 @@
     "first_inference_date": "2026-04-03",
     "last_inference_date": "2026-04-30",
     "last_updated_iso": "2026-04-30T00:00:00",
-    "hours_since_last_run": 19.2,
+    "hours_since_last_run": 33.6,
     "pipeline_components": [
       "Tushare Data Fetch (CSI300, ~200 trading days)",
       "Qlib Export → daily_pv.h5",
