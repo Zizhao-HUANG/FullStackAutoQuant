@@ -430,8 +430,8 @@
     "std_score": 0.0547387,
     "score_spread_top_bottom": 0.31694266,
     "top_k_mean_score": 0.10578773,
-    "top_k_mean_confidence": 0.977007,
-    "mean_confidence": 0.98163495,
+    "top_k_mean_confidence": 0.975836,
+    "mean_confidence": 0.98177475,
     "score_quantiles": {
       "p5": -0.08389826,
       "p25": -0.017382,

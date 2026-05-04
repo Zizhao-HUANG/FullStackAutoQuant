@@ -15,10 +15,10 @@
   "topk_win_rate": 0.5,
   "mean_spread_top_bottom": 0.19484475,
   "mean_positive_ratio": 0.5931,
-  "avg_confidence": 0.981742,
+  "avg_confidence": 0.981749,
   "latest_topk_alpha": 0.10578773,
   "latest_daily_return": -0.00653299,
-  "latest_confidence": 0.981635,
+  "latest_confidence": 0.981775,
   "latest_positive_ratio": 0.602,
   "cumulative_return": 0.002818,
   "annualized_return": 0.033816
