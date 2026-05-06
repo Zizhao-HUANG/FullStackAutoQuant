@@ -1321,5 +1321,96 @@
         "status": "SKIPPED_INSUFFICIENT_CASH"
       }
     ]
+  },
+  {
+    "date": "2026-05-06",
+    "order_count": 12,
+    "placed": true,
+    "orders": [
+      {
+        "symbol": "SHSE.688169",
+        "side": "SELL",
+        "volume": 800,
+        "price": 115.8,
+        "status": "SUBMITTED"
+      },
+      {
+        "symbol": "SHSE.600176",
+        "side": "SELL",
+        "volume": 2900,
+        "price": 34.5,
+        "status": "SUBMITTED"
+      },
+      {
+        "symbol": "SZSE.300782",
+        "side": "SELL",
+        "volume": 900,
+        "price": 99.62,
+        "status": "SUBMITTED"
+      },
+      {
+        "symbol": "SZSE.300347",
+        "side": "SELL",
+        "volume": 1600,
+        "price": 53.84,
+        "status": "SUBMITTED"
+      },
+      {
+        "symbol": "SZSE.000630",
+        "side": "SELL",
+        "volume": 14700,
+        "price": 6.15,
+        "status": "SUBMITTED"
+      },
+      {
+        "symbol": "SZSE.002475",
+        "side": "BUY",
+        "volume": 1300,
+        "price": 67.24,
+        "status": "SUBMITTED"
+      },
+      {
+        "symbol": "SHSE.600893",
+        "side": "BUY",
+        "volume": 1900,
+        "price": 46.96,
+        "status": "SUBMITTED"
+      },
+      {
+        "symbol": "SZSE.000938",
+        "side": "BUY",
+        "volume": 2900,
+        "price": 31.93,
+        "status": "SUBMITTED"
+      },
+      {
+        "symbol": "SHSE.601077",
+        "side": "BUY",
+        "volume": 12800,
+        "price": 7.28,
+        "status": "SUBMITTED"
+      },
+      {
+        "symbol": "SZSE.002625",
+        "side": "BUY",
+        "volume": 2300,
+        "price": 40.18,
+        "status": "SUBMITTED"
+      },
+      {
+        "symbol": "SZSE.003816",
+        "side": "BUY",
+        "volume": 20200,
+        "price": 4.61,
+        "status": "SKIPPED_INSUFFICIENT_CASH"
+      },
+      {
+        "symbol": "SHSE.603893",
+        "side": "BUY",
+        "volume": 500,
+        "price": 181.91,
+        "status": "SKIPPED_INSUFFICIENT_CASH"
+      }
+    ]
   }
 ]
