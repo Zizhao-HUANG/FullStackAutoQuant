@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generated_at": "2026-05-08T09:35:20Z",
+    "generated_at": "2026-05-08T16:26:37Z",
     "generator": "scripts/export_dashboard_data.py",
     "version": "1.0.0",
     "description": "FullStackAutoQuant Dashboard — comprehensive dataset for live visualization"
@@ -11,7 +11,7 @@
     "first_inference_date": "2026-04-03",
     "last_inference_date": "2026-05-08",
     "last_updated_iso": "2026-05-08T00:00:00",
-    "hours_since_last_run": 9.6,
+    "hours_since_last_run": 16.4,
     "pipeline_components": [
       "Tushare Data Fetch (CSI300, ~200 trading days)",
       "Qlib Export → daily_pv.h5",
@@ -209,10 +209,10 @@
     "topk_cumulative_score": 2.007829,
     "topk_annualized_score": 25.29865,
     "topk_score_volatility": 0.01161317,
-    "topk_sharpe_ratio": 2.4633,
-    "topk_max_drawdown": -0.009876,
-    "topk_calmar_ratio": 30.6451,
-    "topk_win_rate": 0.4286,
+    "topk_sharpe_ratio": 4.8252,
+    "topk_max_drawdown": -0.006658,
+    "topk_calmar_ratio": 79.5493,
+    "topk_win_rate": 0.75,
     "mean_spread_top_bottom": 0.19329784,
     "mean_positive_ratio": 0.5848,
     "avg_confidence": 0.981829,
@@ -249,45 +249,9 @@
       "source": "real_portfolio"
     },
     {
-      "date": "2026-05-01",
-      "equity": 1.002818,
-      "daily_return": -0.00653299,
-      "cumulative_return": 0.002818,
-      "drawdown": -0.006533,
-      "nav": 3008454.93,
-      "total_market_value": 2646885.02,
-      "available_cash": 361569.92,
-      "position_count": 30,
-      "source": "real_portfolio"
-    },
-    {
-      "date": "2026-05-04",
-      "equity": 1.00033,
-      "daily_return": -0.00248171,
-      "cumulative_return": 0.00033,
-      "drawdown": -0.008998,
-      "nav": 3000988.83,
-      "total_market_value": 2619005.02,
-      "available_cash": 381983.82,
-      "position_count": 30,
-      "source": "real_portfolio"
-    },
-    {
-      "date": "2026-05-05",
-      "equity": 0.999444,
-      "daily_return": -0.00088484,
-      "cumulative_return": -0.000556,
-      "drawdown": -0.009875,
-      "nav": 2998333.43,
-      "total_market_value": 2624895.02,
-      "available_cash": 373438.41,
-      "position_count": 30,
-      "source": "real_portfolio"
-    },
-    {
       "date": "2026-05-06",
       "equity": 1.011083,
-      "daily_return": 0.01164492,
+      "daily_return": 0.00165456,
       "cumulative_return": 0.011083,
       "drawdown": 0.0,
       "nav": 3033248.78,
