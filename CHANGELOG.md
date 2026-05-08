@@ -11,7 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 * Tushare data provider (`tushare_provider.py`) with incremental fetch, parallel adj_factor, and local constituent cache
 * Normalizer parameter caching: 44 cached scalars replace 5 GB of historical data for production inference
 * `load_model()` function with automatic format detection (state_dict, pickle, checkpoint) and CUDA to CPU remapping
-* Lite pipeline scripts: `run_daily_lite.py`, `run_lite_workflow.sh`, `build_full_history.py`
+* Lite pipeline scripts: `run_inference_lite.py`, `run_inference.sh`, `build_full_history.py`
 * Comprehensive test suite: 300+ tests covering Tushare provider, norm cache, pipeline integration, output stability, and backward adjustment
 
 ### Fixed

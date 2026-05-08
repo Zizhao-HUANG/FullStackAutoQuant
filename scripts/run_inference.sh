@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # FullStackAutoQuant — Lite Inference Workflow (Tushare-based)
-# Lightweight alternative to run_full_workflow.sh: no Docker/Dolt needed.
+# Lightweight alternative to run_inference_docker.sh: no Docker/Dolt needed.
 # Runs: Tushare Fetch → Export → Verify → Factor Synthesis → Inference → Push → Deploy
 set -euo pipefail
 

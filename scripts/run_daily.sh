@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Full Pipeline: Inference → Trading (multi-account)
-# Chains run_lite_workflow.sh + run_trading.sh
+# Daily Pipeline: Inference → Trading → Dashboard (multi-account)
+# Chains run_inference.sh + run_trading.sh
 #
 # Env vars (set in .env, which is gitignored):
 #   TUSHARE          — Tushare API token (required)
@@ -28,7 +28,7 @@ if [[ "${SKIP_INFERENCE:-0}" == "1" ]]; then
   [[ ! -f "$CSV" ]] && { log "ERROR: $CSV not found"; exit 1; }
 else
   log "[Phase 1] Inference"
-  bash "$SCRIPT_DIR/run_lite_workflow.sh"
+  bash "$SCRIPT_DIR/run_inference.sh"
 fi
 
 # ── Phase 2: Trading ────────────────────────────────────────────

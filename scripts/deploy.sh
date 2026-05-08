@@ -150,7 +150,7 @@ do_run() {
     . .venv/bin/activate
     export TUSHARE='${TUSHARE_TOKEN}'
     mkdir -p output
-    bash scripts/run_lite_workflow.sh
+    bash scripts/run_inference.sh
   "
   ok "Workflow complete!"
 

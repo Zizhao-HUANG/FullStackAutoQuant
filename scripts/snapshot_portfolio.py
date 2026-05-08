@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Snapshot current portfolio positions from GM Trade API.
 
-Called by the daily pipeline (run_full_pipeline.sh) to capture a daily
+Called by the daily pipeline (run_daily.sh) to capture a daily
 snapshot of real portfolio holdings. This enables the dashboard to show
 actual portfolio returns instead of simulated ones.
 
