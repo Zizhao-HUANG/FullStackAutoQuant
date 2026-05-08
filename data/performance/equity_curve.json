@@ -9,7 +9,8 @@
     "total_market_value": 0.0,
     "available_cash": 3000000.0,
     "position_count": 0,
-    "source": "baseline"
+    "source": "baseline",
+    "benchmark_return": 0.0
   },
   {
     "date": "2026-04-30",
@@ -21,7 +22,8 @@
     "total_market_value": 2694481.02,
     "available_cash": 333757.36,
     "position_count": 30,
-    "source": "real_portfolio"
+    "source": "real_portfolio",
+    "benchmark_return": 0.082534
   },
   {
     "date": "2026-05-06",
@@ -33,7 +35,8 @@
     "total_market_value": 2662386.99,
     "available_cash": 370861.79,
     "position_count": 30,
-    "source": "real_portfolio"
+    "source": "real_portfolio",
+    "benchmark_return": 0.098249
   },
   {
     "date": "2026-05-07",
@@ -45,7 +48,8 @@
     "total_market_value": 2748339.0,
     "available_cash": 297159.75,
     "position_count": 30,
-    "source": "real_portfolio"
+    "source": "real_portfolio",
+    "benchmark_return": 0.103522
   },
   {
     "date": "2026-05-08",
@@ -57,6 +61,7 @@
     "total_market_value": 2724751.0,
     "available_cash": 300469.69,
     "position_count": 30,
-    "source": "real_portfolio"
+    "source": "real_portfolio",
+    "benchmark_return": 0.097083
   }
 ]
