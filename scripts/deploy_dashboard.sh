@@ -37,7 +37,7 @@ if [[ "${SKIP_EXPORT:-0}" == "1" ]]; then
 else
   log "Exporting dashboard JSON data..."
 
-  # Activate conda if available (same as run_lite_workflow.sh)
+  # Activate conda if available (same as run_inference.sh)
   if command -v conda >/dev/null 2>&1; then
     set +u
     eval "$(conda shell.bash hook)" >/dev/null 2>&1 || true
@@ -85,16 +85,15 @@ if git diff --quiet && git diff --cached --quiet && [[ -z "$(git ls-files --othe
 fi
 
 # Stage, commit, push
-TODAY=$(date +'%Y-%m-%d')
 DATA_DATE="unknown"
 if command -v python3 >/dev/null 2>&1; then
   DATA_DATE=$(python3 -c "
 import json, sys
 try:
     d = json.load(open('data/dashboard_data.json'))
-    print(d.get('signals',{}).get('date','$TODAY'))
-except: print('$TODAY')
-" 2>/dev/null || echo "$TODAY")
+    print(d.get('latest_signals',{}).get('date','unknown'))
+except: print('unknown')
+" 2>/dev/null || echo "unknown")
 fi
 
 git add -A

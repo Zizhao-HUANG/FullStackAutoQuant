@@ -119,7 +119,7 @@ The Lite Pipeline uses Tushare to fetch recent market data, then runs factor syn
 
 ```bash
 export TUSHARE=<your_tushare_token>
-python scripts/run_daily_lite.py --date auto
+python scripts/run_inference_lite.py --date auto
 ```
 
 Output: `output/ranked_scores.csv`. Requires a [Tushare Pro](https://tushare.pro/register) account (2000+ points) and pretrained weights in `weights/`.
@@ -185,7 +185,7 @@ FullStackAutoQuant/
 ├── weights/               # Model weights (pretrained)
 ├── tests/                 # Test suite (300+ tests)
 ├── scripts/               # Utility scripts
-│   ├── run_daily_lite.py      # Single command daily inference
+│   ├── run_inference_lite.py   # Single command daily inference
 │   ├── extract_norm_cache.py  # One time normalizer extraction
 │   └── build_full_history.py  # Full history builder
 └── docs/                  # Documentation

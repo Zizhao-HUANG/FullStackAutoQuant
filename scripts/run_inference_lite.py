@@ -3,7 +3,7 @@
 
 Replaces the entire Docker/Dolt pipeline with a single command:
 
-    python scripts/run_daily_lite.py --date auto
+    python scripts/run_inference_lite.py --date auto
 
 Steps:
   1. Fetch ~200 trading days from Tushare → minimal Qlib binary (~3 MB)
