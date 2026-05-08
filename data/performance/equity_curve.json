@@ -1,67 +1,54 @@
 [
   {
-    "date": "2026-04-03",
+    "date": "2026-04-30",
     "equity": 1.0,
     "daily_return": 0.0,
     "cumulative_return": 0.0,
-    "drawdown": 0.0,
-    "nav": 3000000.0,
-    "total_market_value": 0.0,
-    "available_cash": 3000000.0,
-    "position_count": 0,
-    "source": "baseline",
-    "benchmark_return": 0.0
-  },
-  {
-    "date": "2026-04-30",
-    "equity": 1.009413,
-    "daily_return": 0.00941279,
-    "cumulative_return": 0.009413,
     "drawdown": 0.0,
     "nav": 3028238.38,
     "total_market_value": 2694481.02,
     "available_cash": 333757.36,
     "position_count": 30,
     "source": "real_portfolio",
-    "benchmark_return": 0.082534
+    "benchmark_return": 0.0
   },
   {
     "date": "2026-05-06",
-    "equity": 1.011083,
+    "equity": 1.001654,
     "daily_return": 0.00165456,
-    "cumulative_return": 0.011083,
+    "cumulative_return": 0.001654,
     "drawdown": 0.0,
     "nav": 3033248.78,
     "total_market_value": 2662386.99,
     "available_cash": 370861.79,
     "position_count": 30,
     "source": "real_portfolio",
-    "benchmark_return": 0.098249
+    "benchmark_return": 0.014517
   },
   {
     "date": "2026-05-07",
-    "equity": 1.015166,
+    "equity": 1.005699,
     "daily_return": 0.00403856,
-    "cumulative_return": 0.015166,
+    "cumulative_return": 0.005699,
     "drawdown": 0.0,
     "nav": 3045498.75,
     "total_market_value": 2748339.0,
     "available_cash": 297159.75,
     "position_count": 30,
     "source": "real_portfolio",
-    "benchmark_return": 0.103522
+    "benchmark_return": 0.019388
   },
   {
     "date": "2026-05-08",
-    "equity": 1.008407,
+    "equity": 0.999003,
     "daily_return": -0.00665837,
-    "cumulative_return": 0.008407,
+    "cumulative_return": -0.000997,
     "drawdown": -0.006658,
     "nav": 3025220.7,
     "total_market_value": 2724751.0,
     "available_cash": 300469.69,
     "position_count": 30,
     "source": "real_portfolio",
-    "benchmark_return": 0.097083
+    "benchmark_return": 0.013439
   }
 ]
