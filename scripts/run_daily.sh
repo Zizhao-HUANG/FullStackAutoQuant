@@ -22,6 +22,16 @@ CONFIG="$PROJECT_ROOT/configs/trading.yaml"
 # Load .env (gitignored — contains secrets)
 [[ -f "$PROJECT_ROOT/.env" ]] && { set -a; source "$PROJECT_ROOT/.env"; set +a; }
 
+# ── Pre-check: Trading Day Gate ─────────────────────────────────
+# Skip the entire pipeline on weekends / holidays (uses Tushare trade_cal).
+# Set SKIP_CALENDAR_CHECK=1 to bypass (e.g. for manual reruns).
+if [[ "${SKIP_CALENDAR_CHECK:-0}" != "1" ]]; then
+  if ! python "$SCRIPT_DIR/check_trading_day.py"; then
+    log "Today is NOT a trading day — skipping entire pipeline"
+    exit 0
+  fi
+fi
+
 # ── Phase 1: Inference ──────────────────────────────────────────
 if [[ "${SKIP_INFERENCE:-0}" == "1" ]]; then
   log "[Phase 1] Inference — skipped"

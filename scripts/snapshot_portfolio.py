@@ -31,7 +31,25 @@ def main() -> int:
     ap.add_argument("--account-id", default=None, help="Override GM account ID")
     ap.add_argument("--config", default=None, help="Trading config YAML path")
     ap.add_argument("--date", default=None, help="Override snapshot date (YYYY-MM-DD)")
+    ap.add_argument("--skip-calendar-check", action="store_true",
+                    help="Skip trading day check (force snapshot)")
     args = ap.parse_args()
+
+    # ── Trading day gate (defensive) ────────────────────────────
+    # Prevents recording stale snapshots on holidays/weekends.
+    if not args.skip_calendar_check:
+        try:
+            from scripts.dashboard_export.trading_calendar import is_trading_day
+
+            check_date = args.date  # None → today (Beijing time)
+            if not is_trading_day(check_date):
+                date_label = check_date or "today"
+                print(f"[SKIP] {date_label} is not a trading day — no snapshot taken",
+                      file=sys.stderr)
+                return 0
+        except Exception as exc:
+            # Non-fatal: if calendar check fails, proceed anyway
+            print(f"[WARN] Trading day check failed ({exc}), proceeding", file=sys.stderr)
 
     result = snapshot_positions(
         account_id=args.account_id,
