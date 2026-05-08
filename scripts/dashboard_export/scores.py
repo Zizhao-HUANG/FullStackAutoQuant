@@ -122,12 +122,17 @@ def _parse_scores_csv(csv_path: Path, override_date: str | None = None) -> Daily
 
 
 def collect_and_parse_scores() -> list[DailyScores]:
-    """Collect all CSVs, parse, deduplicate by trading date, return sorted list.
+    """Collect all CSVs, parse, deduplicate by data date, return sorted list.
 
-    The filename date (from ``push_csv_to_repo.sh``) represents the actual
-    trading day when the pipeline ran.  The CSV content datetime column
-    contains the data observation date (typically T-1).  We use the filename
-    date as the canonical signal date for display.
+    Deduplication uses the CSV content ``datetime`` column (the actual data
+    observation date) rather than the filename date.  This automatically
+    filters out runs on non-trading days (weekends / holidays) without
+    requiring a trading calendar: when the pipeline runs on a non-trading
+    day, no new market data is available, so the content date is identical
+    to the last trading day and the duplicate is skipped.
+
+    The filename date (system calendar date when the pipeline ran) may
+    differ from the content date on non-trading days.
 
     Returns:
         Sorted list of DailyScores (ascending by date), empty if no data found.
@@ -141,13 +146,14 @@ def collect_and_parse_scores() -> list[DailyScores]:
     all_scores: list[DailyScores] = []
     seen_dates: set[str] = set()
     for csv_path in csv_files:
-        # Extract the trading date from filename (e.g. ranked_scores_2026-05-01.csv → 2026-05-01)
-        filename_date = csv_path.stem.replace("ranked_scores_", "")
-        parsed = _parse_scores_csv(csv_path, override_date=filename_date)
+        # Use content date (datetime column) for dedup — NOT the filename date.
+        # This ensures non-trading-day runs (same data, different calendar day)
+        # are counted only once.
+        parsed = _parse_scores_csv(csv_path)
         if parsed and parsed.date not in seen_dates:
             seen_dates.add(parsed.date)
             all_scores.append(parsed)
-    # Sort by trading date
+    # Sort by data observation date
     all_scores.sort(key=lambda s: s.date)
-    log("1/7", f"Parsed {len(all_scores)} unique trading days")
+    log("1/7", f"Parsed {len(all_scores)} unique trading days (from {len(csv_files)} CSV files)")
     return all_scores
