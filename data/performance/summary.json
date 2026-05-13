@@ -9,17 +9,17 @@
   "topk_cumulative_score": 2.281605,
   "topk_annualized_score": 24.998456,
   "topk_score_volatility": 0.011662,
-  "topk_sharpe_ratio": 7.2272,
+  "topk_sharpe_ratio": 10.0862,
   "topk_max_drawdown": -0.006658,
-  "topk_calmar_ratio": 106.4013,
-  "topk_win_rate": 0.8,
+  "topk_calmar_ratio": 146.867,
+  "topk_win_rate": 0.8333,
   "mean_spread_top_bottom": 0.1948513,
   "mean_positive_ratio": 0.574,
   "avg_confidence": 0.981806,
   "latest_topk_alpha": 0.09367433,
-  "latest_daily_return": 0.00560213,
+  "latest_daily_return": 0.00909819,
   "latest_confidence": 0.981415,
   "latest_positive_ratio": 0.5,
-  "cumulative_return": 0.014056,
-  "annualized_return": 0.154005
+  "cumulative_return": 0.023282,
+  "annualized_return": 0.25509
 }
