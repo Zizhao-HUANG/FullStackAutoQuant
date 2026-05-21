@@ -128,5 +128,18 @@
     "position_count": 30,
     "source": "real_portfolio",
     "benchmark_return": 0.009481
+  },
+  {
+    "date": "2026-05-21",
+    "equity": 0.947868,
+    "daily_return": -0.02308767,
+    "cumulative_return": -0.052132,
+    "drawdown": -0.064979,
+    "nav": 2870370.28,
+    "total_market_value": 2554879.01,
+    "available_cash": 315491.27,
+    "position_count": 30,
+    "source": "real_portfolio",
+    "benchmark_return": -0.005036
   }
 ]
