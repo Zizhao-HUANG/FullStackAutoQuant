@@ -817,5 +817,26 @@
       "p75": 0.043551,
       "p95": 0.09252985
     }
+  },
+  {
+    "date": "2026-06-05",
+    "total_instruments": 300,
+    "positive_count": 159,
+    "negative_count": 141,
+    "positive_ratio": 0.53,
+    "mean_score": 0.00243223,
+    "median_score": 0.00631581,
+    "std_score": 0.06313169,
+    "score_spread_top_bottom": 0.40973193,
+    "top_k_mean_score": 0.114655,
+    "top_k_mean_confidence": 0.975531,
+    "mean_confidence": 0.98218617,
+    "score_quantiles": {
+      "p5": -0.0992514,
+      "p25": -0.04227298,
+      "p50": 0.00631581,
+      "p75": 0.04250818,
+      "p95": 0.09985206
+    }
   }
 ]
