@@ -3,10 +3,7 @@
     "allow_buy": true,
     "day_drawdown": 0.0,
     "rolling5d_drawdown": 0.0,
-    "limit_up_symbols": [
-      "SHSE.600482",
-      "SHSE.688126"
-    ],
+    "limit_up_symbols": [],
     "limit_down_symbols": [],
     "reasons": []
   }
