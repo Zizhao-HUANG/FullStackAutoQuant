@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "generated_at": "2026-06-08T09:38:13Z",
+    "generated_at": "2026-06-09T09:33:53Z",
     "generator": "scripts/export_dashboard_data.py",
     "version": "1.0.0",
     "description": "FullStackAutoQuant Dashboard — comprehensive dataset for live visualization"
@@ -11,7 +11,7 @@
     "first_inference_date": "2026-04-30",
     "last_inference_date": "2026-06-08",
     "last_updated_iso": "2026-06-08T00:00:00",
-    "hours_since_last_run": 9.6,
+    "hours_since_last_run": 33.6,
     "pipeline_components": [
       "Tushare Data Fetch (CSI300, ~200 trading days)",
       "Qlib Export → daily_pv.h5",
@@ -199,29 +199,29 @@
     }
   },
   "performance": {
-    "total_trading_days": 41,
+    "total_trading_days": 42,
     "first_date": "2026-04-03",
-    "last_date": "2026-06-08",
-    "mean_daily_long_short_spread": 0.20218761,
-    "long_short_sharpe": 212.1922,
-    "long_short_information_ratio": 13.3668,
-    "topk_mean_daily_score": 0.10005555,
-    "topk_cumulative_score": 4.102277,
-    "topk_annualized_score": 25.213998,
-    "topk_score_volatility": 0.01397118,
+    "last_date": "2026-06-09",
+    "mean_daily_long_short_spread": 0.20223845,
+    "long_short_sharpe": 214.83,
+    "long_short_information_ratio": 13.533,
+    "topk_mean_daily_score": 0.09967449,
+    "topk_cumulative_score": 4.186328,
+    "topk_annualized_score": 25.11797,
+    "topk_score_volatility": 0.01396083,
     "topk_sharpe_ratio": -4.9965,
     "topk_max_drawdown": -0.115856,
     "topk_calmar_ratio": -11.5126,
     "topk_win_rate": 0.4444,
-    "mean_spread_top_bottom": 0.20218761,
-    "mean_positive_ratio": 0.527,
-    "avg_confidence": 0.981877,
-    "latest_topk_alpha": 0.12733896,
+    "mean_spread_top_bottom": 0.20223845,
+    "mean_positive_ratio": 0.5247,
+    "avg_confidence": 0.981872,
+    "latest_topk_alpha": 0.08405101,
     "latest_daily_return": -0.05346453,
-    "latest_confidence": 0.980583,
-    "latest_positive_ratio": 0.5933,
+    "latest_confidence": 0.981688,
+    "latest_positive_ratio": 0.43,
     "cumulative_return": -0.095271,
-    "annualized_return": -0.585568
+    "annualized_return": -0.571626
   },
   "equity_curve": [
     {
@@ -460,2018 +460,2018 @@
     }
   ],
   "latest_signals": {
-    "date": "2026-06-08",
+    "date": "2026-06-09",
     "top_k": [
       {
         "rank": 1,
-        "instrument": "SH600183",
-        "score": 0.23075414,
-        "confidence": 0.95118535
+        "instrument": "SH600346",
+        "score": 0.11640575,
+        "confidence": 0.977121
       },
       {
         "rank": 2,
-        "instrument": "SH600176",
-        "score": 0.21083778,
-        "confidence": 0.95515656
+        "instrument": "SH601018",
+        "score": 0.11605587,
+        "confidence": 0.9624919
       },
       {
         "rank": 3,
-        "instrument": "SZ300408",
-        "score": 0.20196769,
-        "confidence": 0.95008713
+        "instrument": "SH600104",
+        "score": 0.11205511,
+        "confidence": 0.9755971
       },
       {
         "rank": 4,
-        "instrument": "SZ002916",
-        "score": 0.18439978,
-        "confidence": 0.9798726
+        "instrument": "SH600309",
+        "score": 0.1106525,
+        "confidence": 0.97998697
       },
       {
         "rank": 5,
-        "instrument": "SZ300274",
-        "score": 0.16373044,
-        "confidence": 0.9626859
+        "instrument": "SH601238",
+        "score": 0.11059877,
+        "confidence": 0.97631514
       },
       {
         "rank": 6,
-        "instrument": "SH601800",
-        "score": 0.1436294,
-        "confidence": 0.97158617
+        "instrument": "SH601186",
+        "score": 0.10778675,
+        "confidence": 0.97974056
       },
       {
         "rank": 7,
-        "instrument": "SH601018",
-        "score": 0.1406163,
-        "confidence": 0.9730741
+        "instrument": "SZ003816",
+        "score": 0.09684681,
+        "confidence": 0.978733
       },
       {
         "rank": 8,
-        "instrument": "SZ000708",
-        "score": 0.1319234,
-        "confidence": 0.95674664
+        "instrument": "SH601225",
+        "score": 0.09590241,
+        "confidence": 0.9844521
       },
       {
         "rank": 9,
-        "instrument": "SZ002709",
-        "score": 0.12323012,
-        "confidence": 0.9731897
+        "instrument": "SH600741",
+        "score": 0.09563591,
+        "confidence": 0.97746253
       },
       {
         "rank": 10,
-        "instrument": "SZ002466",
-        "score": 0.12241381,
-        "confidence": 0.9584892
+        "instrument": "SH600426",
+        "score": 0.09201821,
+        "confidence": 0.9674037
       },
       {
         "rank": 11,
-        "instrument": "SZ002714",
-        "score": 0.12184409,
-        "confidence": 0.9537152
+        "instrument": "SZ300308",
+        "score": 0.08509656,
+        "confidence": 0.9722281
       },
       {
         "rank": 12,
-        "instrument": "SZ000338",
-        "score": 0.12066165,
-        "confidence": 0.9842902
+        "instrument": "SZ000625",
+        "score": 0.08187138,
+        "confidence": 0.9765887
       },
       {
         "rank": 13,
-        "instrument": "SZ000977",
-        "score": 0.11913382,
-        "confidence": 0.9858073
+        "instrument": "SZ002252",
+        "score": 0.08152463,
+        "confidence": 0.971151
       },
       {
         "rank": 14,
-        "instrument": "SZ300413",
-        "score": 0.11816699,
-        "confidence": 0.95987797
+        "instrument": "SZ000895",
+        "score": 0.07998495,
+        "confidence": 0.98157805
       },
       {
         "rank": 15,
-        "instrument": "SZ300979",
-        "score": 0.11702735,
-        "confidence": 0.9670911
+        "instrument": "SZ000977",
+        "score": 0.07949858,
+        "confidence": 0.97757804
       },
       {
         "rank": 16,
-        "instrument": "SH601186",
-        "score": 0.11632552,
-        "confidence": 0.9807256
+        "instrument": "SH601658",
+        "score": 0.0787238,
+        "confidence": 0.9833635
       },
       {
         "rank": 17,
-        "instrument": "SH601012",
-        "score": 0.11600574,
-        "confidence": 0.9740708
+        "instrument": "SZ000983",
+        "score": 0.07703971,
+        "confidence": 0.9858278
       },
       {
         "rank": 18,
-        "instrument": "SZ003816",
-        "score": 0.11532382,
-        "confidence": 0.97135174
+        "instrument": "SZ300750",
+        "score": 0.07503709,
+        "confidence": 0.9725011
       },
       {
         "rank": 19,
-        "instrument": "SZ002371",
-        "score": 0.11527135,
-        "confidence": 0.9694853
+        "instrument": "SZ002142",
+        "score": 0.07323322,
+        "confidence": 0.97772855
       },
       {
         "rank": 20,
-        "instrument": "SH601238",
-        "score": 0.1088331,
-        "confidence": 0.9655696
+        "instrument": "SH600989",
+        "score": 0.07277333,
+        "confidence": 0.9782135
       },
       {
         "rank": 21,
-        "instrument": "SH600309",
-        "score": 0.10880353,
-        "confidence": 0.9740313
+        "instrument": "SH600547",
+        "score": 0.07161122,
+        "confidence": 0.9865117
       },
       {
         "rank": 22,
-        "instrument": "SH600426",
-        "score": 0.10832989,
-        "confidence": 0.9723982
+        "instrument": "SH601390",
+        "score": 0.07054584,
+        "confidence": 0.98295283
       },
       {
         "rank": 23,
-        "instrument": "SZ002027",
-        "score": 0.10469594,
-        "confidence": 0.9811447
+        "instrument": "SH688009",
+        "score": 0.06994482,
+        "confidence": 0.98085785
       },
       {
         "rank": 24,
-        "instrument": "SZ300347",
-        "score": 0.10126361,
-        "confidence": 0.9783999
+        "instrument": "SH600926",
+        "score": 0.06909413,
+        "confidence": 0.9803725
       },
       {
         "rank": 25,
-        "instrument": "SZ002304",
-        "score": 0.10090631,
-        "confidence": 0.9773347
+        "instrument": "SZ300413",
+        "score": 0.06790774,
+        "confidence": 0.955292
       },
       {
         "rank": 26,
-        "instrument": "SH601390",
-        "score": 0.09751662,
-        "confidence": 0.9798252
+        "instrument": "SH601800",
+        "score": 0.06751106,
+        "confidence": 0.972764
       },
       {
         "rank": 27,
-        "instrument": "SZ002460",
-        "score": 0.09670856,
-        "confidence": 0.9664287
+        "instrument": "SZ300015",
+        "score": 0.06732208,
+        "confidence": 0.96188307
       },
       {
         "rank": 28,
-        "instrument": "SH600926",
-        "score": 0.09431943,
-        "confidence": 0.9837806
+        "instrument": "SH601288",
+        "score": 0.06720715,
+        "confidence": 0.97198606
       },
       {
         "rank": 29,
-        "instrument": "SZ000983",
-        "score": 0.09308063,
-        "confidence": 0.98041314
+        "instrument": "SZ000975",
+        "score": 0.06666832,
+        "confidence": 0.9846266
       },
       {
         "rank": 30,
-        "instrument": "SZ002422",
-        "score": 0.09244799,
-        "confidence": 0.99027026
+        "instrument": "SZ300979",
+        "score": 0.06497661,
+        "confidence": 0.9738851
       }
     ],
     "statistics": {
       "total_count": 300,
-      "positive_count": 178,
-      "negative_count": 122,
-      "mean_score": 0.01611504,
-      "mean_confidence": 0.9805832,
+      "positive_count": 129,
+      "negative_count": 171,
+      "mean_score": -0.01173952,
+      "mean_confidence": 0.98168776,
       "score_quantiles": {
-        "p5": -0.07805923,
-        "p25": -0.02805441,
-        "p50": 0.01693949,
-        "p75": 0.05510683,
-        "p95": 0.11636061
+        "p5": -0.11581666,
+        "p25": -0.05048188,
+        "p50": -0.00853058,
+        "p75": 0.03121763,
+        "p95": 0.07876254
       }
     },
     "all_instruments": [
       {
         "rank": 1,
-        "instrument": "SH600183",
-        "score": 0.23075414,
-        "confidence": 0.95118535
+        "instrument": "SH600346",
+        "score": 0.11640575,
+        "confidence": 0.977121
       },
       {
         "rank": 2,
-        "instrument": "SH600176",
-        "score": 0.21083778,
-        "confidence": 0.95515656
+        "instrument": "SH601018",
+        "score": 0.11605587,
+        "confidence": 0.9624919
       },
       {
         "rank": 3,
-        "instrument": "SZ300408",
-        "score": 0.20196769,
-        "confidence": 0.95008713
+        "instrument": "SH600104",
+        "score": 0.11205511,
+        "confidence": 0.9755971
       },
       {
         "rank": 4,
-        "instrument": "SZ002916",
-        "score": 0.18439978,
-        "confidence": 0.9798726
+        "instrument": "SH600309",
+        "score": 0.1106525,
+        "confidence": 0.97998697
       },
       {
         "rank": 5,
-        "instrument": "SZ300274",
-        "score": 0.16373044,
-        "confidence": 0.9626859
+        "instrument": "SH601238",
+        "score": 0.11059877,
+        "confidence": 0.97631514
       },
       {
         "rank": 6,
-        "instrument": "SH601800",
-        "score": 0.1436294,
-        "confidence": 0.97158617
+        "instrument": "SH601186",
+        "score": 0.10778675,
+        "confidence": 0.97974056
       },
       {
         "rank": 7,
-        "instrument": "SH601018",
-        "score": 0.1406163,
-        "confidence": 0.9730741
+        "instrument": "SZ003816",
+        "score": 0.09684681,
+        "confidence": 0.978733
       },
       {
         "rank": 8,
-        "instrument": "SZ000708",
-        "score": 0.1319234,
-        "confidence": 0.95674664
+        "instrument": "SH601225",
+        "score": 0.09590241,
+        "confidence": 0.9844521
       },
       {
         "rank": 9,
-        "instrument": "SZ002709",
-        "score": 0.12323012,
-        "confidence": 0.9731897
+        "instrument": "SH600741",
+        "score": 0.09563591,
+        "confidence": 0.97746253
       },
       {
         "rank": 10,
-        "instrument": "SZ002466",
-        "score": 0.12241381,
-        "confidence": 0.9584892
+        "instrument": "SH600426",
+        "score": 0.09201821,
+        "confidence": 0.9674037
       },
       {
         "rank": 11,
-        "instrument": "SZ002714",
-        "score": 0.12184409,
-        "confidence": 0.9537152
+        "instrument": "SZ300308",
+        "score": 0.08509656,
+        "confidence": 0.9722281
       },
       {
         "rank": 12,
-        "instrument": "SZ000338",
-        "score": 0.12066165,
-        "confidence": 0.9842902
+        "instrument": "SZ000625",
+        "score": 0.08187138,
+        "confidence": 0.9765887
       },
       {
         "rank": 13,
-        "instrument": "SZ000977",
-        "score": 0.11913382,
-        "confidence": 0.9858073
+        "instrument": "SZ002252",
+        "score": 0.08152463,
+        "confidence": 0.971151
       },
       {
         "rank": 14,
-        "instrument": "SZ300413",
-        "score": 0.11816699,
-        "confidence": 0.95987797
+        "instrument": "SZ000895",
+        "score": 0.07998495,
+        "confidence": 0.98157805
       },
       {
         "rank": 15,
-        "instrument": "SZ300979",
-        "score": 0.11702735,
-        "confidence": 0.9670911
+        "instrument": "SZ000977",
+        "score": 0.07949858,
+        "confidence": 0.97757804
       },
       {
         "rank": 16,
-        "instrument": "SH601186",
-        "score": 0.11632552,
-        "confidence": 0.9807256
+        "instrument": "SH601658",
+        "score": 0.0787238,
+        "confidence": 0.9833635
       },
       {
         "rank": 17,
-        "instrument": "SH601012",
-        "score": 0.11600574,
-        "confidence": 0.9740708
+        "instrument": "SZ000983",
+        "score": 0.07703971,
+        "confidence": 0.9858278
       },
       {
         "rank": 18,
-        "instrument": "SZ003816",
-        "score": 0.11532382,
-        "confidence": 0.97135174
+        "instrument": "SZ300750",
+        "score": 0.07503709,
+        "confidence": 0.9725011
       },
       {
         "rank": 19,
-        "instrument": "SZ002371",
-        "score": 0.11527135,
-        "confidence": 0.9694853
+        "instrument": "SZ002142",
+        "score": 0.07323322,
+        "confidence": 0.97772855
       },
       {
         "rank": 20,
-        "instrument": "SH601238",
-        "score": 0.1088331,
-        "confidence": 0.9655696
+        "instrument": "SH600989",
+        "score": 0.07277333,
+        "confidence": 0.9782135
       },
       {
         "rank": 21,
-        "instrument": "SH600309",
-        "score": 0.10880353,
-        "confidence": 0.9740313
+        "instrument": "SH600547",
+        "score": 0.07161122,
+        "confidence": 0.9865117
       },
       {
         "rank": 22,
-        "instrument": "SH600426",
-        "score": 0.10832989,
-        "confidence": 0.9723982
+        "instrument": "SH601390",
+        "score": 0.07054584,
+        "confidence": 0.98295283
       },
       {
         "rank": 23,
-        "instrument": "SZ002027",
-        "score": 0.10469594,
-        "confidence": 0.9811447
+        "instrument": "SH688009",
+        "score": 0.06994482,
+        "confidence": 0.98085785
       },
       {
         "rank": 24,
-        "instrument": "SZ300347",
-        "score": 0.10126361,
-        "confidence": 0.9783999
+        "instrument": "SH600926",
+        "score": 0.06909413,
+        "confidence": 0.9803725
       },
       {
         "rank": 25,
-        "instrument": "SZ002304",
-        "score": 0.10090631,
-        "confidence": 0.9773347
+        "instrument": "SZ300413",
+        "score": 0.06790774,
+        "confidence": 0.955292
       },
       {
         "rank": 26,
-        "instrument": "SH601390",
-        "score": 0.09751662,
-        "confidence": 0.9798252
+        "instrument": "SH601800",
+        "score": 0.06751106,
+        "confidence": 0.972764
       },
       {
         "rank": 27,
-        "instrument": "SZ002460",
-        "score": 0.09670856,
-        "confidence": 0.9664287
+        "instrument": "SZ300015",
+        "score": 0.06732208,
+        "confidence": 0.96188307
       },
       {
         "rank": 28,
-        "instrument": "SH600926",
-        "score": 0.09431943,
-        "confidence": 0.9837806
+        "instrument": "SH601288",
+        "score": 0.06720715,
+        "confidence": 0.97198606
       },
       {
         "rank": 29,
-        "instrument": "SZ000983",
-        "score": 0.09308063,
-        "confidence": 0.98041314
+        "instrument": "SZ000975",
+        "score": 0.06666832,
+        "confidence": 0.9846266
       },
       {
         "rank": 30,
-        "instrument": "SZ002422",
-        "score": 0.09244799,
-        "confidence": 0.99027026
+        "instrument": "SZ300979",
+        "score": 0.06497661,
+        "confidence": 0.9738851
       },
       {
         "rank": 31,
-        "instrument": "SH600009",
-        "score": 0.09194785,
-        "confidence": 0.96523905
+        "instrument": "SZ300347",
+        "score": 0.06412014,
+        "confidence": 0.9734865
       },
       {
         "rank": 32,
-        "instrument": "SZ300015",
-        "score": 0.09009994,
-        "confidence": 0.9721743
+        "instrument": "SH600918",
+        "score": 0.06373147,
+        "confidence": 0.970633
       },
       {
         "rank": 33,
-        "instrument": "SH600104",
-        "score": 0.0884132,
-        "confidence": 0.971238
+        "instrument": "SZ300274",
+        "score": 0.06251804,
+        "confidence": 0.98498803
       },
       {
         "rank": 34,
-        "instrument": "SZ000895",
-        "score": 0.08701106,
-        "confidence": 0.9649233
+        "instrument": "SH600016",
+        "score": 0.06221989,
+        "confidence": 0.9841219
       },
       {
         "rank": 35,
-        "instrument": "SH600515",
-        "score": 0.08503067,
-        "confidence": 0.97192466
+        "instrument": "SH600886",
+        "score": 0.06092013,
+        "confidence": 0.98245174
       },
       {
         "rank": 36,
-        "instrument": "SH600025",
-        "score": 0.08497199,
-        "confidence": 0.98497057
+        "instrument": "SH601117",
+        "score": 0.06068199,
+        "confidence": 0.9751256
       },
       {
         "rank": 37,
-        "instrument": "SH601788",
-        "score": 0.08452665,
-        "confidence": 0.9764786
+        "instrument": "SH600010",
+        "score": 0.05820193,
+        "confidence": 0.98178345
       },
       {
         "rank": 38,
-        "instrument": "SH600026",
-        "score": 0.08225518,
-        "confidence": 0.97202265
+        "instrument": "SH600025",
+        "score": 0.05683371,
+        "confidence": 0.9787774
       },
       {
         "rank": 39,
-        "instrument": "SH600989",
-        "score": 0.08187921,
-        "confidence": 0.98080003
+        "instrument": "SH601898",
+        "score": 0.0558706,
+        "confidence": 0.97944313
       },
       {
         "rank": 40,
-        "instrument": "SH605499",
-        "score": 0.08136859,
-        "confidence": 0.97513413
+        "instrument": "SZ000776",
+        "score": 0.05580477,
+        "confidence": 0.9783344
       },
       {
         "rank": 41,
-        "instrument": "SZ002142",
-        "score": 0.07957967,
-        "confidence": 0.98265666
+        "instrument": "SH601138",
+        "score": 0.05443218,
+        "confidence": 0.9848934
       },
       {
         "rank": 42,
-        "instrument": "SH600085",
-        "score": 0.07915004,
-        "confidence": 0.9776144
+        "instrument": "SH601456",
+        "score": 0.0523218,
+        "confidence": 0.9735014
       },
       {
         "rank": 43,
-        "instrument": "SH600346",
-        "score": 0.07905442,
-        "confidence": 0.969443
+        "instrument": "SZ300014",
+        "score": 0.05155962,
+        "confidence": 0.9825246
       },
       {
         "rank": 44,
-        "instrument": "SZ002252",
-        "score": 0.0785898,
-        "confidence": 0.978585
+        "instrument": "SZ002475",
+        "score": 0.05065992,
+        "confidence": 0.9843546
       },
       {
         "rank": 45,
-        "instrument": "SZ300661",
-        "score": 0.07802565,
-        "confidence": 0.9812959
+        "instrument": "SH600489",
+        "score": 0.05038419,
+        "confidence": 0.98199
       },
       {
         "rank": 46,
-        "instrument": "SH600161",
-        "score": 0.07726819,
-        "confidence": 0.9818402
+        "instrument": "SZ000786",
+        "score": 0.04948453,
+        "confidence": 0.9731698
       },
       {
         "rank": 47,
-        "instrument": "SH600015",
-        "score": 0.07612037,
-        "confidence": 0.9853596
+        "instrument": "SZ300394",
+        "score": 0.04906627,
+        "confidence": 0.9809692
       },
       {
         "rank": 48,
-        "instrument": "SH601117",
-        "score": 0.07569276,
-        "confidence": 0.9792084
+        "instrument": "SH600803",
+        "score": 0.04878338,
+        "confidence": 0.9875951
       },
       {
         "rank": 49,
-        "instrument": "SZ000596",
-        "score": 0.07430575,
-        "confidence": 0.9799795
+        "instrument": "SH688256",
+        "score": 0.04863407,
+        "confidence": 0.9856511
       },
       {
         "rank": 50,
-        "instrument": "SH600438",
-        "score": 0.07427251,
-        "confidence": 0.9689413
+        "instrument": "SZ000338",
+        "score": 0.04735979,
+        "confidence": 0.9676261
       },
       {
         "rank": 51,
-        "instrument": "SZ300750",
-        "score": 0.07384404,
-        "confidence": 0.98383325
+        "instrument": "SH601169",
+        "score": 0.04724365,
+        "confidence": 0.97913545
       },
       {
         "rank": 52,
-        "instrument": "SH601838",
-        "score": 0.07131883,
-        "confidence": 0.9824613
+        "instrument": "SH603259",
+        "score": 0.04461158,
+        "confidence": 0.97805154
       },
       {
         "rank": 53,
-        "instrument": "SH600584",
-        "score": 0.07102095,
-        "confidence": 0.98032516
+        "instrument": "SH601127",
+        "score": 0.04439443,
+        "confidence": 0.97019225
       },
       {
         "rank": 54,
-        "instrument": "SZ000166",
-        "score": 0.06989392,
-        "confidence": 0.98181033
+        "instrument": "SZ000999",
+        "score": 0.04433192,
+        "confidence": 0.9838807
       },
       {
         "rank": 55,
-        "instrument": "SH600741",
-        "score": 0.0698932,
-        "confidence": 0.9870515
+        "instrument": "SZ002415",
+        "score": 0.04427063,
+        "confidence": 0.980135
       },
       {
         "rank": 56,
-        "instrument": "SZ300502",
-        "score": 0.06892785,
-        "confidence": 0.97727317
+        "instrument": "SH600188",
+        "score": 0.04376524,
+        "confidence": 0.98212194
       },
       {
         "rank": 57,
-        "instrument": "SH688041",
-        "score": 0.06864552,
-        "confidence": 0.981513
+        "instrument": "SH601298",
+        "score": 0.04374426,
+        "confidence": 0.9828073
       },
       {
         "rank": 58,
-        "instrument": "SH600519",
-        "score": 0.06828488,
-        "confidence": 0.9808039
+        "instrument": "SZ300760",
+        "score": 0.04369859,
+        "confidence": 0.9739182
       },
       {
         "rank": 59,
-        "instrument": "SZ300122",
-        "score": 0.06703224,
-        "confidence": 0.98091733
+        "instrument": "SH600039",
+        "score": 0.04322808,
+        "confidence": 0.9832237
       },
       {
         "rank": 60,
-        "instrument": "SZ300759",
-        "score": 0.06523364,
-        "confidence": 0.9804647
+        "instrument": "SH600015",
+        "score": 0.04186391,
+        "confidence": 0.9801666
       },
       {
         "rank": 61,
-        "instrument": "SZ000999",
-        "score": 0.06461089,
-        "confidence": 0.9780462
+        "instrument": "SH605499",
+        "score": 0.04132021,
+        "confidence": 0.9767122
       },
       {
         "rank": 62,
-        "instrument": "SZ300433",
-        "score": 0.06460991,
-        "confidence": 0.9821436
+        "instrument": "SH600515",
+        "score": 0.03981065,
+        "confidence": 0.9759183
       },
       {
         "rank": 63,
-        "instrument": "SZ300418",
-        "score": 0.06276789,
-        "confidence": 0.9733787
+        "instrument": "SH601236",
+        "score": 0.03977128,
+        "confidence": 0.98143125
       },
       {
         "rank": 64,
-        "instrument": "SZ000776",
-        "score": 0.06273677,
-        "confidence": 0.9857964
+        "instrument": "SH601166",
+        "score": 0.03911906,
+        "confidence": 0.9850889
       },
       {
         "rank": 65,
-        "instrument": "SZ000301",
-        "score": 0.06034797,
-        "confidence": 0.97114974
+        "instrument": "SH601818",
+        "score": 0.03881673,
+        "confidence": 0.9871169
       },
       {
         "rank": 66,
-        "instrument": "SH600016",
-        "score": 0.06029098,
-        "confidence": 0.9815538
+        "instrument": "SH601808",
+        "score": 0.03685825,
+        "confidence": 0.9772329
       },
       {
         "rank": 67,
-        "instrument": "SH601456",
-        "score": 0.05999423,
-        "confidence": 0.9710127
+        "instrument": "SZ002304",
+        "score": 0.03628433,
+        "confidence": 0.98479676
       },
       {
         "rank": 68,
-        "instrument": "SZ300866",
-        "score": 0.05978461,
-        "confidence": 0.9770034
+        "instrument": "SH600036",
+        "score": 0.03547639,
+        "confidence": 0.97894865
       },
       {
         "rank": 69,
-        "instrument": "SZ300251",
-        "score": 0.05963396,
-        "confidence": 0.97730404
+        "instrument": "SZ002714",
+        "score": 0.03545977,
+        "confidence": 0.97498524
       },
       {
         "rank": 70,
-        "instrument": "SZ002459",
-        "score": 0.05913194,
-        "confidence": 0.9774549
+        "instrument": "SZ000858",
+        "score": 0.03494901,
+        "confidence": 0.9801231
       },
       {
         "rank": 71,
-        "instrument": "SH600061",
-        "score": 0.0567641,
-        "confidence": 0.9787642
+        "instrument": "SZ000630",
+        "score": 0.03487211,
+        "confidence": 0.98341227
       },
       {
         "rank": 72,
-        "instrument": "SZ000858",
-        "score": 0.05658301,
-        "confidence": 0.98148626
+        "instrument": "SH600900",
+        "score": 0.03402706,
+        "confidence": 0.98626167
       },
       {
         "rank": 73,
-        "instrument": "SH601872",
-        "score": 0.05649631,
-        "confidence": 0.97009146
+        "instrument": "SH600160",
+        "score": 0.03364461,
+        "confidence": 0.98705274
       },
       {
         "rank": 74,
-        "instrument": "SZ000975",
-        "score": 0.05561834,
-        "confidence": 0.978448
+        "instrument": "SH601788",
+        "score": 0.03275049,
+        "confidence": 0.96670604
       },
       {
         "rank": 75,
-        "instrument": "SZ002384",
-        "score": 0.05538573,
-        "confidence": 0.9796866
+        "instrument": "SH603296",
+        "score": 0.03136098,
+        "confidence": 0.9831166
       },
       {
         "rank": 76,
-        "instrument": "SH600547",
-        "score": 0.05501386,
-        "confidence": 0.9809085
+        "instrument": "SH600519",
+        "score": 0.03116984,
+        "confidence": 0.9746216
       },
       {
         "rank": 77,
-        "instrument": "SH601901",
-        "score": 0.05406798,
-        "confidence": 0.9685125
+        "instrument": "SH600026",
+        "score": 0.03022286,
+        "confidence": 0.98052543
       },
       {
         "rank": 78,
-        "instrument": "SH600809",
-        "score": 0.05389381,
-        "confidence": 0.9754404
+        "instrument": "SH601985",
+        "score": 0.03020906,
+        "confidence": 0.98647654
       },
       {
         "rank": 79,
-        "instrument": "SH600886",
-        "score": 0.05282452,
-        "confidence": 0.972913
+        "instrument": "SH601607",
+        "score": 0.02913261,
+        "confidence": 0.9858483
       },
       {
         "rank": 80,
-        "instrument": "SH600803",
-        "score": 0.05248734,
-        "confidence": 0.9813386
+        "instrument": "SZ000166",
+        "score": 0.02865494,
+        "confidence": 0.97950304
       },
       {
         "rank": 81,
-        "instrument": "SH601169",
-        "score": 0.05245348,
-        "confidence": 0.98407644
+        "instrument": "SH600066",
+        "score": 0.02749458,
+        "confidence": 0.988316
       },
       {
         "rank": 82,
-        "instrument": "SH688223",
-        "score": 0.05218738,
-        "confidence": 0.98221564
+        "instrument": "SH688396",
+        "score": 0.02738452,
+        "confidence": 0.9822052
       },
       {
         "rank": 83,
-        "instrument": "SZ000001",
-        "score": 0.05130852,
-        "confidence": 0.9811412
+        "instrument": "SZ300033",
+        "score": 0.02681819,
+        "confidence": 0.9814408
       },
       {
         "rank": 84,
-        "instrument": "SH600019",
-        "score": 0.05115842,
-        "confidence": 0.98657817
+        "instrument": "SH600028",
+        "score": 0.0264413,
+        "confidence": 0.9819255
       },
       {
         "rank": 85,
-        "instrument": "SH600023",
-        "score": 0.05083867,
-        "confidence": 0.9822333
+        "instrument": "SH601825",
+        "score": 0.02591746,
+        "confidence": 0.9798692
       },
       {
         "rank": 86,
-        "instrument": "SH601236",
-        "score": 0.05073192,
-        "confidence": 0.9804975
+        "instrument": "SH605117",
+        "score": 0.02572841,
+        "confidence": 0.9807165
       },
       {
         "rank": 87,
-        "instrument": "SH600585",
-        "score": 0.05059009,
-        "confidence": 0.9792078
+        "instrument": "SH600048",
+        "score": 0.02569031,
+        "confidence": 0.982939
       },
       {
         "rank": 88,
-        "instrument": "SZ002415",
-        "score": 0.0503008,
-        "confidence": 0.9799314
+        "instrument": "SZ300803",
+        "score": 0.02520219,
+        "confidence": 0.9863491
       },
       {
         "rank": 89,
-        "instrument": "SH600918",
-        "score": 0.04881199,
-        "confidence": 0.9816836
+        "instrument": "SZ300476",
+        "score": 0.02519689,
+        "confidence": 0.9821724
       },
       {
         "rank": 90,
-        "instrument": "SH600893",
-        "score": 0.04779124,
-        "confidence": 0.9797044
+        "instrument": "SZ000651",
+        "score": 0.02498186,
+        "confidence": 0.98566043
       },
       {
         "rank": 91,
-        "instrument": "SH601229",
-        "score": 0.04722664,
-        "confidence": 0.9832797
+        "instrument": "SH600018",
+        "score": 0.02491528,
+        "confidence": 0.98475665
       },
       {
         "rank": 92,
-        "instrument": "SZ300498",
-        "score": 0.04708912,
-        "confidence": 0.9779806
+        "instrument": "SZ002241",
+        "score": 0.02444225,
+        "confidence": 0.98558086
       },
       {
         "rank": 93,
-        "instrument": "SH600066",
-        "score": 0.04657015,
-        "confidence": 0.98296964
+        "instrument": "SZ000538",
+        "score": 0.02440418,
+        "confidence": 0.98023635
       },
       {
         "rank": 94,
-        "instrument": "SH600919",
-        "score": 0.0459648,
-        "confidence": 0.98181504
+        "instrument": "SH600377",
+        "score": 0.02294589,
+        "confidence": 0.9874635
       },
       {
         "rank": 95,
-        "instrument": "SH601318",
-        "score": 0.04542639,
-        "confidence": 0.98848766
+        "instrument": "SZ000876",
+        "score": 0.02287038,
+        "confidence": 0.97748905
       },
       {
         "rank": 96,
-        "instrument": "SH601658",
-        "score": 0.04539866,
-        "confidence": 0.97116333
+        "instrument": "SZ300122",
+        "score": 0.02135907,
+        "confidence": 0.9804617
       },
       {
         "rank": 97,
-        "instrument": "SZ000963",
-        "score": 0.04521508,
-        "confidence": 0.9807817
+        "instrument": "SZ000333",
+        "score": 0.02086999,
+        "confidence": 0.9857005
       },
       {
         "rank": 98,
-        "instrument": "SH600377",
-        "score": 0.04295217,
-        "confidence": 0.9844706
+        "instrument": "SH601916",
+        "score": 0.02028111,
+        "confidence": 0.98653257
       },
       {
         "rank": 99,
-        "instrument": "SH600372",
-        "score": 0.04243784,
-        "confidence": 0.98099375
+        "instrument": "SH601618",
+        "score": 0.02000194,
+        "confidence": 0.98134965
       },
       {
         "rank": 100,
-        "instrument": "SH600010",
-        "score": 0.04199331,
-        "confidence": 0.9692498
+        "instrument": "SH600019",
+        "score": 0.01942986,
+        "confidence": 0.9838991
       },
       {
         "rank": 101,
-        "instrument": "SH688047",
-        "score": 0.04184648,
-        "confidence": 0.9778907
+        "instrument": "SZ000963",
+        "score": 0.01911003,
+        "confidence": 0.9855881
       },
       {
         "rank": 102,
-        "instrument": "SZ001965",
-        "score": 0.04109906,
-        "confidence": 0.98072904
+        "instrument": "SH601939",
+        "score": 0.01896203,
+        "confidence": 0.98194605
       },
       {
         "rank": 103,
-        "instrument": "SH601818",
-        "score": 0.0403141,
-        "confidence": 0.98861676
+        "instrument": "SH601838",
+        "score": 0.01598797,
+        "confidence": 0.97929025
       },
       {
         "rank": 104,
-        "instrument": "SH603986",
-        "score": 0.03928461,
-        "confidence": 0.97806555
+        "instrument": "SH600085",
+        "score": 0.0150248,
+        "confidence": 0.98017335
       },
       {
         "rank": 105,
-        "instrument": "SH601066",
-        "score": 0.03761024,
-        "confidence": 0.98357326
+        "instrument": "SH601318",
+        "score": 0.01345887,
+        "confidence": 0.9819072
       },
       {
         "rank": 106,
-        "instrument": "SZ300760",
-        "score": 0.03745726,
-        "confidence": 0.97246075
+        "instrument": "SH688223",
+        "score": 0.01278197,
+        "confidence": 0.97234356
       },
       {
         "rank": 107,
-        "instrument": "SZ300896",
-        "score": 0.03640218,
-        "confidence": 0.9809018
+        "instrument": "SZ300498",
+        "score": 0.0127259,
+        "confidence": 0.97106016
       },
       {
         "rank": 108,
-        "instrument": "SZ002736",
-        "score": 0.03625859,
-        "confidence": 0.9830756
+        "instrument": "SH601088",
+        "score": 0.01073051,
+        "confidence": 0.98560286
       },
       {
         "rank": 109,
-        "instrument": "SH600588",
-        "score": 0.03609792,
-        "confidence": 0.98211884
+        "instrument": "SZ300408",
+        "score": 0.0104498,
+        "confidence": 0.96455485
       },
       {
         "rank": 110,
-        "instrument": "SH601825",
-        "score": 0.03574117,
-        "confidence": 0.97925436
+        "instrument": "SH600115",
+        "score": 0.01024706,
+        "confidence": 0.9870884
       },
       {
         "rank": 111,
         "instrument": "SZ000617",
-        "score": 0.03571656,
-        "confidence": 0.97692174
+        "score": 0.00979013,
+        "confidence": 0.97963697
       },
       {
         "rank": 112,
-        "instrument": "SZ000625",
-        "score": 0.03524508,
-        "confidence": 0.9853219
+        "instrument": "SH600938",
+        "score": 0.00973985,
+        "confidence": 0.98498756
       },
       {
         "rank": 113,
-        "instrument": "SZ000002",
-        "score": 0.03520767,
-        "confidence": 0.9791965
+        "instrument": "SH601012",
+        "score": 0.00777356,
+        "confidence": 0.97353655
       },
       {
         "rank": 114,
-        "instrument": "SH600036",
-        "score": 0.03496991,
-        "confidence": 0.9805218
+        "instrument": "SZ300418",
+        "score": 0.00741504,
+        "confidence": 0.9871841
       },
       {
         "rank": 115,
-        "instrument": "SH601607",
-        "score": 0.03394074,
-        "confidence": 0.9877208
+        "instrument": "SH601816",
+        "score": 0.00741232,
+        "confidence": 0.9838409
       },
       {
         "rank": 116,
-        "instrument": "SZ001979",
-        "score": 0.03377931,
-        "confidence": 0.9823704
+        "instrument": "SH600061",
+        "score": 0.0053548,
+        "confidence": 0.9888819
       },
       {
         "rank": 117,
-        "instrument": "SZ300308",
-        "score": 0.03353806,
-        "confidence": 0.9883483
+        "instrument": "SH603893",
+        "score": 0.00516664,
+        "confidence": 0.98566055
       },
       {
         "rank": 118,
-        "instrument": "SH600048",
-        "score": 0.03342418,
-        "confidence": 0.9840844
+        "instrument": "SZ000807",
+        "score": 0.0047786,
+        "confidence": 0.97629935
       },
       {
         "rank": 119,
-        "instrument": "SH600150",
-        "score": 0.03291117,
-        "confidence": 0.98651195
+        "instrument": "SZ002049",
+        "score": 0.00371049,
+        "confidence": 0.98900884
       },
       {
         "rank": 120,
-        "instrument": "SH601618",
-        "score": 0.03178327,
-        "confidence": 0.98331577
+        "instrument": "SH600919",
+        "score": 0.00359065,
+        "confidence": 0.98398787
       },
       {
         "rank": 121,
-        "instrument": "SH600115",
-        "score": 0.03175751,
-        "confidence": 0.9863624
+        "instrument": "SH603799",
+        "score": 0.00354178,
+        "confidence": 0.9797754
       },
       {
         "rank": 122,
-        "instrument": "SZ000651",
-        "score": 0.03164265,
-        "confidence": 0.98475504
+        "instrument": "SH603993",
+        "score": 0.00328623,
+        "confidence": 0.9836188
       },
       {
         "rank": 123,
-        "instrument": "SH603260",
-        "score": 0.03106923,
-        "confidence": 0.98193055
+        "instrument": "SH600570",
+        "score": 0.00202236,
+        "confidence": 0.98471063
       },
       {
         "rank": 124,
-        "instrument": "SH600900",
-        "score": 0.03039108,
-        "confidence": 0.9835661
+        "instrument": "SH601066",
+        "score": 0.00149771,
+        "confidence": 0.9785615
       },
       {
         "rank": 125,
-        "instrument": "SZ000786",
-        "score": 0.03027894,
-        "confidence": 0.97907764
+        "instrument": "SH600030",
+        "score": 0.00093921,
+        "confidence": 0.98135424
       },
       {
         "rank": 126,
-        "instrument": "SH600690",
-        "score": 0.02888262,
-        "confidence": 0.9870179
+        "instrument": "SH600372",
+        "score": 0.00072765,
+        "confidence": 0.9809817
       },
       {
         "rank": 127,
-        "instrument": "SZ000661",
-        "score": 0.02876716,
-        "confidence": 0.9694845
+        "instrument": "SH600660",
+        "score": 0.00068342,
+        "confidence": 0.98465204
       },
       {
         "rank": 128,
-        "instrument": "SH600018",
-        "score": 0.02661583,
-        "confidence": 0.97903067
+        "instrument": "SZ002459",
+        "score": 0.00055579,
+        "confidence": 0.9758563
       },
       {
         "rank": 129,
-        "instrument": "SH601298",
-        "score": 0.02649103,
-        "confidence": 0.98342496
+        "instrument": "SH600161",
+        "score": 0.00049477,
+        "confidence": 0.9712815
       },
       {
         "rank": 130,
-        "instrument": "SZ301269",
-        "score": 0.02636737,
-        "confidence": 0.97991735
+        "instrument": "SZ300832",
+        "score": -5.225e-05,
+        "confidence": 0.97754943
       },
       {
         "rank": 131,
-        "instrument": "SH600196",
-        "score": 0.02636731,
-        "confidence": 0.97665614
+        "instrument": "SZ002736",
+        "score": -0.00028849,
+        "confidence": 0.9819693
       },
       {
         "rank": 132,
-        "instrument": "SZ300476",
-        "score": 0.02615618,
-        "confidence": 0.98428416
+        "instrument": "SZ000001",
+        "score": -0.0011239,
+        "confidence": 0.9770184
       },
       {
         "rank": 133,
-        "instrument": "SZ300999",
-        "score": 0.02568709,
-        "confidence": 0.9764614
+        "instrument": "SH603392",
+        "score": -0.00142327,
+        "confidence": 0.9848364
       },
       {
         "rank": 134,
-        "instrument": "SH601166",
-        "score": 0.02540145,
-        "confidence": 0.9801877
+        "instrument": "SH600176",
+        "score": -0.00186495,
+        "confidence": 0.9827663
       },
       {
         "rank": 135,
-        "instrument": "SH601808",
-        "score": 0.02449576,
-        "confidence": 0.9857092
+        "instrument": "SH601328",
+        "score": -0.00203932,
+        "confidence": 0.98434836
       },
       {
         "rank": 136,
-        "instrument": "SH600489",
-        "score": 0.02367727,
-        "confidence": 0.97982055
+        "instrument": "SZ002028",
+        "score": -0.00209669,
+        "confidence": 0.9850979
       },
       {
         "rank": 137,
-        "instrument": "SH601985",
-        "score": 0.02318545,
-        "confidence": 0.98322314
+        "instrument": "SZ000596",
+        "score": -0.00236023,
+        "confidence": 0.9712025
       },
       {
         "rank": 138,
-        "instrument": "SH600760",
-        "score": 0.02316943,
-        "confidence": 0.98485684
+        "instrument": "SH600600",
+        "score": -0.00278022,
+        "confidence": 0.9850877
       },
       {
         "rank": 139,
-        "instrument": "SZ000938",
-        "score": 0.02107077,
-        "confidence": 0.98000664
+        "instrument": "SZ002311",
+        "score": -0.00383946,
+        "confidence": 0.9821754
       },
       {
         "rank": 140,
-        "instrument": "SZ000333",
-        "score": 0.02060082,
-        "confidence": 0.97651494
+        "instrument": "SH601899",
+        "score": -0.00487587,
+        "confidence": 0.99040586
       },
       {
         "rank": 141,
-        "instrument": "SH601916",
-        "score": 0.02057215,
-        "confidence": 0.9773318
+        "instrument": "SH600809",
+        "score": -0.00490095,
+        "confidence": 0.96529436
       },
       {
         "rank": 142,
-        "instrument": "SZ002311",
-        "score": 0.02002173,
-        "confidence": 0.9818193
+        "instrument": "SH600436",
+        "score": -0.00516184,
+        "confidence": 0.97935104
       },
       {
         "rank": 143,
-        "instrument": "SH601995",
-        "score": 0.01984987,
-        "confidence": 0.982457
+        "instrument": "SH601857",
+        "score": -0.00520404,
+        "confidence": 0.9858586
       },
       {
         "rank": 144,
-        "instrument": "SH600570",
-        "score": 0.01945485,
-        "confidence": 0.9853741
+        "instrument": "SH600000",
+        "score": -0.00538025,
+        "confidence": 0.9806323
       },
       {
         "rank": 145,
-        "instrument": "SZ002001",
-        "score": 0.01846888,
-        "confidence": 0.98259485
+        "instrument": "SZ300866",
+        "score": -0.00550973,
+        "confidence": 0.9764514
       },
       {
         "rank": 146,
-        "instrument": "SH601336",
-        "score": 0.01800845,
-        "confidence": 0.97126925
+        "instrument": "SH601919",
+        "score": -0.00642323,
+        "confidence": 0.9781496
       },
       {
         "rank": 147,
-        "instrument": "SZ000876",
-        "score": 0.01773808,
-        "confidence": 0.9813882
+        "instrument": "SH600585",
+        "score": -0.00675871,
+        "confidence": 0.98044246
       },
       {
         "rank": 148,
-        "instrument": "SH600030",
-        "score": 0.01763114,
-        "confidence": 0.9804652
+        "instrument": "SZ300628",
+        "score": -0.00768358,
+        "confidence": 0.98627174
       },
       {
         "rank": 149,
-        "instrument": "SH605117",
-        "score": 0.01752738,
-        "confidence": 0.9769523
+        "instrument": "SH601600",
+        "score": -0.00776646,
+        "confidence": 0.98002315
       },
       {
         "rank": 150,
-        "instrument": "SH601136",
-        "score": 0.01719996,
-        "confidence": 0.9772674
+        "instrument": "SH600183",
+        "score": -0.00801741,
+        "confidence": 0.98243606
       },
       {
         "rank": 151,
-        "instrument": "SZ000792",
-        "score": 0.01667901,
-        "confidence": 0.9837446
+        "instrument": "SH601901",
+        "score": -0.00904374,
+        "confidence": 0.9728097
       },
       {
         "rank": 152,
         "instrument": "SH601360",
-        "score": 0.01642283,
-        "confidence": 0.9858519
+        "score": -0.00941303,
+        "confidence": 0.97704333
       },
       {
         "rank": 153,
-        "instrument": "SH600436",
-        "score": 0.01557425,
-        "confidence": 0.987643
+        "instrument": "SH601229",
+        "score": -0.00996087,
+        "confidence": 0.9797314
       },
       {
         "rank": 154,
-        "instrument": "SH601077",
-        "score": 0.01465853,
-        "confidence": 0.9715215
+        "instrument": "SZ002709",
+        "score": -0.01019072,
+        "confidence": 0.97347224
       },
       {
         "rank": 155,
-        "instrument": "SH601328",
-        "score": 0.01412453,
-        "confidence": 0.983083
+        "instrument": "SH601877",
+        "score": -0.01059443,
+        "confidence": 0.9834742
       },
       {
         "rank": 156,
-        "instrument": "SH603288",
-        "score": 0.01386108,
-        "confidence": 0.9773781
+        "instrument": "SH601006",
+        "score": -0.0112173,
+        "confidence": 0.98625875
       },
       {
         "rank": 157,
-        "instrument": "SZ002028",
-        "score": 0.01377103,
-        "confidence": 0.9866355
+        "instrument": "SZ002074",
+        "score": -0.01161598,
+        "confidence": 0.9809564
       },
       {
         "rank": 158,
-        "instrument": "SZ300782",
-        "score": 0.01375458,
-        "confidence": 0.98503554
+        "instrument": "SH600893",
+        "score": -0.01254804,
+        "confidence": 0.984502
       },
       {
         "rank": 159,
-        "instrument": "SH688082",
-        "score": 0.01245186,
-        "confidence": 0.97983503
+        "instrument": "SZ300251",
+        "score": -0.0127712,
+        "confidence": 0.9818211
       },
       {
         "rank": 160,
-        "instrument": "SH600011",
-        "score": 0.01233587,
-        "confidence": 0.98317575
+        "instrument": "SZ300896",
+        "score": -0.01335026,
+        "confidence": 0.9814944
       },
       {
         "rank": 161,
         "instrument": "SZ002236",
-        "score": 0.00980479,
-        "confidence": 0.9868101
+        "score": -0.01349251,
+        "confidence": 0.98468196
       },
       {
         "rank": 162,
-        "instrument": "SH600795",
-        "score": 0.00912829,
-        "confidence": 0.9842194
+        "instrument": "SH600690",
+        "score": -0.0135133,
+        "confidence": 0.98556757
       },
       {
         "rank": 163,
-        "instrument": "SZ002179",
-        "score": 0.0089212,
-        "confidence": 0.9848022
+        "instrument": "SH600023",
+        "score": -0.01530415,
+        "confidence": 0.9829213
       },
       {
         "rank": 164,
-        "instrument": "SZ300803",
-        "score": 0.00887583,
-        "confidence": 0.97943646
+        "instrument": "SZ002001",
+        "score": -0.01532255,
+        "confidence": 0.9877979
       },
       {
         "rank": 165,
-        "instrument": "SH601006",
-        "score": 0.00867309,
-        "confidence": 0.98127717
+        "instrument": "SH600584",
+        "score": -0.01545079,
+        "confidence": 0.9849806
       },
       {
         "rank": 166,
-        "instrument": "SH601877",
-        "score": 0.00649495,
-        "confidence": 0.9842407
+        "instrument": "SH603019",
+        "score": -0.01598377,
+        "confidence": 0.9852267
       },
       {
         "rank": 167,
-        "instrument": "SZ000725",
-        "score": 0.00647582,
-        "confidence": 0.97689384
+        "instrument": "SZ002384",
+        "score": -0.01725126,
+        "confidence": 0.9806857
       },
       {
         "rank": 168,
-        "instrument": "SH600600",
-        "score": 0.00626845,
-        "confidence": 0.9797141
+        "instrument": "SZ000408",
+        "score": -0.01743379,
+        "confidence": 0.98422503
       },
       {
         "rank": 169,
-        "instrument": "SH600887",
-        "score": 0.00554399,
-        "confidence": 0.9842293
+        "instrument": "SH600219",
+        "score": -0.01836506,
+        "confidence": 0.98652506
       },
       {
         "rank": 170,
-        "instrument": "SH688981",
-        "score": 0.00497331,
-        "confidence": 0.9811441
+        "instrument": "SZ002179",
+        "score": -0.01934403,
+        "confidence": 0.98363864
       },
       {
         "rank": 171,
-        "instrument": "SH601288",
-        "score": 0.00309225,
-        "confidence": 0.97158784
+        "instrument": "SH600438",
+        "score": -0.01993544,
+        "confidence": 0.97613424
       },
       {
         "rank": 172,
-        "instrument": "SH688256",
-        "score": 0.0028215,
-        "confidence": 0.98361975
+        "instrument": "SZ000938",
+        "score": -0.0205033,
+        "confidence": 0.9832617
       },
       {
         "rank": 173,
-        "instrument": "SH603392",
-        "score": 0.00238693,
-        "confidence": 0.9876644
+        "instrument": "SH600887",
+        "score": -0.02113511,
+        "confidence": 0.9822594
       },
       {
         "rank": 174,
-        "instrument": "SZ000538",
-        "score": 0.00229228,
-        "confidence": 0.9841615
+        "instrument": "SH601868",
+        "score": -0.02132036,
+        "confidence": 0.98560184
       },
       {
         "rank": 175,
-        "instrument": "SH600039",
-        "score": 0.00120115,
-        "confidence": 0.9850714
+        "instrument": "SH600196",
+        "score": -0.02203893,
+        "confidence": 0.9799525
       },
       {
         "rank": 176,
-        "instrument": "SH601919",
-        "score": 0.00117385,
-        "confidence": 0.9754396
+        "instrument": "SH688008",
+        "score": -0.02208694,
+        "confidence": 0.9874241
       },
       {
         "rank": 177,
-        "instrument": "SH601939",
-        "score": 0.00078718,
-        "confidence": 0.9811405
+        "instrument": "SH601398",
+        "score": -0.02264757,
+        "confidence": 0.98065776
       },
       {
         "rank": 178,
-        "instrument": "SH600233",
-        "score": 0.00073863,
-        "confidence": 0.97990924
+        "instrument": "SZ001965",
+        "score": -0.02497799,
+        "confidence": 0.98818064
       },
       {
         "rank": 179,
-        "instrument": "SZ000568",
-        "score": -0.00026826,
-        "confidence": 0.9871723
+        "instrument": "SZ300759",
+        "score": -0.02543783,
+        "confidence": 0.9764642
       },
       {
         "rank": 180,
-        "instrument": "SH600160",
-        "score": -0.00114492,
-        "confidence": 0.98403
+        "instrument": "SH688036",
+        "score": -0.02549525,
+        "confidence": 0.9856958
       },
       {
         "rank": 181,
-        "instrument": "SH600000",
-        "score": -0.00122785,
-        "confidence": 0.98379105
+        "instrument": "SH600795",
+        "score": -0.02569185,
+        "confidence": 0.9839113
       },
       {
         "rank": 182,
-        "instrument": "SH688472",
-        "score": -0.00160052,
-        "confidence": 0.97834045
+        "instrument": "SZ300999",
+        "score": -0.02604155,
+        "confidence": 0.9901922
       },
       {
         "rank": 183,
-        "instrument": "SH603195",
-        "score": -0.00305541,
-        "confidence": 0.9857997
+        "instrument": "SH601998",
+        "score": -0.02648706,
+        "confidence": 0.9836431
       },
       {
         "rank": 184,
-        "instrument": "SH688009",
-        "score": -0.00329036,
-        "confidence": 0.98783946
+        "instrument": "SH688041",
+        "score": -0.0267633,
+        "confidence": 0.9821363
       },
       {
         "rank": 185,
-        "instrument": "SH601633",
-        "score": -0.00414518,
-        "confidence": 0.97502387
+        "instrument": "SZ002352",
+        "score": -0.02698576,
+        "confidence": 0.989268
       },
       {
         "rank": 186,
-        "instrument": "SH601816",
-        "score": -0.00414616,
-        "confidence": 0.98054403
+        "instrument": "SH601136",
+        "score": -0.02843163,
+        "confidence": 0.9792585
       },
       {
         "rank": 187,
-        "instrument": "SZ002475",
-        "score": -0.00432959,
-        "confidence": 0.9846385
+        "instrument": "SH600760",
+        "score": -0.02915504,
+        "confidence": 0.973738
       },
       {
         "rank": 188,
-        "instrument": "SH601127",
-        "score": -0.00463609,
-        "confidence": 0.9644762
+        "instrument": "SH601688",
+        "score": -0.03060992,
+        "confidence": 0.984141
       },
       {
         "rank": 189,
-        "instrument": "SH601021",
-        "score": -0.00523986,
-        "confidence": 0.9888115
+        "instrument": "SZ000002",
+        "score": -0.03176368,
+        "confidence": 0.9791949
       },
       {
         "rank": 190,
-        "instrument": "SH603296",
-        "score": -0.00659368,
-        "confidence": 0.99048513
+        "instrument": "SH600999",
+        "score": -0.03198509,
+        "confidence": 0.98208195
       },
       {
         "rank": 191,
-        "instrument": "SH688506",
-        "score": -0.00669094,
-        "confidence": 0.9862991
+        "instrument": "SH601633",
+        "score": -0.03211712,
+        "confidence": 0.9841643
       },
       {
         "rank": 192,
-        "instrument": "SH688008",
-        "score": -0.00752052,
-        "confidence": 0.9825899
+        "instrument": "SZ000708",
+        "score": -0.03248922,
+        "confidence": 0.97511035
       },
       {
         "rank": 193,
-        "instrument": "SH600276",
-        "score": -0.0077353,
-        "confidence": 0.98892003
+        "instrument": "SH601668",
+        "score": -0.03292014,
+        "confidence": 0.987513
       },
       {
         "rank": 194,
-        "instrument": "SH601688",
-        "score": -0.0077456,
-        "confidence": 0.97817105
+        "instrument": "SH600941",
+        "score": -0.0337258,
+        "confidence": 0.98434365
       },
       {
         "rank": 195,
-        "instrument": "SZ002074",
-        "score": -0.00800862,
-        "confidence": 0.98490673
+        "instrument": "SH688169",
+        "score": -0.03451948,
+        "confidence": 0.9863121
       },
       {
         "rank": 196,
-        "instrument": "SH601881",
-        "score": -0.00803762,
-        "confidence": 0.99212575
+        "instrument": "SZ300442",
+        "score": -0.03492086,
+        "confidence": 0.9832176
       },
       {
         "rank": 197,
-        "instrument": "SZ002493",
-        "score": -0.00817761,
-        "confidence": 0.98244965
+        "instrument": "SH601872",
+        "score": -0.03628409,
+        "confidence": 0.9708095
       },
       {
         "rank": 198,
-        "instrument": "SH600938",
-        "score": -0.00993118,
-        "confidence": 0.98144066
+        "instrument": "SH600674",
+        "score": -0.03628787,
+        "confidence": 0.9812718
       },
       {
         "rank": 199,
-        "instrument": "SH600999",
-        "score": -0.01070434,
-        "confidence": 0.980056
+        "instrument": "SH601377",
+        "score": -0.0363302,
+        "confidence": 0.9824362
       },
       {
         "rank": 200,
-        "instrument": "SZ300059",
-        "score": -0.01114649,
-        "confidence": 0.9846651
+        "instrument": "SZ000661",
+        "score": -0.03644055,
+        "confidence": 0.98157525
       },
       {
         "rank": 201,
-        "instrument": "SH601868",
-        "score": -0.01211683,
-        "confidence": 0.98563623
+        "instrument": "SZ000301",
+        "score": -0.03649076,
+        "confidence": 0.9807163
       },
       {
         "rank": 202,
-        "instrument": "SZ300033",
-        "score": -0.01265917,
-        "confidence": 0.9794677
+        "instrument": "SH600905",
+        "score": -0.03676363,
+        "confidence": 0.9846565
       },
       {
         "rank": 203,
-        "instrument": "SH603799",
-        "score": -0.01291069,
-        "confidence": 0.9887293
+        "instrument": "SH600875",
+        "score": -0.03716079,
+        "confidence": 0.98219967
       },
       {
         "rank": 204,
-        "instrument": "SH601668",
-        "score": -0.01349687,
-        "confidence": 0.986889
+        "instrument": "SH601988",
+        "score": -0.03828656,
+        "confidence": 0.9861551
       },
       {
         "rank": 205,
-        "instrument": "SH600660",
-        "score": -0.01352873,
-        "confidence": 0.9818356
+        "instrument": "SH601995",
+        "score": -0.03894348,
+        "confidence": 0.9884242
       },
       {
         "rank": 206,
-        "instrument": "SH600875",
-        "score": -0.01403687,
-        "confidence": 0.98448217
+        "instrument": "SH603501",
+        "score": -0.03918585,
+        "confidence": 0.9800092
       },
       {
         "rank": 207,
-        "instrument": "SH603019",
-        "score": -0.01430267,
-        "confidence": 0.9840508
+        "instrument": "SH688111",
+        "score": -0.03924608,
+        "confidence": 0.9904197
       },
       {
         "rank": 208,
-        "instrument": "SZ000100",
-        "score": -0.01549872,
-        "confidence": 0.9830214
+        "instrument": "SH600050",
+        "score": -0.0397661,
+        "confidence": 0.9870762
       },
       {
         "rank": 209,
-        "instrument": "SH601766",
-        "score": -0.01619948,
-        "confidence": 0.98660374
+        "instrument": "SH600415",
+        "score": -0.04035576,
+        "confidence": 0.9857896
       },
       {
         "rank": 210,
-        "instrument": "SZ300316",
-        "score": -0.01627613,
-        "confidence": 0.9860787
+        "instrument": "SH688472",
+        "score": -0.0410267,
+        "confidence": 0.9794463
       },
       {
         "rank": 211,
-        "instrument": "SH688187",
-        "score": -0.01706681,
-        "confidence": 0.98381746
+        "instrument": "SZ002027",
+        "score": -0.04283007,
+        "confidence": 0.9780256
       },
       {
         "rank": 212,
-        "instrument": "SH600188",
-        "score": -0.0185949,
-        "confidence": 0.9845632
+        "instrument": "SH601021",
+        "score": -0.04302643,
+        "confidence": 0.9842404
       },
       {
         "rank": 213,
-        "instrument": "SH600941",
-        "score": -0.02074574,
-        "confidence": 0.978966
+        "instrument": "SH688271",
+        "score": -0.04341701,
+        "confidence": 0.98685956
       },
       {
         "rank": 214,
-        "instrument": "SH600029",
-        "score": -0.02259324,
-        "confidence": 0.9760715
+        "instrument": "SH688047",
+        "score": -0.0436937,
+        "confidence": 0.98588264
       },
       {
         "rank": 215,
-        "instrument": "SH688012",
-        "score": -0.02260182,
-        "confidence": 0.98597103
+        "instrument": "SZ002371",
+        "score": -0.04409181,
+        "confidence": 0.9900767
       },
       {
         "rank": 216,
-        "instrument": "SZ300014",
-        "score": -0.02357372,
-        "confidence": 0.98675066
+        "instrument": "SZ301236",
+        "score": -0.04456311,
+        "confidence": 0.97360194
       },
       {
         "rank": 217,
-        "instrument": "SH601138",
-        "score": -0.02358992,
-        "confidence": 0.9842427
+        "instrument": "SZ300059",
+        "score": -0.04467138,
+        "confidence": 0.9881413
       },
       {
         "rank": 218,
-        "instrument": "SH600050",
-        "score": -0.02415029,
-        "confidence": 0.9843875
+        "instrument": "SZ000768",
+        "score": -0.04533056,
+        "confidence": 0.98620516
       },
       {
         "rank": 219,
-        "instrument": "SH603259",
-        "score": -0.0243166,
-        "confidence": 0.9763031
+        "instrument": "SH600027",
+        "score": -0.04692601,
+        "confidence": 0.9918984
       },
       {
         "rank": 220,
-        "instrument": "SH600027",
-        "score": -0.02600552,
-        "confidence": 0.9886115
+        "instrument": "SH600111",
+        "score": -0.04713351,
+        "confidence": 0.98460025
       },
       {
         "rank": 221,
-        "instrument": "SH601398",
-        "score": -0.02658456,
-        "confidence": 0.98071057
+        "instrument": "SH600009",
+        "score": -0.04765841,
+        "confidence": 0.97500944
       },
       {
         "rank": 222,
-        "instrument": "SH601689",
-        "score": -0.02659914,
-        "confidence": 0.979006
+        "instrument": "SZ002230",
+        "score": -0.04784522,
+        "confidence": 0.9758916
       },
       {
         "rank": 223,
-        "instrument": "SH601377",
-        "score": -0.02731489,
-        "confidence": 0.98555285
+        "instrument": "SH601878",
+        "score": -0.04910094,
+        "confidence": 0.9801036
       },
       {
         "rank": 224,
-        "instrument": "SH601878",
-        "score": -0.02750427,
-        "confidence": 0.98253894
+        "instrument": "SH600460",
+        "score": -0.04991074,
+        "confidence": 0.9842121
       },
       {
         "rank": 225,
-        "instrument": "SH600460",
-        "score": -0.02784539,
-        "confidence": 0.98244864
+        "instrument": "SH601669",
+        "score": -0.05046405,
+        "confidence": 0.98060626
       },
       {
         "rank": 226,
-        "instrument": "SZ300442",
-        "score": -0.02868147,
-        "confidence": 0.98279136
+        "instrument": "SZ300433",
+        "score": -0.05053537,
+        "confidence": 0.97916
       },
       {
         "rank": 227,
-        "instrument": "SH600905",
-        "score": -0.02886291,
-        "confidence": 0.97874147
+        "instrument": "SH688981",
+        "score": -0.05347308,
+        "confidence": 0.9893628
       },
       {
         "rank": 228,
-        "instrument": "SH600674",
-        "score": -0.03041362,
-        "confidence": 0.9816358
+        "instrument": "SH600011",
+        "score": -0.05353722,
+        "confidence": 0.9804937
       },
       {
         "rank": 229,
-        "instrument": "SH601319",
-        "score": -0.03112209,
-        "confidence": 0.9759507
+        "instrument": "SZ000792",
+        "score": -0.05368516,
+        "confidence": 0.98535013
       },
       {
         "rank": 230,
-        "instrument": "SH688036",
-        "score": -0.03141084,
-        "confidence": 0.98455715
+        "instrument": "SZ002493",
+        "score": -0.05369898,
+        "confidence": 0.9800529
       },
       {
         "rank": 231,
-        "instrument": "SH601698",
-        "score": -0.03191365,
-        "confidence": 0.9858417
+        "instrument": "SH601059",
+        "score": -0.0546398,
+        "confidence": 0.9850017
       },
       {
         "rank": 232,
-        "instrument": "SZ300628",
-        "score": -0.03244032,
-        "confidence": 0.98529935
+        "instrument": "SZ302132",
+        "score": -0.05510097,
+        "confidence": 0.97820926
       },
       {
         "rank": 233,
-        "instrument": "SZ300394",
-        "score": -0.03340274,
-        "confidence": 0.98641557
+        "instrument": "SH600233",
+        "score": -0.055434,
+        "confidence": 0.9843312
       },
       {
         "rank": 234,
-        "instrument": "SH601225",
-        "score": -0.03349839,
-        "confidence": 0.9850574
+        "instrument": "SZ002916",
+        "score": -0.05655788,
+        "confidence": 0.98429525
       },
       {
         "rank": 235,
-        "instrument": "SZ002049",
-        "score": -0.03455808,
-        "confidence": 0.9823829
+        "instrument": "SH600150",
+        "score": -0.05730214,
+        "confidence": 0.98503
       },
       {
         "rank": 236,
-        "instrument": "SH601669",
-        "score": -0.03481863,
-        "confidence": 0.98888063
+        "instrument": "SZ300661",
+        "score": -0.05836352,
+        "confidence": 0.9856537
       },
       {
         "rank": 237,
-        "instrument": "SZ000768",
-        "score": -0.03585974,
-        "confidence": 0.9880363
+        "instrument": "SZ002625",
+        "score": -0.05847747,
+        "confidence": 0.99164456
       },
       {
         "rank": 238,
-        "instrument": "SH601009",
-        "score": -0.03597047,
-        "confidence": 0.98070174
+        "instrument": "SH600362",
+        "score": -0.05956673,
+        "confidence": 0.98063964
       },
       {
         "rank": 239,
-        "instrument": "SZ000408",
-        "score": -0.03605771,
-        "confidence": 0.98303866
+        "instrument": "SZ300502",
+        "score": -0.06008677,
+        "confidence": 0.98795915
       },
       {
         "rank": 240,
-        "instrument": "SH603893",
-        "score": -0.03794482,
-        "confidence": 0.98332363
+        "instrument": "SH603369",
+        "score": -0.06018085,
+        "confidence": 0.9885594
       },
       {
         "rank": 241,
-        "instrument": "SH601111",
-        "score": -0.0381747,
-        "confidence": 0.9798717
+        "instrument": "SH601698",
+        "score": -0.06035782,
+        "confidence": 0.98981655
       },
       {
         "rank": 242,
-        "instrument": "SZ002594",
-        "score": -0.03852392,
-        "confidence": 0.9883875
+        "instrument": "SH601881",
+        "score": -0.06050029,
+        "confidence": 0.9825649
       },
       {
         "rank": 243,
-        "instrument": "SH600028",
-        "score": -0.03987685,
-        "confidence": 0.9753249
+        "instrument": "SZ001979",
+        "score": -0.06099209,
+        "confidence": 0.98608464
       },
       {
         "rank": 244,
-        "instrument": "SZ002600",
-        "score": -0.03988576,
-        "confidence": 0.98088396
+        "instrument": "SH600089",
+        "score": -0.06202126,
+        "confidence": 0.9856089
       },
       {
         "rank": 245,
-        "instrument": "SH688111",
-        "score": -0.04023869,
-        "confidence": 0.9853072
+        "instrument": "SH601728",
+        "score": -0.06361437,
+        "confidence": 0.9854981
       },
       {
         "rank": 246,
-        "instrument": "SH600219",
-        "score": -0.04165419,
-        "confidence": 0.9859337
+        "instrument": "SZ300782",
+        "score": -0.06390405,
+        "confidence": 0.98563725
       },
       {
         "rank": 247,
-        "instrument": "SZ002625",
-        "score": -0.04210745,
-        "confidence": 0.9861871
+        "instrument": "SH603986",
+        "score": -0.06417814,
+        "confidence": 0.97877115
       },
       {
         "rank": 248,
-        "instrument": "SH688271",
-        "score": -0.04225303,
-        "confidence": 0.989805
+        "instrument": "SZ301269",
+        "score": -0.06495547,
+        "confidence": 0.98640835
       },
       {
         "rank": 249,
-        "instrument": "SZ002352",
-        "score": -0.04323714,
-        "confidence": 0.9899422
+        "instrument": "SZ002594",
+        "score": -0.06710096,
+        "confidence": 0.98349035
       },
       {
         "rank": 250,
-        "instrument": "SH601211",
-        "score": -0.04379542,
-        "confidence": 0.97852886
+        "instrument": "SZ002422",
+        "score": -0.06734115,
+        "confidence": 0.9897371
       },
       {
         "rank": 251,
-        "instrument": "SZ002230",
-        "score": -0.04513281,
-        "confidence": 0.98279184
+        "instrument": "SH600845",
+        "score": -0.06802003,
+        "confidence": 0.9864987
       },
       {
         "rank": 252,
-        "instrument": "SH603501",
-        "score": -0.04535259,
-        "confidence": 0.9848489
+        "instrument": "SZ300316",
+        "score": -0.06926864,
+        "confidence": 0.98600775
       },
       {
         "rank": 253,
-        "instrument": "SH600930",
-        "score": -0.04609697,
-        "confidence": 0.98911554
+        "instrument": "SH601319",
+        "score": -0.06986592,
+        "confidence": 0.9801308
       },
       {
         "rank": 254,
-        "instrument": "SZ000807",
-        "score": -0.0471487,
-        "confidence": 0.98415965
+        "instrument": "SZ002648",
+        "score": -0.07297159,
+        "confidence": 0.98922616
       },
       {
         "rank": 255,
-        "instrument": "SZ000630",
-        "score": -0.04787552,
-        "confidence": 0.98618454
+        "instrument": "SH600930",
+        "score": -0.07321642,
+        "confidence": 0.9826917
       },
       {
         "rank": 256,
-        "instrument": "SZ301236",
-        "score": -0.04802253,
-        "confidence": 0.9859904
+        "instrument": "SH601628",
+        "score": -0.07493015,
+        "confidence": 0.9816921
       },
       {
         "rank": 257,
-        "instrument": "SZ002241",
-        "score": -0.04883149,
-        "confidence": 0.9848311
+        "instrument": "SH601689",
+        "score": -0.07541933,
+        "confidence": 0.98351926
       },
       {
         "rank": 258,
         "instrument": "SZ001391",
-        "score": -0.05272206,
-        "confidence": 0.9865741
+        "score": -0.0762884,
+        "confidence": 0.9862401
       },
       {
         "rank": 259,
-        "instrument": "SZ302132",
-        "score": -0.05300475,
-        "confidence": 0.98248243
+        "instrument": "SH601211",
+        "score": -0.07745814,
+        "confidence": 0.98093927
       },
       {
         "rank": 260,
-        "instrument": "SH601899",
-        "score": -0.05344386,
-        "confidence": 0.98744607
+        "instrument": "SZ002460",
+        "score": -0.0780581,
+        "confidence": 0.9821577
       },
       {
         "rank": 261,
-        "instrument": "SZ000425",
-        "score": -0.0539652,
-        "confidence": 0.9809378
+        "instrument": "SH601009",
+        "score": -0.07880744,
+        "confidence": 0.9817394
       },
       {
         "rank": 262,
-        "instrument": "SZ300124",
-        "score": -0.0541677,
-        "confidence": 0.98268616
+        "instrument": "SH601766",
+        "score": -0.07982355,
+        "confidence": 0.98576945
       },
       {
         "rank": 263,
-        "instrument": "SH688126",
-        "score": -0.05461717,
-        "confidence": 0.9826035
+        "instrument": "SH603195",
+        "score": -0.08290713,
+        "confidence": 0.989883
       },
       {
         "rank": 264,
-        "instrument": "SH600845",
-        "score": -0.05751322,
-        "confidence": 0.98764336
+        "instrument": "SH601111",
+        "score": -0.0843844,
+        "confidence": 0.9911801
       },
       {
         "rank": 265,
         "instrument": "SH600406",
-        "score": -0.05790397,
-        "confidence": 0.98360866
+        "score": -0.08519676,
+        "confidence": 0.9840921
       },
       {
         "rank": 266,
-        "instrument": "SH600089",
-        "score": -0.0590764,
-        "confidence": 0.9790044
+        "instrument": "SH600029",
+        "score": -0.08749983,
+        "confidence": 0.9891461
       },
       {
         "rank": 267,
-        "instrument": "SH601898",
-        "score": -0.05977376,
-        "confidence": 0.98177713
+        "instrument": "SH688012",
+        "score": -0.08956076,
+        "confidence": 0.9832887
       },
       {
         "rank": 268,
-        "instrument": "SH601998",
-        "score": -0.06174828,
-        "confidence": 0.97718036
+        "instrument": "SH688187",
+        "score": -0.09406745,
+        "confidence": 0.9847756
       },
       {
         "rank": 269,
-        "instrument": "SH688396",
-        "score": -0.06186384,
-        "confidence": 0.98395157
+        "instrument": "SH688082",
+        "score": -0.09450875,
+        "confidence": 0.9845902
       },
       {
         "rank": 270,
-        "instrument": "SH600111",
-        "score": -0.06251027,
-        "confidence": 0.9832939
+        "instrument": "SH688126",
+        "score": -0.09521596,
+        "confidence": 0.98250306
       },
       {
         "rank": 271,
-        "instrument": "SH600482",
-        "score": -0.06697369,
-        "confidence": 0.9731035
+        "instrument": "SZ002466",
+        "score": -0.09522868,
+        "confidence": 0.97626
       },
       {
         "rank": 272,
-        "instrument": "SZ002050",
-        "score": -0.06701964,
-        "confidence": 0.9851311
+        "instrument": "SH600958",
+        "score": -0.09553249,
+        "confidence": 0.98581713
       },
       {
         "rank": 273,
-        "instrument": "SH601088",
-        "score": -0.06732011,
-        "confidence": 0.9906103
+        "instrument": "SZ000725",
+        "score": -0.09909889,
+        "confidence": 0.9874024
       },
       {
         "rank": 274,
-        "instrument": "SH601600",
-        "score": -0.06758091,
-        "confidence": 0.99092555
+        "instrument": "SZ002601",
+        "score": -0.099451,
+        "confidence": 0.98137015
       },
       {
         "rank": 275,
-        "instrument": "SZ002463",
-        "score": -0.06799249,
-        "confidence": 0.9829531
+        "instrument": "SH603288",
+        "score": -0.1001586,
+        "confidence": 0.9858122
       },
       {
         "rank": 276,
-        "instrument": "SH600958",
-        "score": -0.06850193,
-        "confidence": 0.9855488
+        "instrument": "SZ000568",
+        "score": -0.1002343,
+        "confidence": 0.9773383
       },
       {
         "rank": 277,
-        "instrument": "SH600415",
-        "score": -0.06937509,
-        "confidence": 0.9820404
+        "instrument": "SH601077",
+        "score": -0.1009451,
+        "confidence": 0.98820007
       },
       {
         "rank": 278,
-        "instrument": "SZ000063",
-        "score": -0.06998298,
-        "confidence": 0.98248476
+        "instrument": "SZ002920",
+        "score": -0.10205271,
+        "confidence": 0.9861178
       },
       {
         "rank": 279,
-        "instrument": "SH600031",
-        "score": -0.07169858,
-        "confidence": 0.98267156
+        "instrument": "SH601601",
+        "score": -0.1026029,
+        "confidence": 0.98034877
       },
       {
         "rank": 280,
-        "instrument": "SZ002601",
-        "score": -0.07222458,
-        "confidence": 0.9807937
+        "instrument": "SH603260",
+        "score": -0.10309489,
+        "confidence": 0.9850536
       },
       {
         "rank": 281,
-        "instrument": "SH601988",
-        "score": -0.07286047,
-        "confidence": 0.9825332
+        "instrument": "SZ002600",
+        "score": -0.10313941,
+        "confidence": 0.9882117
       },
       {
         "rank": 282,
-        "instrument": "SH601857",
-        "score": -0.07312763,
-        "confidence": 0.98416984
+        "instrument": "SZ300124",
+        "score": -0.10579005,
+        "confidence": 0.98841596
       },
       {
         "rank": 283,
-        "instrument": "SH601059",
-        "score": -0.07342891,
-        "confidence": 0.9868325
+        "instrument": "SH600276",
+        "score": -0.11333662,
+        "confidence": 0.9852009
       },
       {
         "rank": 284,
-        "instrument": "SH688169",
-        "score": -0.07472938,
-        "confidence": 0.9882655
+        "instrument": "SZ000100",
+        "score": -0.11507686,
+        "confidence": 0.9881229
       },
       {
         "rank": 285,
-        "instrument": "SH601728",
-        "score": -0.07803845,
-        "confidence": 0.9841614
+        "instrument": "SH600522",
+        "score": -0.11576175,
+        "confidence": 0.9827718
       },
       {
         "rank": 286,
-        "instrument": "SZ300832",
-        "score": -0.07845394,
-        "confidence": 0.9900187
+        "instrument": "SH688303",
+        "score": -0.11685992,
+        "confidence": 0.98265475
       },
       {
         "rank": 287,
-        "instrument": "SH601628",
-        "score": -0.07993411,
-        "confidence": 0.9773342
+        "instrument": "SH600482",
+        "score": -0.12078495,
+        "confidence": 0.98305595
       },
       {
         "rank": 288,
-        "instrument": "SZ002938",
-        "score": -0.08163182,
-        "confidence": 0.976002
+        "instrument": "SH601336",
+        "score": -0.1210366,
+        "confidence": 0.9797575
       },
       {
         "rank": 289,
-        "instrument": "SZ000157",
-        "score": -0.08243423,
-        "confidence": 0.9842333
+        "instrument": "SZ000063",
+        "score": -0.12173729,
+        "confidence": 0.9818174
       },
       {
         "rank": 290,
-        "instrument": "SH603369",
-        "score": -0.08451738,
-        "confidence": 0.98857135
+        "instrument": "SZ000425",
+        "score": -0.12321205,
+        "confidence": 0.9896374
       },
       {
         "rank": 291,
-        "instrument": "SH688303",
-        "score": -0.08611923,
-        "confidence": 0.98399156
+        "instrument": "SZ000157",
+        "score": -0.12480492,
+        "confidence": 0.9815615
       },
       {
         "rank": 292,
-        "instrument": "SH603993",
-        "score": -0.08715106,
-        "confidence": 0.98283917
+        "instrument": "SZ002050",
+        "score": -0.12574998,
+        "confidence": 0.9803649
       },
       {
         "rank": 293,
-        "instrument": "SH601058",
-        "score": -0.08741532,
-        "confidence": 0.97950554
+        "instrument": "SH600588",
+        "score": -0.12601247,
+        "confidence": 0.97515625
       },
       {
         "rank": 294,
-        "instrument": "SZ002920",
-        "score": -0.09224752,
-        "confidence": 0.98867756
+        "instrument": "SH688506",
+        "score": -0.13012664,
+        "confidence": 0.9900051
       },
       {
         "rank": 295,
-        "instrument": "SH600362",
-        "score": -0.10233834,
-        "confidence": 0.98533404
+        "instrument": "SH600031",
+        "score": -0.13800263,
+        "confidence": 0.9811385
       },
       {
         "rank": 296,
-        "instrument": "SZ002648",
-        "score": -0.10576797,
-        "confidence": 0.98148984
+        "instrument": "SZ002938",
+        "score": -0.14161637,
+        "confidence": 0.97776675
       },
       {
         "rank": 297,
-        "instrument": "SH600522",
-        "score": -0.11217558,
-        "confidence": 0.98043776
+        "instrument": "SH601058",
+        "score": -0.14883848,
+        "confidence": 0.98836344
       },
       {
         "rank": 298,
         "instrument": "SH601888",
-        "score": -0.11279319,
-        "confidence": 0.9833845
+        "score": -0.16022871,
+        "confidence": 0.98274475
       },
       {
         "rank": 299,
-        "instrument": "SH601601",
-        "score": -0.11988722,
-        "confidence": 0.98342955
+        "instrument": "SZ002463",
+        "score": -0.16200924,
+        "confidence": 0.9711246
       },
       {
         "rank": 300,
         "instrument": "SH601100",
-        "score": -0.12658301,
-        "confidence": 0.9775
+        "score": -0.19563927,
+        "confidence": 0.9773626
       }
     ]
   },
   "confidence_analysis": {
     "overall": {
-      "total_predictions": 12292,
-      "mean": 0.981877,
-      "std": 0.005106,
+      "total_predictions": 12592,
+      "mean": 0.981872,
+      "std": 0.005116,
       "percentiles": {
-        "p1": 0.965654,
-        "p5": 0.972432,
-        "p25": 0.979192,
-        "p50": 0.982647,
-        "p75": 0.985373,
-        "p95": 0.988675,
+        "p1": 0.965534,
+        "p5": 0.972397,
+        "p25": 0.979194,
+        "p50": 0.982644,
+        "p75": 0.985376,
+        "p95": 0.98869,
         "p99": 0.990658
       }
     },
@@ -3047,6 +3047,20 @@
           "0.97-0.98": 86,
           "0.98-0.99": 188,
           "0.99-1.00": 6,
+          "≥1.00": 0
+        }
+      },
+      {
+        "date": "2026-06-09",
+        "mean": 0.981688,
+        "std": 0.005484,
+        "min": 0.955292,
+        "max": 0.991898,
+        "bins": {
+          "0.96-0.97": 7,
+          "0.97-0.98": 81,
+          "0.98-0.99": 203,
+          "0.99-1.00": 8,
           "≥1.00": 0
         }
       }
@@ -7799,6 +7813,27 @@
         "p50": 0.01693949,
         "p75": 0.05510683,
         "p95": 0.11636061
+      }
+    },
+    {
+      "date": "2026-06-09",
+      "total_instruments": 300,
+      "positive_count": 129,
+      "negative_count": 171,
+      "positive_ratio": 0.43,
+      "mean_score": -0.01173952,
+      "median_score": -0.00853058,
+      "std_score": 0.05905677,
+      "score_spread_top_bottom": 0.31204502,
+      "top_k_mean_score": 0.08405101,
+      "top_k_mean_confidence": 0.97624,
+      "mean_confidence": 0.98168776,
+      "score_quantiles": {
+        "p5": -0.11581666,
+        "p25": -0.05048188,
+        "p50": -0.00853058,
+        "p75": 0.03121763,
+        "p95": 0.07876254
       }
     }
   ]
