@@ -1,119 +1,119 @@
 {
-  "date": "2026-07-01",
+  "date": "2026-07-02",
   "order_count": 16,
-  "buy_count": 8,
-  "sell_count": 8,
+  "buy_count": 11,
+  "sell_count": 5,
   "orders": [
     {
-      "symbol": "SZSE.002384",
+      "symbol": "SHSE.600926",
       "side": "SELL",
-      "volume": 200,
-      "price": 241.38,
+      "volume": 5800,
+      "price": 14.59,
+      "type": "limit"
+    },
+    {
+      "symbol": "SZSE.300413",
+      "side": "SELL",
+      "volume": 6500,
+      "price": 14.65,
+      "type": "limit"
+    },
+    {
+      "symbol": "SHSE.600547",
+      "side": "SELL",
+      "volume": 3800,
+      "price": 23.69,
+      "type": "limit"
+    },
+    {
+      "symbol": "SZSE.300661",
+      "side": "SELL",
+      "volume": 600,
+      "price": 139.16,
       "type": "limit"
     },
     {
       "symbol": "SHSE.600176",
       "side": "SELL",
-      "volume": 1600,
-      "price": 68.86,
-      "type": "limit"
-    },
-    {
-      "symbol": "SZSE.300782",
-      "side": "SELL",
-      "volume": 100,
-      "price": 102.41,
-      "type": "limit"
-    },
-    {
-      "symbol": "SHSE.600741",
-      "side": "SELL",
-      "volume": 4600,
-      "price": 15.19,
-      "type": "limit"
-    },
-    {
-      "symbol": "SHSE.603993",
-      "side": "SELL",
-      "volume": 4600,
-      "price": 17.37,
-      "type": "limit"
-    },
-    {
-      "symbol": "SHSE.601100",
-      "side": "SELL",
-      "volume": 900,
-      "price": 103.62,
-      "type": "limit"
-    },
-    {
-      "symbol": "SZSE.300308",
-      "side": "SELL",
-      "volume": 100,
-      "price": 1198.7,
-      "type": "limit"
-    },
-    {
-      "symbol": "SHSE.600196",
-      "side": "SELL",
-      "volume": 3500,
-      "price": 22.65,
-      "type": "limit"
-    },
-    {
-      "symbol": "SZSE.002028",
-      "side": "BUY",
-      "volume": 100,
-      "price": 169.09,
+      "volume": 1300,
+      "price": 66.46,
       "type": "limit"
     },
     {
       "symbol": "SHSE.600183",
       "side": "BUY",
-      "volume": 500,
-      "price": 168.1,
+      "volume": 100,
+      "price": 154.99,
       "type": "limit"
     },
     {
       "symbol": "SHSE.600522",
       "side": "BUY",
-      "volume": 1600,
-      "price": 56.53,
-      "type": "limit"
-    },
-    {
-      "symbol": "SHSE.688082",
-      "side": "BUY",
-      "volume": 200,
-      "price": 413.1,
-      "type": "limit"
-    },
-    {
-      "symbol": "SHSE.601872",
-      "side": "BUY",
-      "volume": 5500,
-      "price": 17.21,
+      "volume": 300,
+      "price": 52.62,
       "type": "limit"
     },
     {
       "symbol": "SHSE.600026",
       "side": "BUY",
-      "volume": 5500,
-      "price": 17.04,
+      "volume": 500,
+      "price": 16.84,
       "type": "limit"
     },
     {
-      "symbol": "SHSE.603986",
+      "symbol": "SHSE.600584",
       "side": "BUY",
       "volume": 100,
-      "price": 787.46,
+      "price": 97.9,
       "type": "limit"
     },
     {
-      "symbol": "SHSE.600460",
+      "symbol": "SZSE.002384",
       "side": "BUY",
-      "volume": 1700,
-      "price": 54.22,
+      "volume": 100,
+      "price": 226.12,
+      "type": "limit"
+    },
+    {
+      "symbol": "SHSE.688012",
+      "side": "BUY",
+      "volume": 100,
+      "price": 417.08,
+      "type": "limit"
+    },
+    {
+      "symbol": "SZSE.000338",
+      "side": "BUY",
+      "volume": 3500,
+      "price": 26.93,
+      "type": "limit"
+    },
+    {
+      "symbol": "SHSE.603259",
+      "side": "BUY",
+      "volume": 700,
+      "price": 123.73,
+      "type": "limit"
+    },
+    {
+      "symbol": "SHSE.600875",
+      "side": "BUY",
+      "volume": 3300,
+      "price": 28.47,
+      "type": "limit"
+    },
+    {
+      "symbol": "SZSE.002074",
+      "side": "BUY",
+      "volume": 3400,
+      "price": 27.27,
+      "type": "limit"
+    },
+    {
+      "symbol": "SHSE.688041",
+      "side": "BUY",
+      "volume": 200,
+      "price": 328.74,
       "type": "limit"
     }
   ]
