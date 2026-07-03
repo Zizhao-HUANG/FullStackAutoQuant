@@ -1,180 +1,180 @@
 {
-  "date": "2026-07-02",
+  "date": "2026-07-03",
   "target_count": 29,
   "targets": [
     {
-      "instrument": "SH600183",
-      "weight": 0.033247,
-      "target_shares": 600,
-      "ref_price": 151.95
-    },
-    {
-      "instrument": "SH601872",
-      "weight": 0.033308,
-      "target_shares": 5600,
-      "ref_price": 16.53
-    },
-    {
-      "instrument": "SH600522",
-      "weight": 0.033272,
-      "target_shares": 1800,
-      "ref_price": 51.58
-    },
-    {
-      "instrument": "SZ300433",
-      "weight": 0.033243,
-      "target_shares": 1800,
-      "ref_price": 50.69
-    },
-    {
-      "instrument": "SH600026",
-      "weight": 0.033465,
-      "target_shares": 5600,
-      "ref_price": 16.5
-    },
-    {
-      "instrument": "SH600584",
-      "weight": 0.033139,
-      "target_shares": 900,
-      "ref_price": 95.98
+      "instrument": "SH688082",
+      "weight": 0.033445,
+      "target_shares": 200,
+      "ref_price": 363.43
     },
     {
       "instrument": "SH600460",
-      "weight": 0.033293,
-      "target_shares": 1800,
-      "ref_price": 50.5
+      "weight": 0.033161,
+      "target_shares": 1900,
+      "ref_price": 47.25
     },
     {
-      "instrument": "SZ002384",
-      "weight": 0.033125,
-      "target_shares": 400,
-      "ref_price": 221.68
-    },
-    {
-      "instrument": "SZ000338",
-      "weight": 0.033392,
-      "target_shares": 3500,
-      "ref_price": 26.4
-    },
-    {
-      "instrument": "SH603259",
-      "weight": 0.033345,
-      "target_shares": 700,
-      "ref_price": 121.3
-    },
-    {
-      "instrument": "SH600875",
-      "weight": 0.033163,
-      "target_shares": 3300,
-      "ref_price": 27.91
-    },
-    {
-      "instrument": "SZ002074",
-      "weight": 0.033331,
-      "target_shares": 3400,
-      "ref_price": 26.73
-    },
-    {
-      "instrument": "SH688981",
-      "weight": 0.033472,
-      "target_shares": 600,
-      "ref_price": 144.1
+      "instrument": "SH600584",
+      "weight": 0.033316,
+      "target_shares": 1000,
+      "ref_price": 90.88
     },
     {
       "instrument": "SH688012",
-      "weight": 0.03343,
+      "weight": 0.033313,
       "target_shares": 200,
-      "ref_price": 408.9
+      "ref_price": 413.69
     },
     {
-      "instrument": "SH688041",
-      "weight": 0.033293,
-      "target_shares": 200,
-      "ref_price": 322.29
-    },
-    {
-      "instrument": "SZ002916",
-      "weight": 0.033378,
-      "target_shares": 200,
-      "ref_price": 423.1
-    },
-    {
-      "instrument": "SH603799",
-      "weight": 0.033481,
-      "target_shares": 1900,
-      "ref_price": 47.05
+      "instrument": "SH688396",
+      "weight": 0.033314,
+      "target_shares": 1000,
+      "ref_price": 83.6
     },
     {
       "instrument": "SZ002371",
-      "weight": 0.033332,
+      "weight": 0.033218,
       "target_shares": 100,
-      "ref_price": 841.82
+      "ref_price": 816.0
     },
     {
-      "instrument": "SH600893",
-      "weight": 0.033405,
-      "target_shares": 2500,
-      "ref_price": 37.06
+      "instrument": "SH600160",
+      "weight": 0.033313,
+      "target_shares": 1800,
+      "ref_price": 49.35
+    },
+    {
+      "instrument": "SZ300408",
+      "weight": 0.033281,
+      "target_shares": 600,
+      "ref_price": 144.89
+    },
+    {
+      "instrument": "SZ000725",
+      "weight": 0.033241,
+      "target_shares": 11000,
+      "ref_price": 8.38
+    },
+    {
+      "instrument": "SH688981",
+      "weight": 0.033109,
+      "target_shares": 600,
+      "ref_price": 140.31
+    },
+    {
+      "instrument": "SH603259",
+      "weight": 0.033193,
+      "target_shares": 700,
+      "ref_price": 124.12
+    },
+    {
+      "instrument": "SH600026",
+      "weight": 0.033529,
+      "target_shares": 5300,
+      "ref_price": 17.37
+    },
+    {
+      "instrument": "SH601066",
+      "weight": 0.033465,
+      "target_shares": 3300,
+      "ref_price": 28.32
+    },
+    {
+      "instrument": "SZ002179",
+      "weight": 0.033321,
+      "target_shares": 2100,
+      "ref_price": 42.35
+    },
+    {
+      "instrument": "SH688041",
+      "weight": 0.033144,
+      "target_shares": 200,
+      "ref_price": 325.4
+    },
+    {
+      "instrument": "SZ002311",
+      "weight": 0.033368,
+      "target_shares": 2000,
+      "ref_price": 45.39
+    },
+    {
+      "instrument": "SH688126",
+      "weight": 0.033472,
+      "target_shares": 2600,
+      "ref_price": 34.53
+    },
+    {
+      "instrument": "SH600999",
+      "weight": 0.033416,
+      "target_shares": 4200,
+      "ref_price": 21.82
+    },
+    {
+      "instrument": "SZ300661",
+      "weight": 0.033222,
+      "target_shares": 600,
+      "ref_price": 139.6
     },
     {
       "instrument": "SH600570",
-      "weight": 0.033385,
-      "target_shares": 4300,
-      "ref_price": 21.29
+      "weight": 0.033497,
+      "target_shares": 4400,
+      "ref_price": 21.23
     },
     {
-      "instrument": "SH601360",
-      "weight": 0.033402,
-      "target_shares": 10700,
-      "ref_price": 8.7
-    },
-    {
-      "instrument": "SZ002938",
-      "weight": 0.033315,
-      "target_shares": 1000,
-      "ref_price": 92.52
-    },
-    {
-      "instrument": "SH601117",
-      "weight": 0.033307,
-      "target_shares": 12400,
-      "ref_price": 7.49
-    },
-    {
-      "instrument": "SH601111",
-      "weight": 0.033502,
-      "target_shares": 15200,
-      "ref_price": 6.15
-    },
-    {
-      "instrument": "SZ002028",
-      "weight": 0.033453,
-      "target_shares": 600,
-      "ref_price": 155.44
-    },
-    {
-      "instrument": "SZ002460",
-      "weight": 0.033336,
-      "target_shares": 1400,
-      "ref_price": 63.99
-    },
-    {
-      "instrument": "SH601877",
-      "weight": 0.033453,
-      "target_shares": 3700,
-      "ref_price": 24.72
+      "instrument": "SH688223",
+      "weight": 0.033231,
+      "target_shares": 20000,
+      "ref_price": 4.6
     },
     {
       "instrument": "SH600372",
-      "weight": 0.033417,
-      "target_shares": 8600,
-      "ref_price": 10.81
+      "weight": 0.033403,
+      "target_shares": 8200,
+      "ref_price": 11.24
     },
     {
-      "instrument": "SH600115",
-      "weight": 0.033134,
-      "target_shares": 23900,
-      "ref_price": 3.86
+      "instrument": "SZ002714",
+      "weight": 0.033321,
+      "target_shares": 2500,
+      "ref_price": 36.9
+    },
+    {
+      "instrument": "SH601872",
+      "weight": 0.033434,
+      "target_shares": 5400,
+      "ref_price": 17.0
+    },
+    {
+      "instrument": "SH688008",
+      "weight": 0.03337,
+      "target_shares": 200,
+      "ref_price": 266.8
+    },
+    {
+      "instrument": "SH601111",
+      "weight": 0.03344,
+      "target_shares": 15200,
+      "ref_price": 6.1
+    },
+    {
+      "instrument": "SH601360",
+      "weight": 0.033511,
+      "target_shares": 10700,
+      "ref_price": 8.71
+    },
+    {
+      "instrument": "SH601985",
+      "weight": 0.033436,
+      "target_shares": 10500,
+      "ref_price": 8.86
+    },
+    {
+      "instrument": "SH600438",
+      "weight": 0.033412,
+      "target_shares": 7900,
+      "ref_price": 11.8
     }
   ]
 }

@@ -5,11 +5,7 @@
     "rolling5d_drawdown": 0.0,
     "limit_up_symbols": [],
     "limit_down_symbols": [
-      "SHSE.600584",
-      "SHSE.688012",
-      "SZSE.002371",
-      "SZSE.002384",
-      "SZSE.002938"
+      "SHSE.600160"
     ],
     "reasons": []
   }
