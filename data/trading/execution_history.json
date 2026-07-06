@@ -5150,5 +5150,215 @@
         "status": "SKIPPED_INSUFFICIENT_CASH"
       }
     ]
+  },
+  {
+    "date": "2026-07-06",
+    "order_count": 29,
+    "placed": true,
+    "orders": [
+      {
+        "symbol": "SHSE.600176",
+        "side": "BUY",
+        "volume": 1400,
+        "price": 63.97,
+        "status": "ERROR"
+      },
+      {
+        "symbol": "SHSE.600460",
+        "side": "BUY",
+        "volume": 1900,
+        "price": 46.74,
+        "status": "ERROR"
+      },
+      {
+        "symbol": "SZSE.002371",
+        "side": "BUY",
+        "volume": 100,
+        "price": 805.8,
+        "status": "ERROR"
+      },
+      {
+        "symbol": "SHSE.688396",
+        "side": "BUY",
+        "volume": 1000,
+        "price": 86.25,
+        "status": "ERROR"
+      },
+      {
+        "symbol": "SHSE.688012",
+        "side": "BUY",
+        "volume": 200,
+        "price": 421.0,
+        "status": "ERROR"
+      },
+      {
+        "symbol": "SHSE.600160",
+        "side": "BUY",
+        "volume": 1800,
+        "price": 49.17,
+        "status": "ERROR"
+      },
+      {
+        "symbol": "SHSE.603259",
+        "side": "BUY",
+        "volume": 700,
+        "price": 123.27,
+        "status": "ERROR"
+      },
+      {
+        "symbol": "SHSE.603986",
+        "side": "BUY",
+        "volume": 100,
+        "price": 655.93,
+        "status": "ERROR"
+      },
+      {
+        "symbol": "SZSE.000725",
+        "side": "BUY",
+        "volume": 11900,
+        "price": 7.78,
+        "status": "ERROR"
+      },
+      {
+        "symbol": "SZSE.300661",
+        "side": "BUY",
+        "volume": 600,
+        "price": 136.31,
+        "status": "ERROR"
+      },
+      {
+        "symbol": "SHSE.688126",
+        "side": "BUY",
+        "volume": 2600,
+        "price": 34.7,
+        "status": "ERROR"
+      },
+      {
+        "symbol": "SHSE.600999",
+        "side": "BUY",
+        "volume": 4300,
+        "price": 21.48,
+        "status": "ERROR"
+      },
+      {
+        "symbol": "SZSE.300408",
+        "side": "BUY",
+        "volume": 600,
+        "price": 142.08,
+        "status": "ERROR"
+      },
+      {
+        "symbol": "SHSE.600183",
+        "side": "BUY",
+        "volume": 600,
+        "price": 154.66,
+        "status": "ERROR"
+      },
+      {
+        "symbol": "SZSE.300316",
+        "side": "BUY",
+        "volume": 1900,
+        "price": 48.33,
+        "status": "ERROR"
+      },
+      {
+        "symbol": "SHSE.601360",
+        "side": "BUY",
+        "volume": 10900,
+        "price": 8.58,
+        "status": "ERROR"
+      },
+      {
+        "symbol": "SHSE.688981",
+        "side": "BUY",
+        "volume": 600,
+        "price": 144.35,
+        "status": "ERROR"
+      },
+      {
+        "symbol": "SZSE.300450",
+        "side": "BUY",
+        "volume": 2400,
+        "price": 37.97,
+        "status": "ERROR"
+      },
+      {
+        "symbol": "SHSE.688008",
+        "side": "BUY",
+        "volume": 200,
+        "price": 269.34,
+        "status": "ERROR"
+      },
+      {
+        "symbol": "SHSE.688223",
+        "side": "BUY",
+        "volume": 21000,
+        "price": 4.46,
+        "status": "ERROR"
+      },
+      {
+        "symbol": "SHSE.600026",
+        "side": "BUY",
+        "volume": 5300,
+        "price": 17.42,
+        "status": "ERROR"
+      },
+      {
+        "symbol": "SHSE.688041",
+        "side": "BUY",
+        "volume": 200,
+        "price": 339.87,
+        "status": "ERROR"
+      },
+      {
+        "symbol": "SZSE.002353",
+        "side": "BUY",
+        "volume": 500,
+        "price": 171.48,
+        "status": "ERROR"
+      },
+      {
+        "symbol": "SZSE.002028",
+        "side": "BUY",
+        "volume": 500,
+        "price": 174.63,
+        "status": "ERROR"
+      },
+      {
+        "symbol": "SHSE.601127",
+        "side": "BUY",
+        "volume": 1500,
+        "price": 60.13,
+        "status": "ERROR"
+      },
+      {
+        "symbol": "SHSE.600150",
+        "side": "BUY",
+        "volume": 2400,
+        "price": 37.74,
+        "status": "ERROR"
+      },
+      {
+        "symbol": "SHSE.600018",
+        "side": "BUY",
+        "volume": 18600,
+        "price": 5.0,
+        "status": "ERROR"
+      },
+      {
+        "symbol": "SHSE.600438",
+        "side": "BUY",
+        "volume": 8000,
+        "price": 11.67,
+        "status": "ERROR"
+      },
+      {
+        "symbol": "SZSE.002202",
+        "side": "BUY",
+        "volume": 3900,
+        "price": 23.96,
+        "status": "ERROR"
+      }
+    ]
   }
 ]
