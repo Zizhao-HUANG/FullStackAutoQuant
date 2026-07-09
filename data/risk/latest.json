@@ -4,10 +4,7 @@
     "day_drawdown": 0.0,
     "rolling5d_drawdown": 0.0,
     "limit_up_symbols": [],
-    "limit_down_symbols": [
-      "SHSE.688126",
-      "SZSE.300433"
-    ],
+    "limit_down_symbols": [],
     "reasons": []
   }
 }
