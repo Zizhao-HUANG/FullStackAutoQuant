@@ -3,13 +3,12 @@
     "allow_buy": true,
     "day_drawdown": 0.0,
     "rolling5d_drawdown": 0.0,
-    "limit_up_symbols": [
-      "SHSE.600118",
-      "SHSE.601698",
-      "SZSE.002202"
-    ],
+    "limit_up_symbols": [],
     "limit_down_symbols": [
-      "SHSE.688396"
+      "SHSE.600183",
+      "SZSE.000725",
+      "SZSE.002179",
+      "SZSE.300408"
     ],
     "reasons": []
   }
